@@ -1,0 +1,14 @@
+<html>
+    <head>
+        <title>Breeding cows</title>
+    </head>
+    <body>
+         <div>
+            <h1><a href="/">Breeding cows</a></h1>
+        </div>
+            {% for breeding_cow in breeding_cows %}
+                <h2><a href="">Localidad: {{ breeding_cow.location }}</a></h2>
+                <p>Alta: {{ breeding_cow.entry_date }}</p>
+            {% endfor %}
+    </body>
+</html>
