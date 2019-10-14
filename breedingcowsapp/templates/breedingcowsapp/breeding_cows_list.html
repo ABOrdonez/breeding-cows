@@ -1,31 +1,18 @@
-{% load static %}
-<html>
-    <head>
-        <div class="page-header">
-            <h1><a href="/">Breeding cows's App</a></h1>
-        </div>
-        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
-        <link href="//fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext" rel="stylesheet" type="text/css">
-        <link rel="stylesheet" href="{% static 'css/breedingcowsapp.css' %}">
-    </head>
-    <body>
-         <div>
-            <h1><a href="/">Breeding cows</a></h1>
-        </div>
-        <div class="content container">
-            <div class="row">
-                <div class="col-md-8">
-                    {% for breeding_cow in breeding_cows %}
-                        <div class="breeding_cow">
-                            <h2><a href="">Localidad: {{ breeding_cow.location }}</a></h2>
-                            <div class="date">
-                                <p>Alta: {{ breeding_cow.entry_date }}</p>
-                            </div>
-                        </div>
-                    {% endfor %}
+{% extends 'breedingcowsapp/base.html' %}
+
+{% block content %}
+<div class="content container">
+    <div class="row">
+        <div class="col-md-8">
+            {% for breeding_cow in breeding_cows %}
+                <div class="breeding_cow">
+                    <h2><a href= "{% url 'breeding_cow_detail' pk=breeding_cow.pk %}">Localidad: {{ breeding_cow.location }}</a></h2>
+                    <div class="date">
+                        <p>Alta: {{ breeding_cow.entry_date }}</p>
+                    </div>
                 </div>
-            </div>
+            {% endfor %}
         </div>
-    </body>
-</html>
+    </div>
+</div>
+{% endblock %}

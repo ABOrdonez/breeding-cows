@@ -1,0 +1,9 @@
+{% extends 'breedingcowsapp/base.html' %}
+
+{% block content %}
+    <div class="breeding_cow">
+        <h2>{{ breeding_cow.location }}</h2>
+        <p>{{ breeding_cow.entry_date }}</p>
+        <p>{{ breeding_cow.text|linebreaksbr }}</p>
+    </div>
+{% endblock %}
