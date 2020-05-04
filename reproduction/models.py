@@ -1,0 +1,25 @@
+from django.db import models
+from enum import Enum
+
+
+class ReproductionType(Enum):
+    INSEMINACION = "Inseminacion Artificial"
+    NATURAL = "Natural"
+
+    @classmethod
+    def choices(cls):
+        return [(key.value, key.name) for key in cls]
+
+
+class Reproduction(models.Model):
+	reproduction_type = models.CharField(choices=ReproductionType.choices(), default='', max_length=100)
+	preparation_date = models.DateTimeField(blank=True, null=True)
+	execution_date = models.DateTimeField(blank=True, null=True)
+	revision_date = models.DateTimeField(blank=True, null=True)
+	success = models.BooleanField(blank=True, null=True)
+	separation = models.DateTimeField(blank=True, null=True)
+	give_birth_date = models.DateTimeField(blank=True, null=True)
+
+	def __str__(self):
+		return self.reproduction_type
+		

@@ -1,0 +1,68 @@
+{% extends 'breedingcows/base.html' %}
+
+{% block content %}
+    <div class="content container">
+        <div class="row">
+            <div class="col-md-8">
+                <!-- Progress Table start -->
+                <div class="col-12 mt-5">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h4 class="header-title">Dietas</h4>
+                                </div>
+                                <div class="col-md-6">
+                                    <a class="btn btn-rounded btn-outline-secondary mb-3 pull-right"
+                                       href="{% url 'breeding_cow_new' %}" role="button">+</a>
+                                </div>
+                            </div>
+                            <div class="single-table">
+                                <div class="table-responsive">
+                                    <table class="table table-hover progress-table text-center">
+                                        <thead class="text-uppercase">
+                                        <tr>
+                                            <th scope="col">Nombre</th>
+                                            <th scope="col">Proteinas</th>
+                                            <th scope="col">Energia</th>
+                                            <th scope="col">Tipo de animales</th>
+                                            <th scope="col">Aplicado en</th>
+                                            <th scope="col">Acciones</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for diet, animal_count in diets %}
+                                            <tr>
+                                                <td>
+                                                    <a style="color: #7801ff;"
+                                                       href="{% url 'diet_detail' pk=diet.pk %}">{{ diet.name }}
+                                                    </a>
+                                                </td>
+                                                <td>{{ diet.protein }}</td>
+                                                <td>{{ diet.energies }}</td>
+                                                <td>{{ diet.animal_type }}</td>
+                                                <td>{{ animal_count }}</td>
+                                                <td>
+                                                    <ul class="d-flex justify-content-center">
+                                                        <li class="mr-3"><a
+                                                                href="#"
+                                                                class="text-secondary"><i
+                                                                class="fa fa-edit"></i></a></li>
+                                                        <li><a href="#" class="text-danger"><i class="ti-trash"></i></a>
+                                                        </li>
+                                                    </ul>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

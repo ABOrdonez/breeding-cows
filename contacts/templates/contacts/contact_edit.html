@@ -1,0 +1,32 @@
+{% extends 'breedingcows/base.html' %}
+
+{% block content %}
+    <div class="col-12 mt-5">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title">Contacto</h4>
+                <form method="POST" class="post-form">
+                    {% csrf_token %}
+                    <div class="form-group col-6">
+                        <label for="first_name">Nombre</label>
+                        <input name="first_name" class="form-control" id="id_first_name" placeholder="Ingrese el nombre del Contacto" type="text" value="{{form.first_name.value}}">
+
+                        <label for="last_name">Apellido</label>
+                        <input name="last_name" class="form-control" id="id_last_name" placeholder="Ingrese el apellido del Contacto" type="text" value="{{form.last_name.value}}">
+
+                        <label for="phone">Telefono</label>
+                        <input name="phone" class="form-control" id="id_phone" placeholder="Ingrese el telefono del Contacto" type="text" value="{{form.phone.value}}">
+
+                        <label for="email">Mail</label>
+                        <input name="email" class="form-control" id="id_email" placeholder="Ingrese el mail del Contacto" type="text" value="{{form.email.value}}">
+
+                        <label for="birthday">birthday</label>
+                        <input name="birthday" class="form-control" id="id_birthday" type="date" value="{{form.birthday.value}}">
+
+                        <button type="submit" class="btn btn-outline-success btn-lg btn-block mt-3">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

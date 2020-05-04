@@ -1,52 +1,63 @@
 from django.db import models
+from django.contrib.auth.models import User
+from enum import Enum
 from django.utils import timezone
+from contacts import models as contactsmodels
+from contacts.models import Contact
 
-status = (
-    ('a', 'Activo'),
-    ('e', 'Eliminado'),
-)
 
-reproductive_status = (
-    ('p', 'Positivo'),
-    ('n', 'Negativo'),
-)
+class PositionType(Enum):
+    DUEÑO = "Dueño"
+    PEON = "Peón"
+    VETERINARIO = "Veterinario"
 
-animal_type = (
-    ('v', 'Vaca'),
-    ('va', 'Vaquillona'),
-    ('t', 'Toro'),
-    ('te', 'ternero')
-)
+    @classmethod
+    def choices(cls):
+        return [(key.value, key.name) for key in cls]
+
+
+class StatusType(Enum):
+    ACTIVO = "Activo"
+    ELIMINADO = "Eliminado"
+    SUSPENDIDIO = "Suspendido"
+
+    @classmethod
+    def choices(cls):
+        return [(key.value, key.name) for key in cls]
 
 
 class BreedingCows(models.Model):
     location = models.CharField(max_length=50, null=False, blank=False, default='')
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    contact = models.ForeignKey(Contact, on_delete=models.CASCADE, null=True, blank=True)
     entry_date = models.DateTimeField(blank=True, null=True)
     leaving_date = models.DateTimeField(blank=True, null=True)
-    status = models.CharField(max_length=1, choices=status, blank=True, default='a',
-                              help_text='Estado del Rodeo de Cría')
+    status = models.CharField(max_length=50, choices=StatusType.choices(), default=StatusType.ACTIVO)
+
+    def get_status_type_label(self):
+        return StatusType(self.type).name.title()
+
+    def add_leaving_date(self):
+        self.leaving_date = timezone.now()
+        self.save()
+        return self.location
 
     def __str__(self):
         return self.location
 
 
-class Animal(models.Model):
+class WorkPosition(models.Model):
     breeding_cows = models.ForeignKey(BreedingCows, on_delete=models.CASCADE)
-    flock_number = models.IntegerField(null=True, blank=True, default=0)
-    birthday = models.DateTimeField(blank=True, null=True)
-    entry_date = models.DateTimeField(default=timezone.now)
-    leaving_date = models.DateTimeField(blank=True, null=True)
-    rejection_date = models.DateTimeField(blank=True, null=True)
-    weight = models.DecimalField(max_digits=30, decimal_places=15)
-    reproductive_status = models.CharField(max_length=1, choices=reproductive_status, blank=True, default='p',
-                                           help_text='Estado reproductorio del animal')
-    animal_type = models.CharField(max_length=1, choices=animal_type, blank=True, default='t',
-                                   help_text='Estado reproductorio del animal')
+    person = models.ForeignKey(contactsmodels.Contact, on_delete=models.CASCADE, null=True, blank=True)
+    entry_date = models.DateTimeField(blank=True, null=True)
+    status = models.CharField(choices=StatusType.choices(), default=StatusType.ACTIVO, max_length=50)
+    position = models.CharField(choices=PositionType.choices(), default=PositionType.DUEÑO, max_length=50)
 
-    def rejection(self):
-        self.rejection_date = timezone.now()
-        self.animal_type = "n"
-        self.save()
+    def get_position_type_label(self):
+        return PositionType(self.type).name.title()
+
+    def get_status_type_label(self):
+        return StatusType(self.type).name.title()
 
     def __str__(self):
-        return self.flock_number
+        return self.person.username

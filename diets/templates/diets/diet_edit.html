@@ -1,0 +1,34 @@
+{% extends 'breedingcows/base.html' %}
+
+{% block content %}
+    <div class="col-12 mt-5">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title">Dieta</h4>
+                <form method="POST" class="post-form">
+                    {% csrf_token %}
+                    <div class="form-group col-6">
+                        <label for="name">Nombre</label>
+                        <input name="name" class="form-control" id="id_name" placeholder="Ingrese el nombre la Dieta" type="text" value="{{form.name.value}}">
+
+                        <label for="description">Descripcion</label>
+                        <input name="description" class="form-control" id="id_description" placeholder="Ingrese el detalle de la Dieta" type="text" value="{{form.description.value}}">
+
+                        <label for="protein">Poteinas</label>
+                        <input name="protein" class="form-control" id="id_protein" placeholder="Ingrese las proteinas de la Dieta" type="text" value="{{form.protein.value}}">
+
+                        <label for="energies">Energias</label>
+                        <input name="energies" class="form-control" id="id_energies" placeholder="Ingrese las energias de la Dieta" type="text" value="{{form.energies.value}}">
+
+                        <label for="animal_type">Tipo de animal involucrado en la dieta</label>
+                        <table>
+                            {{ form.animal_type }}
+                        </table>
+
+                        <button type="submit" class="btn btn-outline-success btn-lg btn-block mt-3">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

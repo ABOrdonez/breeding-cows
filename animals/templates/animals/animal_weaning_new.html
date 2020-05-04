@@ -1,0 +1,134 @@
+{% extends 'breedingcows/base.html' %}
+
+{% block header %}
+    <h4 class="page-title pull-left">Asociar Dieta</h4>
+    <ul class="breadcrumbs pull-left">
+        <li><a href="{% url 'breeding_cow_detail' pk=breeding_cow.pk %}">Detalle del Rodeo de Cría</a></li>
+        <li><span>Asociar Dieta</span></li>
+    </ul>
+{% endblock %}
+
+{% block content %}
+	<div class="col-12 mt-3">
+		<div class="card">
+			<div class="invoice-head" style="
+    margin-bottom: 5px;">
+		        <div class="iv-left col-6 mt-3">
+		            <span>Selección de Animales</span>
+		        </div>
+			</div>
+			<div class="modal-body">
+			    <div class="row"> 
+			      <div class="col-sm-5">
+			      	<h4 class="header-title">Animales del Rodeo</h4>
+			        <div class="selector-available"> 
+			          <select name="all_animals" class="filtered form-control" id="id_all_animals_from" multiple="" data-is-stacked="0" data-field-name="selected_animals">
+			            {% for animal in animals %}
+					       <option id="{{animal.id}}" value="{{animal.id}}" title="{{animal.flock_number}}">{{animal.flock_number}}</option>
+					    {% endfor %}
+			          </select>
+			        </div>
+			      </div>
+			      <div class="col-sm-2 text-center">
+			        <a onclick="moves_out()">
+			        	<i class="fa fa-arrow-left"></i>
+			        </a>
+			        <a onclick="moves_in()">
+			        	<i class="fa fa-arrow-right"></i>
+			        </a>
+			      </div>
+
+			      <div class="col-sm-5">
+			      	<h4 class="header-title">Aplicado en</h4>
+			         <div class="selector-chosen">
+			            <select id="id_selected_animals_to" multiple="multiple" size="0" name="selected_animals" class="filtered form-control" >
+			            </select>
+			          </div>
+			      </div>
+			    </div>
+			 </div>
+		</div>
+	</div>
+	<div class="col-12 mt-3">
+		<div class="card">
+			<div class="invoice-head" style="
+    margin-bottom: 5px;">
+		        <div class="iv-left col-6 mt-3">
+		            <span>Seleccione la especie: </span>
+		            <span class="text-info" id="id_species_name"><a href=""></a></span>
+		        </div>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="dropdown col-lg-6">
+		                <button class="btn btn-rounded btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+		                	Especie
+		                </button>
+		                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+		                    <a class="dropdown-item" onclick="added_selected_choice('Hembra')">Hembra</a>
+		                    <a class="dropdown-item" onclick="added_selected_choice('Macho')">Macho</a>
+		                </div>
+		            </div>
+				</div>
+			</div>
+			<button type="submit" name="action" class="btn btn-outline-success btn-lg btn-block mt-3" data-dismiss="modal" onclick="weaning({{ breeding_cow.pk }})">Guardar</button>
+		</div>
+	</div>
+
+	<script>
+      function moves_in(){
+        var selected_animlas = $("#id_all_animals_from option:selected");
+        var unselected_animlas = $("#id_all_animals_from option:not(:selected)");
+
+        $.each(selected_animlas, function(id, option, title) {
+          $("#id_selected_animals_to").append('<option id='+option.id+' value='+option.id+' title='+option.title+'>'+option.title+'</option>');
+        });
+        $("#id_all_animals_from").empty();
+        $.each(unselected_animlas, function(id, option, title) {
+          $("#id_all_animals_from").append('<option id='+option.id+' value='+option.id+' title='+option.title+'>'+option.title+'</option>');
+        });
+      };
+    </script>
+
+    <script>
+      function moves_out(){
+        var selected_animlas = $("#id_selected_animals_to option:selected");
+        var unselected_animlas = $("#id_selected_animals_to option:not(:selected)");
+
+        $.each(selected_animlas, function(id, option, title) {
+          $("#id_all_animals_from").append('<option id='+option.id+' value='+option.id+' title='+option.title+'>'+option.title+'</option>');
+        });
+        $("#id_selected_animals_to").empty();
+        $.each(unselected_animlas, function(id, option, title) {
+          $("#id_selected_animals_to").append('<option id='+option.id+' value='+option.id+' title='+option.title+'>'+option.title+'</option>');
+        });
+      };
+    </script>
+
+    <script>
+      function added_selected_choice(selectedChoice){
+      	$("#id_species_name").text(selectedChoice);
+        };
+    </script>
+
+      <script>
+      function weaning(breedingCowPk){
+        var selected_animlas = $("#id_selected_animals_to option");
+        var species = $("#id_species_name").text()
+
+        $.each(selected_animlas, function(id, option) {
+	        add_animal_weaning(breedingCowPk, option.id, species);
+        });
+    }
+    </script>
+
+    <script>
+      function add_animal_weaning(breedingCowPk, idAnimal, idSpecies){
+          $.ajax({
+            type: 'POST',
+            url: '/'+breedingCowPk+'/animals/weaning/new/',
+            data: {idAnimal: idAnimal, idSpecies: idSpecies},
+          });
+        };
+    </script>
+{% endblock %}

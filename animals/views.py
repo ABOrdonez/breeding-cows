@@ -1,0 +1,204 @@
+from .models import Animals, AnimalRepoduction
+from breedingcows.models import BreedingCows
+from reproduction.models import Reproduction
+from diets.models import Diet
+from reproduction.forms import ReproductionForm
+from django.shortcuts import render, get_object_or_404, redirect
+from .forms import AnimalForm, AnimalDietForm, AnimalRepoductionForm
+from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
+from breedingcows.views import breeding_cow_detail
+
+
+def animals_list(request):
+    animals = Animals.objects.order_by('flock_number')
+
+    return render(request, 'animals/animals_list.html', {'animals': animals})
+
+
+@csrf_exempt
+def animal_detail(request, pk):
+    animal = get_object_or_404(Animals, pk=pk)
+    return render(request, 'animals/animal_detail.html', {'animal': animal})
+
+
+def animal_edit(request, pk):
+    animal = get_object_or_404(Animals, pk=pk)
+    if request.method == "POST":
+        form = AnimalForm(request.POST, instance=animal)
+        if form.is_valid():
+            animal = form.save(commit=False)
+            animal.save()
+            return redirect('animal_detail', pk=animal.pk)
+    else:
+        form = AnimalForm(instance=animal)
+    return render(request, 'animals/animal_edit.html', {'form': form})
+
+
+@csrf_exempt
+def animal_new(request, breedingCowsPk):
+    if request.method == "POST":
+        form = AnimalForm(request.POST)
+        if form.is_valid():
+            breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
+            animal = form.save(commit=False)
+            animal.breeding_cows = breedingCows
+            animal.sexual_maturity = False
+            animal.save()
+            return redirect('animal_detail', pk=animal.pk)
+
+    else:
+        form = AnimalForm()
+        return render(request, 'animals/animal_edit.html', {'form': form})
+
+
+@csrf_exempt
+def animal_diet_new(request, breedingCowsPk):
+    if request.method == "POST":
+        animal = get_object_or_404(Animals, id=request.POST['idAnimal'])
+        diet = get_object_or_404(Diet, id=request.POST['idDiet'])
+        animalDietForm = AnimalDietForm()
+        animalDiet = animalDietForm.save(commit=False)
+        animalDiet.animal = animal
+        animalDiet.diet = diet
+        animalDiet.diagnosis_date = timezone.now()
+        animalDiet.save()
+        return breeding_cow_detail(request, pk=animal.pk)
+
+    else:
+        breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
+        animals = Animals.objects.order_by('flock_number').filter(
+            breeding_cows=breedingCows)
+        diets = Diet.objects.order_by('name')
+        return render(request, 'animals/animal_diet_new.html', {'animals': animals, 'breeding_cow': breedingCows, 'diets': diets})
+
+
+@csrf_exempt
+def animal_palpation_new(request, breedingCowsPk):
+    if request.method == "POST":
+        animal = get_object_or_404(Animals, id=request.POST['idAnimal'])
+        maturity = request.POST['maturity']
+        development = request.POST['development']
+        disease = request.POST['disease']
+
+        animal.sexual_maturity = isAceptable(maturity)
+        animal.body_development = isAceptable(development)
+        animal.save()
+
+        return breeding_cow_detail(request, pk=animal.pk)
+
+    else:
+        breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
+        animals = Animals.objects.order_by('flock_number').filter(breeding_cows=breedingCows).exclude(animal_type="Toro")
+        return render(request, 'animals/animal_palpation_new.html', {'animals': animals, 'breeding_cow': breedingCows})
+
+
+@csrf_exempt
+def animal_weaning_new(request, breedingCowsPk):
+    if request.method == "POST":
+        animal = get_object_or_404(Animals, id=request.POST['idAnimal'])
+        species = request.POST['idSpecies']
+
+        if isFemale(species):
+            animal.animal_type = "Vaquillona"
+        else:
+            animal.animal_type = "Toro"
+
+        animal.save()
+        return breeding_cow_detail(request, pk=animal.pk)
+    else:
+        breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
+        animals = Animals.objects.order_by('flock_number').filter(
+            breeding_cows=breedingCows,
+            animal_type="Ternero")
+        return render(request, 'animals/animal_weaning_new.html', {'animals': animals, 'breeding_cow': breedingCows})
+
+
+@csrf_exempt
+def animal_reproduction_type_new(request, breedingCowsPk):
+    if request.method == "POST":
+        animal = get_object_or_404(Animals, id=request.POST['idAnimal'])
+        reproductionForm = ReproductionForm()
+        reproduction = reproductionForm.save(commit=False)
+        animalRepoductionForm = AnimalRepoductionForm()
+        animalRepoduction = animalRepoductionForm.save(commit=False)
+
+        reproduction.reproduction_type = request.POST['idReproduction']
+        reproduction.preparation_date = timezone.now()
+        reproduction.save()
+
+        animalRepoduction.reproduction = reproduction
+        animalRepoduction.animal = animal
+        animalRepoduction.started_date = timezone.now()
+        animalRepoduction.breeding_cow = animal.breeding_cows
+        animalRepoduction.save()
+
+        return breeding_cow_detail(request, pk=animal.pk)
+
+    else:
+        breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
+        animals = getFemaleAnimalsWithoutReproductionInProcess(breedingCows)
+        return render(request, 'animals/animal_reproduction_type_new.html', {'animals': animals, 'breeding_cow': breedingCows})
+
+
+@csrf_exempt
+def animal_reproduction_execution_new(request, breedingCowsPk):
+    if request.method == "POST":
+        animal = get_object_or_404(Animals, id=request.POST['idAnimal'])
+        animalReproductions = AnimalRepoduction.objects.filter(
+            animal=animal,
+            finished_date__isnull=True)
+
+        for animalReproduction in animalReproductions:
+            reproduction = animalReproduction.reproduction
+            reproduction.execution_date = timezone.now()
+            reproduction.save()
+
+        return breeding_cow_detail(request, pk=animal.pk)
+
+    else:
+        breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
+        animals = getFemaleAnimalsWithoutReproductionExecution(breedingCows)
+        return render(request, 'animals/animal_reproduction_execution_new.html', {'animals': animals, 'breeding_cow': breedingCows})
+
+
+def isAceptable(string):
+    return string == "Aceptable"
+
+
+def isContiene(string):
+    return string == "Contiene"
+
+
+def isFemale(string):
+    return string == "Hembra"
+
+
+def getFemaleAnimals(breedingCows):
+    return Animals.objects.order_by('flock_number').filter(breeding_cows=breedingCows).exclude(animal_type='Toro').exclude(animal_type='Ternero')
+
+
+def getFemaleAnimalsWithoutReproductionInProcess(breedingcows):
+    femaleAnimals = getFemaleAnimals(breedingcows)
+    reproductionsInProcess = AnimalRepoduction.objects.filter(
+        breeding_cow=breedingcows,
+        finished_date__isnull=True)
+
+    for reproductionInProcess in reproductionsInProcess:
+        femaleAnimals = femaleAnimals.exclude(
+            flock_number=reproductionInProcess.animal.flock_number)
+
+    return femaleAnimals
+
+
+def getFemaleAnimalsWithoutReproductionExecution(breedingcows):
+    femaleAnimals = []
+    reproductionsInProcess = AnimalRepoduction.objects.filter(
+        breeding_cow=breedingcows,
+        finished_date__isnull=True)
+
+    for reproductionInProcess in reproductionsInProcess:
+        if not reproductionInProcess.reproduction.execution_date:
+            femaleAnimals.append(reproductionInProcess.animal)
+
+    return femaleAnimals

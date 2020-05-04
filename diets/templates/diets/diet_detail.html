@@ -1,0 +1,11 @@
+{% extends 'breedingcows/base.html' %}
+
+{% block content %}
+    <div class="col-12">
+        {% if user.is_authenticated %}
+            <a class="btn btn-default" href="{% url 'diet_edit' pk=diet.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
+        {% endif %}
+        <h2>{{ diet.name }}</h2>
+        <p>{{ diet.description }}</p>
+    </div>
+{% endblock %}

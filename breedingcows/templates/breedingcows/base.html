@@ -1,396 +1,177 @@
 {% load static %}
 
 <!doctype html>
-<!--
-  Material Design Lite
-  Copyright 2015 Google Inc. All rights reserved.
+<html class="no-js" lang="en">
 
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Breeding Cows- Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/png" href="{% static 'assets/images/icon/favicon.ico' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/themify-icons.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/metisMenu.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/slicknav.min.css' %}">
+    <!-- amchart css -->
+    <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all"/>
+    <!-- others css -->
+    <link rel="stylesheet" href="{% static 'assets/css/typography.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/default-css.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/responsive.css' %}">
+    <!-- modernizr css -->
+    <script src="{% static 'assets/js/vendor/modernizr-2.8.3.min.js' %}"></script>
 
-      https://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License
--->
-<html lang="en" xmlns="http://www.w3.org/1999/html">
-    <head>
-        <link rel="icon" type="image/png" href="{% static 'assets/images/DB_16х16.png' %}">
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="description" content="A front-end template that helps you build fast, modern mobile web apps.">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Material Dashboard Lite</title>
-
-        <!-- Add to homescreen for Chrome on Android -->
-        <meta name="mobile-web-app-capable" content="yes">
-
-
-        <!-- Add to homescreen for Safari on iOS -->
-        <meta name="apple-mobile-web-app-capable" content="yes">
-        <meta name="apple-mobile-web-app-status-bar-style" content="black">
-        <meta name="apple-mobile-web-app-title" content="Material Design Lite">
-
-
-        <!-- Tile icon for Win8 (144x144 + tile color) -->
-        <meta name="msapplication-TileImage" content="{% static 'assets/images/touch/ms-touch-icon-144x144-precomposed.png'%}">
-        <meta name="msapplication-TileColor" content="#3372DF">
-
-        <!-- SEO: If your mobile URL is different from the desktop URL, add a canonical link to the desktop page https://developers.google.com/webmasters/smartphone-sites/feature-phones -->
-        <!--
-        <link rel="canonical" href="http://www.example.com/">
-        -->
-
-        <link href='https://fonts.googleapis.com/css?family=Roboto:400,500,300,100,700,900' rel='stylesheet'
-              type='text/css'>
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-        <!-- inject:css -->
-        <link rel="stylesheet" href="{% static 'assets/css/lib/getmdl-select.min.css' %}">
-        <link rel="stylesheet" href="{% static 'assets/css/lib/nv.d3.min.css' %}">
-        <link rel="stylesheet" href="{% static 'assets/css/application.min.css' %}">
-
-        <!-- endinject -->
-
-
+    <!-- query latest version -->
+    <script src="{% static 'assets/js/vendor/jquery-2.2.4.min.js' %}"></script>
+    <!-- bootstrap 4 js -->
+    <script src="{% static 'assets/js/popper.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'assets/js/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'assets/js/metisMenu.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.slimscroll.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.slicknav.min.js' %}"></script>
+    <!-- start chart js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
     </head>
-    <body>
-        <div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header is-small-screen">
-            <header class="mdl-layout__header">
-                <div class="mdl-layout__header-row">
-                    <div class="mdl-layout-spacer"></div>
-                    <!-- Search-->
-                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable">
-                        <label class="mdl-button mdl-js-button mdl-button--icon" for="search">
-                            <i class="material-icons">search</i>
-                        </label>
 
-                        <div class="mdl-textfield__expandable-holder">
-                            <input class="mdl-textfield__input" type="text" id="search"/>
-                            <label class="mdl-textfield__label" for="search">Enter your query...</label>
-                        </div>
-                    </div>
-
-                    <div class="material-icons mdl-badge mdl-badge--overlap mdl-button--icon notification" id="notification"
-                         data-badge="23">
-                        notifications_none
-                    </div>
-                    <!-- Notifications dropdown-->
-                    <ul class="mdl-menu mdl-list mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right mdl-shadow--2dp notifications-dropdown"
-                        for="notification">
-                        <li class="mdl-list__item">
-                            You have 23 new notifications!
+<body>
+<!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+<!-- preloader area start -->
+<div id="preloader">
+    <div class="loader"></div>
+</div>
+<!-- preloader area end -->
+<!-- page container area start -->
+<div class="page-container">
+    <!-- sidebar menu area start -->
+    <div class="sidebar-menu">
+        <div class="sidebar-header">
+            <div class="logo">
+                <a href="index.html"><img src="{% static 'assets/images/icon/logo.png' %}" alt="logo"></a>
+            </div>
+        </div>
+        <div class="main-menu">
+            <div class="menu-inner">
+                <nav>
+                    <ul class="metismenu" id="menu">
+                        <!-- barra -->
+                        <li>
+                            <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-users"></i><span>Contactos</span></a>
+                            <ul class="collapse">
+                                <li><a href="{% url 'contact_new' %}"><i class="fa fa-user-plus"></i><span>Agregar</span></a></li>
+                                <li><a href="{% url 'contacts_list' %}"><i class="fa fa-search"></i><span>Buscar</span></a></li>
+                            </ul>
                         </li>
-                        <li class="mdl-menu__item mdl-list__item list__item--border-top">
-                            <span class="mdl-list__item-primary-content">
-                                <span class="mdl-list__item-avatar background-color--primary">
-                                    <i class="material-icons">plus_one</i>
-                                </span>
-                                <span>You have 3 new orders.</span>
-                            </span>
-                            <span class="mdl-list__item-secondary-content">
-                              <span class="label">just now</span>
-                            </span>
+                        <li>
+                            <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-map-signs"></i><span>Rodeo de Crias</span></a>
+                            <ul class="collapse">
+                                <li><a href="{% url 'breeding_cow_new' %}"><i class="fa fa-plus"></i><span>Agregar</span></a></li>
+                                <li><a href="{% url 'breeding_cows_list' %}"><i class="fa fa-search"></i><span>Buscar</span></a></li>
+                            </ul>
                         </li>
-                        <li class="mdl-menu__item mdl-list__item list__item--border-top">
-                            <span class="mdl-list__item-primary-content">
-                                <span class="mdl-list__item-avatar background-color--secondary">
-                                    <i class="material-icons">error_outline</i>
-                                </span>
-                              <span>Database error</span>
-                            </span>
-                            <span class="mdl-list__item-secondary-content">
-                              <span class="label">1 min</span>
-                            </span>
-                        </li>
-                        <li class="mdl-menu__item mdl-list__item list__item--border-top">
-                            <span class="mdl-list__item-primary-content">
-                                <span class="mdl-list__item-avatar background-color--primary">
-                                    <i class="material-icons">new_releases</i>
-                                </span>
-                              <span>The Death Star is built!</span>
-                            </span>
-                            <span class="mdl-list__item-secondary-content">
-                              <span class="label">2 hours</span>
-                            </span>
-                        </li>
-                        <li class="mdl-menu__item mdl-list__item list__item--border-top">
-                            <span class="mdl-list__item-primary-content">
-                                <span class="mdl-list__item-avatar background-color--primary">
-                                    <i class="material-icons">mail_outline</i>
-                                </span>
-                              <span>You have 4 new mails.</span>
-                            </span>
-                            <span class="mdl-list__item-secondary-content">
-                              <span class="label">5 days</span>
-                            </span>
-                        </li>
-                        <li class="mdl-list__item list__item--border-top">
-                            <button href="#" class="mdl-button mdl-js-button mdl-js-ripple-effect">ALL NOTIFICATIONS</button>
+                        <li>
+                            <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-shopping-cart"></i><span>Dietas</span></a>
+                            <ul class="collapse">
+                                <li><a href="{% url 'diet_new' %}"><i class="fa fa-plus"></i><span>Agregar</span></a></li>
+                                <li><a href="{% url 'diets_list' %}"><i class="fa fa-search"></i><span>Buscar</span></a></li>
+                            </ul>
                         </li>
                     </ul>
-
-                    <div class="material-icons mdl-badge mdl-badge--overlap mdl-button--icon message" id="inbox" data-badge="4">
-                        mail_outline
+                </nav>
+            </div>
+        </div>
+    </div>
+    <!-- sidebar menu area end -->
+    <!-- main content area start -->
+    <div class="main-content">
+        <!-- header area start -->
+        <div class="header-area" style=" padding-top: 0px; padding-bottom: 0px;">
+            <div class="row align-items-center">
+                <!-- nav and search button -->
+                <div class="col-md-6 col-sm-8 clearfix">
+                    <div class="nav-btn pull-left">
+                        <span></span>
+                        <span></span>
+                        <span></span>
                     </div>
-                    <!-- Messages dropdown-->
-                    <ul class="mdl-menu mdl-list mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right mdl-shadow--2dp messages-dropdown"
-                        for="inbox">
-                        <li class="mdl-list__item">
-                            You have 4 new messages!
-                        </li>
-                        <li class="mdl-menu__item mdl-list__item mdl-list__item--two-line list__item--border-top">
-                            <span class="mdl-list__item-primary-content">
-                                <span class="mdl-list__item-avatar background-color--primary">
-                                    <text>A</text>
-                                </span>
-                                <span>Alice</span>
-                                <span class="mdl-list__item-sub-title">Birthday Party</span>
-                            </span>
-                            <span class="mdl-list__item-secondary-content">
-                              <span class="label label--transparent">just now</span>
-                            </span>
-                        </li>
-                        <li class="mdl-menu__item mdl-list__item mdl-list__item--two-line list__item--border-top">
-                            <span class="mdl-list__item-primary-content">
-                                <span class="mdl-list__item-avatar background-color--baby-blue">
-                                    <text>M</text>
-                                </span>
-                                <span>Mike</span>
-                                <span class="mdl-list__item-sub-title">No theme</span>
-                            </span>
-                            <span class="mdl-list__item-secondary-content">
-                              <span class="label label--transparent">5 min</span>
-                            </span>
-                        </li>
-                        <li class="mdl-menu__item mdl-list__item mdl-list__item--two-line list__item--border-top">
-                            <span class="mdl-list__item-primary-content">
-                                <span class="mdl-list__item-avatar background-color--cerulean">
-                                    <text>D</text>
-                                </span>
-                                <span>Darth</span>
-                                <span class="mdl-list__item-sub-title">Suggestion</span>
-                            </span>
-                            <span class="mdl-list__item-secondary-content">
-                              <span class="label label--transparent">23 hours</span>
-                            </span>
-                        </li>
-                        <li class="mdl-menu__item mdl-list__item mdl-list__item--two-line list__item--border-top">
-                            <span class="mdl-list__item-primary-content">
-                                <span class="mdl-list__item-avatar background-color--mint">
-                                    <text>D</text>
-                                </span>
-                                <span>Don McDuket</span>
-                                <span class="mdl-list__item-sub-title">NEWS</span>
-                            </span>
-                            <span class="mdl-list__item-secondary-content">
-                              <span class="label label--transparent">30 Nov</span>
-                            </span>
-                        </li>
-                        <li class="mdl-list__item list__item--border-top">
-                            <button href="#" class="mdl-button mdl-js-button mdl-js-ripple-effect">SHOW ALL MESSAGES</button>
-                        </li>
-                    </ul>
-
-                    <div class="avatar-dropdown" id="icon">
-                        <span>Luke</span>
-                        <img src="images/Icon_header.png">
+                    <div class="search-box pull-left">
+                        <form action="#">
+                            <input type="text" name="search" placeholder="Search..." required>
+                            <i class="ti-search"></i>
+                        </form>
                     </div>
-                    <!-- Account dropdawn-->
-                    <ul class="mdl-menu mdl-list mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect mdl-shadow--2dp account-dropdown"
-                        for="icon">
-                        <li class="mdl-list__item mdl-list__item--two-line">
-                            <span class="mdl-list__item-primary-content">
-                                <span class="material-icons mdl-list__item-avatar"></span>
-                                <span>Luke</span>
-                                <span class="mdl-list__item-sub-title">Luke@skywalker.com</span>
-                            </span>
-                        </li>
-                        <li class="list__item--border-top"></li>
-                        <li class="mdl-menu__item mdl-list__item">
-                            <span class="mdl-list__item-primary-content">
-                                <i class="material-icons mdl-list__item-icon">account_circle</i>
-                                My account
-                            </span>
-                        </li>
-                        <li class="mdl-menu__item mdl-list__item">
-                            <span class="mdl-list__item-primary-content">
-                                <i class="material-icons mdl-list__item-icon">check_box</i>
-                                My tasks
-                            </span>
-                            <span class="mdl-list__item-secondary-content">
-                              <span class="label background-color--primary">3 new</span>
-                            </span>
-                        </li>
-                        <li class="mdl-menu__item mdl-list__item">
-                            <span class="mdl-list__item-primary-content">
-                                <i class="material-icons mdl-list__item-icon">perm_contact_calendar</i>
-                                My events
-                            </span>
-                        </li>
-                        <li class="list__item--border-top"></li>
-                        <li class="mdl-menu__item mdl-list__item">
-                            <span class="mdl-list__item-primary-content">
-                                <i class="material-icons mdl-list__item-icon">settings</i>
-                                Settings
-                            </span>
-                        </li>
-                        <a href="login.html">
-                            <li class="mdl-menu__item mdl-list__item">
-                                <span class="mdl-list__item-primary-content">
-                                    <i class="material-icons mdl-list__item-icon text-color--secondary">exit_to_app</i>
-                                    Log out
-                                </span>
-                            </li>
-                        </a>
-                    </ul>
-
-                    <button id="more"
-                            class="mdl-button mdl-js-button mdl-button--icon">
-                        <i class="material-icons">more_vert</i>
-                    </button>
-
-                    <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect mdl-shadow--2dp settings-dropdown"
-                        for="more">
-                        <li class="mdl-menu__item">
-                            Settings
-                        </li>
-                        <a class="mdl-menu__item" href="https://github.com/CreativeIT/getmdl-dashboard/issues">
-                            Support
-                        </a>
-                        <li class="mdl-menu__item">
-                            F.A.Q.
-                        </li>
-                    </ul>
                 </div>
-            </header>
-
-            <div class="mdl-layout__drawer">
-                <header>darkboard</header>
-                <div class="scroll__wrapper" id="scroll__wrapper">
-                    <div class="scroller" id="scroller">
-                        <div class="scroll__container" id="scroll__container">
-                            <nav class="mdl-navigation">
-                                <a class="mdl-navigation__link mdl-navigation__link--current" href="index.html">
-                                    <i class="material-icons" role="presentation">dashboard</i>
-                                    Dashboard
-                                </a>
-                                <div class="sub-navigation">
-                                    <a class="mdl-navigation__link">
-                                        <i class="material-icons">view_comfy</i>
-                                        UI
-                                        <i class="material-icons">keyboard_arrow_down</i>
-                                    </a>
-                                    <div class="mdl-navigation">
-                                        <a class="mdl-navigation__link" href="ui-buttons.html">
-                                            Buttons
-                                        </a>
-                                        <a class="mdl-navigation__link" href="ui-cards.html">
-                                            Cards
-                                        </a>
-                                        <a class="mdl-navigation__link" href="ui-colors.html">
-                                            Colors
-                                        </a>
-                                        <a class="mdl-navigation__link" href="ui-form-components.html">
-                                            Forms
-                                        </a>
-                                        <a class="mdl-navigation__link" href="ui-icons.html">
-                                            Icons
-                                        </a>
-                                        <a class="mdl-navigation__link" href="ui-typography.html">
-                                            Typography
-                                        </a>
-                                        <a class="mdl-navigation__link" href="ui-tables.html">
-                                            Tables
-                                        </a>
-                                    </div>
-                                </div>
-                                <a class="mdl-navigation__link" href="ui-components.html">
-                                    <i class="material-icons">developer_board</i>
-                                    Components
-                                </a>
-                                <a class="mdl-navigation__link" href="forms.html">
-                                    <i class="material-icons" role="presentation">person</i>
-                                    Account
-                                </a>
-                                <a class="mdl-navigation__link" href="maps.html">
-                                    <i class="material-icons" role="presentation">map</i>
-                                    Maps
-                                </a>
-                                <a class="mdl-navigation__link" href="charts.html">
-                                    <i class="material-icons">multiline_chart</i>
-                                    Charts
-                                </a>
-                                <div class="sub-navigation">
-                                    <a class="mdl-navigation__link">
-                                        <i class="material-icons">pages</i>
-                                        Pages
-                                        <i class="material-icons">keyboard_arrow_down</i>
-                                    </a>
-                                    <div class="mdl-navigation">
-                                        <a class="mdl-navigation__link" href="login.html">
-                                            Sign in
-                                        </a>
-                                        <a class="mdl-navigation__link" href="sign-up.html">
-                                            Sign up
-                                        </a>
-                                        <a class="mdl-navigation__link" href="forgot-password.html">
-                                            Forgot password
-                                        </a>
-                                        <a class="mdl-navigation__link" href="404.html">
-                                            404
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="mdl-layout-spacer"></div>
-                                <hr>
-                                <a class="mdl-navigation__link" href="https://github.com/CreativeIT/getmdl-dashboard">
-                                    <i class="material-icons" role="presentation">link</i>
-                                    GitHub
-                                </a>
-                            </nav>
-                        </div>
+                <!-- Login, resister, log out -->
+                <div class="col-md-6 col-sm-8 clearfix">
+                    <div class="user-profile pull-right">
+                        {% if user.is_authenticated %}
+                            <img class="avatar user-thumb" src="{% static 'assets/images/author/avatar.png' %}"
+                             alt="avatar">
+                            <h4 class="user-name dropdown-toggle" data-toggle="dropdown">{{ user.get_username }} &nbsp <i
+                                    class="fa fa-angle-down"></i></h4>
+                            <div class="dropdown-menu">
+                            <a class="dropdown-item" href="#">Message</a>
+                            <a class="dropdown-item" href="#">Settings</a>
+                            <a class="dropdown-item" href="{% url 'logout' %}">Log Out</a>
+                            </div>
+                        {% else %}
+                        {% endif %}
                     </div>
-                    <div class='scroller__bar' id="scroller__bar"></div>
                 </div>
             </div>
-
-            <main class="mdl-layout__content">
-
-                <div class="mdl-grid mdl-grid--no-spacing dashboard">
-
-                    <div class="mdl-grid mdl-cell mdl-cell--9-col-desktop mdl-cell--12-col-tablet mdl-cell--4-col-phone mdl-cell--top">
-
-                            {% block content %}
-                            {% endblock %}
-
+        </div>
+        <!-- header area end -->
+        <!-- page title area start -->
+        <div class="header-area">
+            <div class="page-title-area">
+                <div class="col-sm-6 col-sm-8">
+                    <div class="breadcrumbs-area clearfix">
+                        {% block header %}
+                        {% endblock %}
                     </div>
                 </div>
-
-            </main>
-
+            </div>
         </div>
+        <!-- page title area end -->
+        <div class="main-content-inner">
+            <div class="row">
+                {% block content %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+    <!-- main content area end -->
+    <!-- footer area start-->
+    <footer>
+    </footer>
+    <!-- footer area end-->
+</div>
+<!-- offset area end -->
+<!-- bootstrap 4 js
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+-->
+<!-- start chart js -->
+<!-- start highcharts js -->
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<!-- start amcharts -->
+<script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+<script src="https://www.amcharts.com/lib/3/ammap.js"></script>
+<script src="https://www.amcharts.com/lib/3/maps/js/worldLow.js"></script>
+<script src="https://www.amcharts.com/lib/3/serial.js"></script>
+<script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
+<script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
 
-        <!-- inject:js -->
-        <script src="{% static 'assets/js/d3.min.js'%}"></script>
-        <script src="{% static 'assets/js/getmdl-select.min.js'%}"></script>
-        <script src="{% static 'assets/js/material.min.js'%}"></script>
-        <script src="{% static 'assets/js/nv.d3.min.js'%}"></script>
-        <script src="{% static 'assets/js/layout/layout.min.js'%}"></script>
-        <script src="{% static 'assets/js/scroll/scroll.min.js'%}"></script>
-        <script src="{% static 'assets/js/widgets/charts/discreteBarChart.min.js'%}"></script>
-        <script src="{% static 'assets/js/widgets/charts/linePlusBarChart.min.js'%}"></script>
-        <script src="{% static 'assets/js/widgets/charts/stackedBarChart.min.js'%}"></script>
-        <script src="{% static 'assets/js/widgets/employer-form/employer-form.min.js'%}"></script>
-        <script src="{% static 'assets/js/widgets/line-chart/line-charts-nvd3.min.js'%}"></script>
-        <script src="{% static 'assets/js/widgets/map/maps.min.js'%}"></script>
-        <script src="{% static 'assets/js/widgets/pie-chart/pie-charts-nvd3.min.js'%}"></script>
-        <script src="{% static 'assets/js/widgets/table/table.min.js'%}"></script>
-        <script src="{% static 'assets/js/widgets/todo/todo.min.js'%}"></script>
-        <!-- endinject -->
+<!-- others plugins -->
+<script src="{% static 'assets/js/plugins.js' %}"></script>
+<script src="{% static 'assets/js/scripts.js' %}"></script>
+</body>
 
-    </body>
 </html>

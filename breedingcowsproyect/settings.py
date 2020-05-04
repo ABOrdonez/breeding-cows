@@ -39,7 +39,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'breedingcows.apps.BreedingcowsConfig',
     'users.apps.UsersConfig',
+    'animals.apps.AnimalsConfig',
+    'action.apps.ActionConfig',
+    'contacts.apps.ContactsConfig',
+    'diets.apps.DietsConfig',
+    'reproduction.apps.ReproductionConfig',
     'crispy_forms',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [

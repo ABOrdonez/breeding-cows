@@ -1,9 +1,25 @@
 {% extends 'breedingcows/base.html' %}
 
 {% block content %}
-    <h2>New Breeding Cows</h2>
-    <form method="POST" class="post-form">{% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="save btn btn-default">Save</button>
-    </form>
+    <div class="col-12 mt-5">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title">Rodeo de Cria</h4>
+                <form method="POST" class="post-form">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="location">Localidad</label>
+                        <input name="location" class="form-control" id="id_location" placeholder="Ingrese la Localidad del Rodeo" type="text" value="{{form.location.value}}">
+
+                        <label for="contact">Dueño:</label>
+                        <table>
+                            {{ form.contact }}
+                        </table>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary mt-4 pr-4 pl-4">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
 {% endblock %}

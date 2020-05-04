@@ -1,0 +1,64 @@
+{% extends 'breedingcows/base.html' %}
+
+{% block content %}
+    <div class="content container">
+        <div class="row">
+            <div class="col-md-8">
+                <!-- Progress Table start -->
+                <div class="col-12 mt-5">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h4 class="header-title">Contactos</h4>
+                                </div>
+                                <div class="col-md-6">
+                                    <a class="btn btn-rounded btn-outline-secondary mb-3 pull-right"
+                                       href="{% url 'breeding_cow_new' %}" role="button">+</a>
+                                </div>
+                            </div>
+                            <div class="single-table">
+                                <div class="table-responsive">
+                                    <table class="table table-hover progress-table text-center">
+                                        <thead class="text-uppercase">
+                                        <tr>
+                                            <th scope="col">Apellido</th>
+                                            <th scope="col">Nombre</th>
+                                            <th scope="col">Numero de Telefono</th>
+                                            <th scope="col">Acciones</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for contact in contacts %}
+                                            <tr>
+                                                <td>
+                                                    <a style="color: #7801ff;"
+                                                       href="{% url 'contact_detail' pk=contact.pk %}">{{ contact.last_name }}
+                                                    </a>
+                                                </td>
+                                                <td>{{ contact.first_name }}</td>
+                                                <td>{{ contact.phone }}</td>
+                                                <td>
+                                                    <ul class="d-flex justify-content-center">
+                                                        <li class="mr-3"><a
+                                                                href="#"
+                                                                class="text-secondary"><i
+                                                                class="fa fa-edit"></i></a></li>
+                                                        <li><a href="#" class="text-danger"><i class="ti-trash"></i></a>
+                                                        </li>
+                                                    </ul>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

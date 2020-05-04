@@ -1,0 +1,37 @@
+{% extends 'breedingcows/base.html' %}
+
+{% block content %}
+    <div class="col-12 mt-5">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title">Animal</h4>
+                <form method="POST" class="post-form">
+                    {% csrf_token %}
+                    <div class="form-group col-6">
+                        <label for="flock_number">Numero de rebaño</label>
+                        <input name="flock_number" class="form-control" id="id_flock_number" placeholder="Ingrese el numero de rebaño del Animal" type="text" value="{{form.flock_number.value}}">
+
+                        <label for="weight">Peso</label>
+                        <input name="weight" class="form-control" id="id_weight" placeholder="Ingrese el peso del Animal" type="decimal" value="{{form.weight.value}}">
+
+                        <br>
+
+                        <label for="animal_type">Tipo de animal</label>
+
+                        <table>
+                            {{ form.animal_type }}
+                        </table>
+
+                        <label for="entry_date">Fecha de ingreso</label>
+                        <input name="entry_date" class="form-control" id="id_entry_date" type="date" value="{{form.entry_date.value}}">
+
+                        <label for="birthday">Fecha de nacimiento</label>
+                        <input name="birthday" class="form-control" id="id_birthday" type="date" value="{{form.birthday.value}}">
+
+                        <button type="submit" class="btn btn-outline-success btn-lg btn-block mt-3">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
