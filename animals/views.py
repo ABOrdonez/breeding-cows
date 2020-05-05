@@ -162,6 +162,29 @@ def animal_reproduction_execution_new(request, breedingCowsPk):
         return render(request, 'animals/animal_reproduction_execution_new.html', {'animals': animals, 'breeding_cow': breedingCows})
 
 
+@csrf_exempt
+def animal_reproduction_revision_new(request, breedingCowsPk):
+    if request.method == "POST":
+        animal = get_object_or_404(Animals, id=request.POST['idAnimal'])
+        result = request.POST['idResult']
+        animalReproductions = AnimalRepoduction.objects.filter(
+            animal=animal,
+            finished_date__isnull=True)
+
+        for animalReproduction in animalReproductions:
+            reproduction = animalReproduction.reproduction
+            reproduction.revision_date = timezone.now()
+            reproduction.success = isPositive(result)
+            reproduction.save()
+
+        return breeding_cow_detail(request, pk=animal.pk)
+
+    else:
+        breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
+        animals = getFemaleAnimalsWithoutRevisionExecution(breedingCows)
+        return render(request, 'animals/animal_reproduction_revision_new.html', {'animals': animals, 'breeding_cow': breedingCows})
+
+
 def isAceptable(string):
     return string == "Aceptable"
 
@@ -172,6 +195,10 @@ def isContiene(string):
 
 def isFemale(string):
     return string == "Hembra"
+
+
+def isPositive(string):
+    return string == "Positivo"
 
 
 def getFemaleAnimals(breedingCows):
@@ -199,6 +226,19 @@ def getFemaleAnimalsWithoutReproductionExecution(breedingcows):
 
     for reproductionInProcess in reproductionsInProcess:
         if not reproductionInProcess.reproduction.execution_date:
+            femaleAnimals.append(reproductionInProcess.animal)
+
+    return femaleAnimals
+
+
+def getFemaleAnimalsWithoutRevisionExecution(breedingcows):
+    femaleAnimals = []
+    reproductionsInProcess = AnimalRepoduction.objects.filter(
+        breeding_cow=breedingcows,
+        finished_date__isnull=True)
+
+    for reproductionInProcess in reproductionsInProcess:
+        if not reproductionInProcess.reproduction.revision_date and reproductionInProcess.reproduction.execution_date:
             femaleAnimals.append(reproductionInProcess.animal)
 
     return femaleAnimals

@@ -11,4 +11,5 @@ urlpatterns = [
     path('<int:breedingCowsPk>/animals/weaning/new/', views.animal_weaning_new, name='animal_weaning_new'),
     path('<int:breedingCowsPk>/animals/reproductiontype/new/', views.animal_reproduction_type_new, name='animal_reproduction_type_new'),
     path('<int:breedingCowsPk>/animals/reproductionexecution/new/', views.animal_reproduction_execution_new, name='animal_reproduction_execution_new'),
+    path('<int:breedingCowsPk>/animals/revision/new/', views.animal_reproduction_revision_new, name='animal_reproduction_revision_new'),
 ]
