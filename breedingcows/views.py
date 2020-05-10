@@ -1,5 +1,5 @@
 from .models import BreedingCows
-from animals.models import Animals, AnimalType
+from animals.models import Animals, AnimalType, AnimalRepoduction
 from django.utils import timezone
 from django.shortcuts import render, get_object_or_404
 from .forms import BreedingCowForm
@@ -8,36 +8,61 @@ from django.core.paginator import Paginator
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.views.decorators.csrf import csrf_exempt
-
+from datetime import datetime
+from reproduction.models import ReproductionProcessDays
 
 
 def breeding_cows_list(request):
-    breeding_cows_all = BreedingCows.objects.filter(leaving_date__isnull=True).order_by('entry_date')
-
+    breeding_cows_all = BreedingCows.objects.filter(
+        leaving_date__isnull=True).order_by(
+        'entry_date')
     breeding_cows = []
-    for breeding_cow in breeding_cows_all: 
-        breeding_cows.append([breeding_cow, Animals.objects.all().filter(breeding_cows=breeding_cow).count()])
+
+    for breeding_cow in breeding_cows_all:
+        breeding_cows.append([breeding_cow, Animals.objects.filter(
+            breeding_cows=breeding_cow).count()])
 
     paginator = Paginator(breeding_cows, 7)
     page = request.GET.get('page')
     breeding_cows_pagenated = paginator.get_page(page)
 
-    return render(request, 'breedingcows/breeding_cows_list.html', {'breeding_cows': breeding_cows_pagenated})
+    return render(
+        request,
+        'breedingcows/breeding_cows_list.html',
+        {'breeding_cows': breeding_cows_pagenated})
 
 
 @csrf_exempt
 def breeding_cow_detail(request, pk):
     breeding_cow = get_object_or_404(BreedingCows, pk=pk)
-    animals = []
+    animals_info = []
+    total = Animals.objects.filter(
+        breeding_cows=breeding_cow,
+        leaving_date__isnull=True).count()
+    animals = Animals.objects.filter(
+        breeding_cows=breeding_cow,
+        leaving_date__isnull=True)
 
-    total = Animals.objects.all().filter(breeding_cows=breeding_cow).filter(leaving_date__isnull=True).count()
     for animal in AnimalType:
-        animalsAmount = Animals.objects.all().filter(breeding_cows=breeding_cow, animal_type= animal.value).filter(leaving_date__isnull=True).count()
+        animalsAmount = Animals.objects.filter(
+            breeding_cows=breeding_cow,
+            animal_type=animal.value,
+            leaving_date__isnull=True).count()
         if total != 0:
-            animals.append([animal.value, animalsAmount, animalsAmount/total*100])
+            percentage = animalsAmount / total * 100
+            animals_info.append([animal.value, animalsAmount, percentage])
 
-    return render(request, 'breedingcows/breeding_cow_detail.html',
-                  {'breeding_cow': breeding_cow, 'animals': animals})
+    on_time_amount = count_reproduction_process_before(animals, 30)
+    warning_amount = count_reproduction_process_before(animals, 0)
+    danger_amount = count_reproduction_process_on_danger(animals)
+
+    return render(request, 'breedingcows/breeding_cow_detail.html', {
+        'breeding_cow': breeding_cow,
+        'animals': animals_info,
+        'on_time_amount': on_time_amount,
+        'warning_amount': warning_amount,
+        'danger_amount': danger_amount
+    })
 
 
 def breeding_cow_new(request):
@@ -74,6 +99,106 @@ def breeding_cow_delete(request, pk):
     BreedingCows.add_leaving_date(breeding_cow)
 
     return redirect('breeding_cows_list')
+
+
+def count_reproduction_process_before(animals, days):
+    reproduction_count = 0
+    execution_days = ReproductionProcessDays.EXECUTION.value + days
+    revision_days = ReproductionProcessDays.REVISION.value + days
+    separation_days = ReproductionProcessDays.SEPARATION.value + days
+    give_birth_days = ReproductionProcessDays.GIVE_BIRTH.value + days
+
+    for animal in animals:
+        reproductionsInProcess = AnimalRepoduction.objects.filter(
+            animal=animal,
+            finished_date__isnull=True)
+
+        for reproductionInProcess in reproductionsInProcess:
+            if has_execution_type_before_specified_days(reproductionInProcess, execution_days):
+                reproduction_count += 1
+            if has_execution_before_specified_days(reproductionInProcess, revision_days):
+                reproduction_count += 1
+            if has_revision_before_specified_days(reproductionInProcess, separation_days):
+                reproduction_count += 1
+            if has_separation_before_specified_days(reproductionInProcess, give_birth_days):
+                reproduction_count += 1
+
+    return reproduction_count
+
+
+def count_reproduction_process_on_danger(animals):
+    danger_amount = 0
+    execution_days = ReproductionProcessDays.EXECUTION.value
+    revision_days = ReproductionProcessDays.REVISION.value
+    separation_days = ReproductionProcessDays.SEPARATION.value
+    give_birth_days = ReproductionProcessDays.GIVE_BIRTH.value
+    for animal in animals:
+        reproductionsInProcess = AnimalRepoduction.objects.filter(
+            animal=animal,
+            finished_date__isnull=True)
+
+        for reproductionInProcess in reproductionsInProcess:
+            if has_execution_type_after_specified_days(reproductionInProcess, execution_days):
+                danger_amount = danger_amount + 1
+            if has_execution_after_specified_days(reproductionInProcess, revision_days):
+                danger_amount = danger_amount + 1
+            if has_revision_after_specified_days(reproductionInProcess, separation_days):
+                danger_amount = danger_amount + 1
+            if has_separation_after_specified_days(reproductionInProcess, give_birth_days):
+                danger_amount = danger_amount + 1
+
+    return danger_amount
+
+
+def has_execution_type_before_specified_days(reproductionInProcess, days):
+    if reproductionInProcess.reproduction.preparation_date and not reproductionInProcess.reproduction.execution_date:
+        diff = datetime.now().date() - reproductionInProcess.reproduction.preparation_date.date()
+        return not diff.days > days
+
+
+def has_execution_before_specified_days(reproductionInProcess, days):
+    if reproductionInProcess.reproduction.execution_date and not reproductionInProcess.reproduction.revision_date:
+        diff = datetime.now().date() - reproductionInProcess.reproduction.execution_date.date()
+        return not diff.days > days
+
+
+def has_revision_before_specified_days(reproductionInProcess, days):
+    if reproductionInProcess.reproduction.revision_date and not reproductionInProcess.reproduction.separation_date:
+        diff = datetime.now().date() - reproductionInProcess.reproduction.revision_date.date()
+        return not diff.days > days
+
+
+def has_separation_before_specified_days(reproductionInProcess, days):
+    if reproductionInProcess.reproduction.separation_date and not reproductionInProcess.reproduction.give_birth_date:
+        diff = datetime.now().date() - reproductionInProcess.reproduction.separation_date.date()
+        return not diff.days > days
+
+
+def has_execution_type_after_specified_days(reproductionInProcess, days):
+    if reproductionInProcess.reproduction.preparation_date and not reproductionInProcess.reproduction.execution_date:
+        diff = datetime.now().date() - reproductionInProcess.reproduction.preparation_date.date()
+        return diff.days > days
+    else:
+        return False
+
+
+def has_execution_after_specified_days(reproductionInProcess, days):
+    if reproductionInProcess.reproduction.execution_date and not reproductionInProcess.reproduction.revision_date:
+        diff = datetime.now().date() - reproductionInProcess.reproduction.execution_date.date()
+        return diff.days > days
+
+
+def has_revision_after_specified_days(reproductionInProcess, days):
+    if reproductionInProcess.reproduction.revision_date and not reproductionInProcess.reproduction.separation_date:
+        diff = datetime.now().date() - reproductionInProcess.reproduction.revision_date.date()
+        return diff.days > days
+
+
+def has_separation_after_specified_days(reproductionInProcess, days):
+    if reproductionInProcess.reproduction.separation_date and not reproductionInProcess.reproduction.give_birth_date:
+        diff = datetime.now().date() - reproductionInProcess.reproduction.separation_date.date()
+        return diff.days > days
+
 
 class ChartData(APIView):
     authentication_classes = []

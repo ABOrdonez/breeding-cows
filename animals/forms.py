@@ -17,4 +17,4 @@ class AnimalDietForm(forms.ModelForm):
 class AnimalRepoductionForm(forms.ModelForm):
     class Meta:
     	model = AnimalRepoduction
-    	fields = ('animal', 'started_date', 'reproduction',)
+    	fields = ('animal', 'started_date', 'reproduction', 'finished_date')

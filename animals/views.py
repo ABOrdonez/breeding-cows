@@ -174,7 +174,10 @@ def animal_reproduction_revision_new(request, breedingCowsPk):
         for animalReproduction in animalReproductions:
             reproduction = animalReproduction.reproduction
             reproduction.revision_date = timezone.now()
-            reproduction.success = isPositive(result)
+            reproduction.success_revision = isPositive(result)
+            if not isPositive(result):
+                animalReproduction.finished_date = timezone.now()
+                animalReproduction.save()
             reproduction.save()
 
         return breeding_cow_detail(request, pk=animal.pk)
@@ -183,6 +186,52 @@ def animal_reproduction_revision_new(request, breedingCowsPk):
         breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
         animals = getFemaleAnimalsWithoutRevisionExecution(breedingCows)
         return render(request, 'animals/animal_reproduction_revision_new.html', {'animals': animals, 'breeding_cow': breedingCows})
+
+
+@csrf_exempt
+def animal_reproduction_separation_new(request, breedingCowsPk):
+    if request.method == "POST":
+        animal = get_object_or_404(Animals, id=request.POST['idAnimal'])
+        animalReproductions = AnimalRepoduction.objects.filter(
+            animal=animal,
+            finished_date__isnull=True)
+
+        for animalReproduction in animalReproductions:
+            reproduction = animalReproduction.reproduction
+            reproduction.separation_date = timezone.now()
+            reproduction.save()
+
+        return breeding_cow_detail(request, pk=animal.pk)
+
+    else:
+        breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
+        animals = getFemaleAnimalsWithoutSeparationExecution(breedingCows)
+        return render(request, 'animals/animal_reproduction_separation_new.html', {'animals': animals, 'breeding_cow': breedingCows})
+
+
+@csrf_exempt
+def animal_reproduction_success_new(request, breedingCowsPk):
+    if request.method == "POST":
+        animal = get_object_or_404(Animals, id=request.POST['idAnimal'])
+        result = request.POST['idResult']
+        animalReproductions = AnimalRepoduction.objects.filter(
+            animal=animal,
+            finished_date__isnull=True)
+
+        for animalReproduction in animalReproductions:
+            animalReproduction.finished_date = timezone.now()
+            reproduction = animalReproduction.reproduction
+            if isSuccess(result):
+                reproduction.give_birth_date = timezone.now()
+            reproduction.save()
+            animalReproduction.save()
+
+        return breeding_cow_detail(request, pk=animal.pk)
+
+    else:
+        breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
+        animals = getFemaleAnimalsWithReproductionExecution(breedingCows)
+        return render(request, 'animals/animal_reproduction_success_new.html', {'animals': animals, 'breeding_cow': breedingCows})
 
 
 def isAceptable(string):
@@ -199,6 +248,10 @@ def isFemale(string):
 
 def isPositive(string):
     return string == "Positivo"
+
+
+def isSuccess(string):
+    return string == "Éxitoso"
 
 
 def getFemaleAnimals(breedingCows):
@@ -240,5 +293,30 @@ def getFemaleAnimalsWithoutRevisionExecution(breedingcows):
     for reproductionInProcess in reproductionsInProcess:
         if not reproductionInProcess.reproduction.revision_date and reproductionInProcess.reproduction.execution_date:
             femaleAnimals.append(reproductionInProcess.animal)
+
+    return femaleAnimals
+
+
+def getFemaleAnimalsWithoutSeparationExecution(breedingcows):
+    femaleAnimals = []
+    reproductionsInProcess = AnimalRepoduction.objects.filter(
+        breeding_cow=breedingcows,
+        finished_date__isnull=True)
+
+    for reproductionInProcess in reproductionsInProcess:
+        if not reproductionInProcess.reproduction.separation_date and reproductionInProcess.reproduction.revision_date:
+            femaleAnimals.append(reproductionInProcess.animal)
+
+    return femaleAnimals
+
+
+def getFemaleAnimalsWithReproductionExecution(breedingcows):
+    femaleAnimals = []
+    reproductionsInProcess = AnimalRepoduction.objects.filter(
+        breeding_cow=breedingcows,
+        finished_date__isnull=True)
+
+    for reproductionInProcess in reproductionsInProcess:
+        femaleAnimals.append(reproductionInProcess.animal)
 
     return femaleAnimals

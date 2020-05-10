@@ -11,13 +11,25 @@ class ReproductionType(Enum):
         return [(key.value, key.name) for key in cls]
 
 
+class ReproductionProcessDays(Enum):
+    EXECUTION = 7
+    REVISION = 30
+    SEPARATION = 90
+	#TODO VALIDAR SI PASAN 120 DIAS
+    GIVE_BIRTH = 120
+
+    @classmethod
+    def choices(cls):
+        return [(key.value, key.name) for key in cls]
+
+
 class Reproduction(models.Model):
 	reproduction_type = models.CharField(choices=ReproductionType.choices(), default='', max_length=100)
 	preparation_date = models.DateTimeField(blank=True, null=True)
 	execution_date = models.DateTimeField(blank=True, null=True)
 	revision_date = models.DateTimeField(blank=True, null=True)
-	success = models.BooleanField(blank=True, null=True)
-	separation = models.DateTimeField(blank=True, null=True)
+	success_revision = models.BooleanField(blank=True, null=True)
+	separation_date = models.DateTimeField(blank=True, null=True)
 	give_birth_date = models.DateTimeField(blank=True, null=True)
 
 	def __str__(self):
