@@ -139,13 +139,13 @@ def count_reproduction_process_on_danger(animals):
 
         for reproductionInProcess in reproductionsInProcess:
             if has_execution_type_after_specified_days(reproductionInProcess, execution_days):
-                danger_amount = danger_amount + 1
+                danger_amount += 1
             if has_execution_after_specified_days(reproductionInProcess, revision_days):
-                danger_amount = danger_amount + 1
+                danger_amount += 1
             if has_revision_after_specified_days(reproductionInProcess, separation_days):
-                danger_amount = danger_amount + 1
+                danger_amount += 1
             if has_separation_after_specified_days(reproductionInProcess, give_birth_days):
-                danger_amount = danger_amount + 1
+                danger_amount += 1
 
     return danger_amount
 
