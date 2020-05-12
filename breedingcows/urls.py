@@ -8,4 +8,5 @@ urlpatterns = [
     path('breeding_cow/<int:pk>/edit/', views.breeding_cow_edit, name='breeding_cow_edit'),
     path('api/breeding_cow/chart/data/', views.ChartData.as_view()),
     path('breeding_cow/<int:pk>/delete/', views.breeding_cow_delete, name='breeding_cow_delete'),
+    path('breeding_cow/<int:pk>/notification/<str:notification_type>/', views.breeding_cow_notification, name='breeding_cow_notification'),
 ]

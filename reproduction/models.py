@@ -17,6 +17,7 @@ class ReproductionProcessDays(Enum):
     SEPARATION = 90
 	#TODO VALIDAR SI PASAN 120 DIAS
     GIVE_BIRTH = 120
+    REPEAT_PROCESS =60
 
     @classmethod
     def choices(cls):
@@ -34,4 +35,3 @@ class Reproduction(models.Model):
 
 	def __str__(self):
 		return self.reproduction_type
-		

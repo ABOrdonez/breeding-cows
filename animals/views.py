@@ -218,6 +218,10 @@ def animal_reproduction_success_new(request, breedingCowsPk):
             animal=animal,
             finished_date__isnull=True)
 
+        if animal.animal_type == "Vaquillona":
+            animal.animal_type = "Vaca"
+            animal.save()
+            
         for animalReproduction in animalReproductions:
             animalReproduction.finished_date = timezone.now()
             reproduction = animalReproduction.reproduction
