@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'reproduction.apps.ReproductionConfig',
     'crispy_forms',
     'rest_framework',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [

@@ -1,10 +1,15 @@
-from .models import Animals, AnimalRepoduction
+from .models import Animals, AnimalRepoduction, AcquisitionType
 from breedingcows.models import BreedingCows
 from reproduction.models import Reproduction
 from diets.models import Diet
 from reproduction.forms import ReproductionForm
 from django.shortcuts import render, get_object_or_404, redirect
-from .forms import AnimalForm, AnimalDietForm, AnimalRepoductionForm
+from .forms import (
+    AnimalForm,
+    AnimalDietForm,
+    AnimalRepoductionForm,
+    PatherAnimalForm
+)
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from breedingcows.views import breeding_cow_detail
@@ -12,7 +17,6 @@ from breedingcows.views import breeding_cow_detail
 
 def animals_list(request):
     animals = Animals.objects.order_by('flock_number')
-
     return render(request, 'animals/animals_list.html', {'animals': animals})
 
 
@@ -24,6 +28,7 @@ def animal_detail(request, pk):
 
 def animal_edit(request, pk):
     animal = get_object_or_404(Animals, pk=pk)
+
     if request.method == "POST":
         form = AnimalForm(request.POST, instance=animal)
         if form.is_valid():
@@ -38,18 +43,60 @@ def animal_edit(request, pk):
 @csrf_exempt
 def animal_new(request, breedingCowsPk):
     if request.method == "POST":
-        form = AnimalForm(request.POST)
-        if form.is_valid():
+        animalForm = AnimalForm(request.POST, prefix="animalForm")
+        if animalForm.is_valid():
             breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
-            animal = form.save(commit=False)
+            animal = animalForm.save(commit=False)
             animal.breeding_cows = breedingCows
             animal.sexual_maturity = False
             animal.save()
-            return redirect('animal_detail', pk=animal.pk)
 
+        if isInsemination(animal.acquisition) or isNatural(animal.acquisition):
+            motherAnimalForm = PatherAnimalForm(
+                request.POST,
+                breeding_cow=breedingCows,
+                animal_type="Vaca",
+                prefix="motherAnimalForm"
+            )
+            if motherAnimalForm.is_valid():
+                motherId = (motherAnimalForm.cleaned_data['animal'].id)
+                mother = get_object_or_404(Animals, pk=motherId)
+                mother.brood.add(animal)
+                mother.save()
+
+        if isNatural(animal.acquisition):
+            fatherAnimalForm = PatherAnimalForm(
+                request.POST,
+                breeding_cow=breedingCows,
+                animal_type="Toro",
+                prefix="fatherAnimalForm"
+            )
+            if fatherAnimalForm.is_valid():
+                fatherId = (fatherAnimalForm.cleaned_data['animal'].id)
+                father = get_object_or_404(Animals, pk=fatherId)
+                father.brood.add(animal)
+                father.save()
+
+        return redirect('animal_detail', pk=animal.pk)
     else:
-        form = AnimalForm()
-        return render(request, 'animals/animal_edit.html', {'form': form})
+        breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
+        form = AnimalForm(prefix="animalForm")
+        motherForm = PatherAnimalForm(
+            breeding_cow=breedingCows,
+            animal_type="Vaca",
+            prefix="motherAnimalForm"
+        )
+        fatherForm = PatherAnimalForm(
+            breeding_cow=breedingCows,
+            animal_type="Toro",
+            prefix="fatherAnimalForm"
+        )
+        return render(request, 'animals/animal_edit.html', {
+            'breeding_cow': breedingCowsPk,
+            'form': form,
+            'formMother': motherForm,
+            'formFather': fatherForm
+        })
 
 
 @csrf_exempt
@@ -221,7 +268,7 @@ def animal_reproduction_success_new(request, breedingCowsPk):
         if animal.animal_type == "Vaquillona":
             animal.animal_type = "Vaca"
             animal.save()
-            
+
         for animalReproduction in animalReproductions:
             animalReproduction.finished_date = timezone.now()
             reproduction = animalReproduction.reproduction
@@ -236,6 +283,25 @@ def animal_reproduction_success_new(request, breedingCowsPk):
         breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
         animals = getFemaleAnimalsWithReproductionExecution(breedingCows)
         return render(request, 'animals/animal_reproduction_success_new.html', {'animals': animals, 'breeding_cow': breedingCows})
+
+
+@csrf_exempt
+def animal_brood_new(request, breedingCowsPk):
+    if request.method == "POST":
+        acquisition = get_object_or_404(Animals, id=request.POST['id_acquisition'])
+
+        if isInsemination(acquisition):
+            mother = get_object_or_404(Animals, id=request.POST['selected_mother'])
+
+        if isNatural(acquisition):
+            mother = get_object_or_404(Animals, id=request.POST['selected_mother'])
+            father = get_object_or_404(Animals, id=request.POST['selected_father'])
+
+
+        return breeding_cow_detail(request, pk=animal.pk)
+
+
+
 
 
 def isAceptable(string):
@@ -256,6 +322,14 @@ def isPositive(string):
 
 def isSuccess(string):
     return string == "Éxitoso"
+
+
+def isInsemination(string):
+    return string == AcquisitionType.INSEMINACION.value
+
+
+def isNatural(string):
+    return string == AcquisitionType.NATURAL.value
 
 
 def getFemaleAnimals(breedingCows):

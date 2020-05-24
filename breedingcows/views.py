@@ -261,6 +261,9 @@ def get_count_no_reproduction_in_process_on_danger(lastReproductionProcessed, an
     if lastReproductionProcessed:
         if has_finished_redroduction_after_specified_days(lastReproductionProcessed, finished_reproduction_days):
             danger_amount += 1
+    else:
+        if animal.animal_type == AnimalType.VACA.value:
+            danger_amount += 1
     if animal.animal_type == AnimalType.VAQUILLONA.value:
         if has_become_vaquillona_after_specified_days(animal, became_vaquillona_days):
             danger_amount += 1
