@@ -4,8 +4,11 @@ from .models import (
     AnimalDiet,
     AnimalRepoduction,
     AnimalType,
-    AcquisitionType
+    AcquisitionType,
+    sexType,
+    AnimalSanitary,
 )
+from sanitarybook.models import Sanitary
 
 
 class AnimalForm(forms.ModelForm):
@@ -46,6 +49,15 @@ class AnimalDietForm(forms.ModelForm):
         )
 
 
+class AnimalSanitaryForm(forms.ModelForm):
+    class Meta:
+        model = AnimalSanitary
+        fields = (
+            'animal',
+            'sanitary',
+        )
+
+
 class AnimalRepoductionForm(forms.ModelForm):
     class Meta:
         model = AnimalRepoduction
@@ -55,6 +67,38 @@ class AnimalRepoductionForm(forms.ModelForm):
             'reproduction',
             'finished_date'
         )
+
+
+class WearningAnimalForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        breeding_cow = kwargs.pop('breeding_cow')
+        animal_type = kwargs.pop('animal_type')
+        super(WearningAnimalForm, self).__init__(*args, **kwargs)
+        self.fields['animals'] = forms.ModelChoiceField(
+            queryset=Animals.objects.all().order_by(
+                'entry_date'
+            ).filter(
+                breeding_cows=breeding_cow,
+                animal_type=animal_type
+            ),
+            required=True,
+            help_text="Terneros",
+            widget=CustomSelect(attrs={'class': 'form-control'})
+        )
+
+    flock_number = forms.IntegerField()
+    sanitary_books = forms.ModelChoiceField(
+        queryset=Sanitary.objects.all().order_by(
+            'name'
+        ),
+        required=False,
+        help_text="Libreta Sanitaria",
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    sex_type = forms.ChoiceField(
+        choices=sexType.choices,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
 
 
 class PatherAnimalForm(forms.Form):

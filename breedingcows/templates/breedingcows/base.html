@@ -76,10 +76,17 @@
                             </ul>
                         </li>
                         <li>
-                            <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-shopping-cart"></i><span>Dietas</span></a>
+                            <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-cutlery"></i><span>Dietas</span></a>
                             <ul class="collapse">
                                 <li><a href="{% url 'diet_new' %}"><i class="fa fa-plus"></i><span>Agregar</span></a></li>
                                 <li><a href="{% url 'diets_list' %}"><i class="fa fa-search"></i><span>Buscar</span></a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-stethoscope"></i><span>Libretas Sanitarias</span></a>
+                            <ul class="collapse">
+                                <li><a href="{% url 'sanitary_book_new' %}"><i class="fa fa-plus"></i><span>Agregar</span></a></li>
+                                <li><a href="{% url 'sanitary_book_list' %}"><i class="fa fa-search"></i><span>Buscar</span></a></li>
                             </ul>
                         </li>
                     </ul>

@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'action.apps.ActionConfig',
     'contacts.apps.ContactsConfig',
     'diets.apps.DietsConfig',
+    'sanitarybook.apps.SanitarybookConfig',
     'reproduction.apps.ReproductionConfig',
     'crispy_forms',
     'rest_framework',

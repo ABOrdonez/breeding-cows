@@ -321,127 +321,127 @@ def count_weaning_on_danger(breeding_cow):
 
 def has_execution_type_before_specified_days(reproductionInProcess, days):
     if reproductionInProcess.reproduction.preparation_date and not reproductionInProcess.reproduction.execution_date:
-        diff = datetime.now().date() - reproductionInProcess.reproduction.preparation_date.date()
+        diff = datetime.now().date() - reproductionInProcess.reproduction.preparation_date
         return diff.days < days
 
 
 def has_execution_before_specified_days(reproductionInProcess, days):
     if reproductionInProcess.reproduction.execution_date and not reproductionInProcess.reproduction.revision_date:
-        diff = datetime.now().date() - reproductionInProcess.reproduction.execution_date.date()
+        diff = datetime.now().date() - reproductionInProcess.reproduction.execution_date
         return diff.days < days
 
 
 def has_revision_before_specified_days(reproductionInProcess, days):
     if reproductionInProcess.reproduction.revision_date and not reproductionInProcess.reproduction.separation_date:
-        diff = datetime.now().date() - reproductionInProcess.reproduction.revision_date.date()
+        diff = datetime.now().date() - reproductionInProcess.reproduction.revision_date
         return diff.days < days
 
 
 def has_separation_before_specified_days(reproductionInProcess, days):
     if reproductionInProcess.reproduction.separation_date and not reproductionInProcess.reproduction.give_birth_date:
-        diff = datetime.now().date() - reproductionInProcess.reproduction.separation_date.date()
+        diff = datetime.now().date() - reproductionInProcess.reproduction.separation_date
         return diff.days < days
 
 
 def has_execution_type_in_same_specified_days(reproductionInProcess, days):
     if reproductionInProcess.reproduction.preparation_date and not reproductionInProcess.reproduction.execution_date:
-        diff = datetime.now().date() - reproductionInProcess.reproduction.preparation_date.date()
+        diff = datetime.now().date() - reproductionInProcess.reproduction.preparation_date
         return diff.days == days
 
 
 def has_execution_in_same_specified_days(reproductionInProcess, days):
     if reproductionInProcess.reproduction.execution_date and not reproductionInProcess.reproduction.revision_date:
-        diff = datetime.now().date() - reproductionInProcess.reproduction.execution_date.date()
+        diff = datetime.now().date() - reproductionInProcess.reproduction.execution_date
         return diff.days == days
 
 
 def has_revision_in_same_specified_days(reproductionInProcess, days):
     if reproductionInProcess.reproduction.revision_date and not reproductionInProcess.reproduction.separation_date:
-        diff = datetime.now().date() - reproductionInProcess.reproduction.revision_date.date()
+        diff = datetime.now().date() - reproductionInProcess.reproduction.revision_date
         return diff.days == days
 
 
 def has_separation_in_same_specified_days(reproductionInProcess, days):
     if reproductionInProcess.reproduction.separation_date and not reproductionInProcess.reproduction.give_birth_date:
-        diff = datetime.now().date() - reproductionInProcess.reproduction.separation_date.date()
+        diff = datetime.now().date() - reproductionInProcess.reproduction.separation_date
         return diff.days == days
 
 
 def has_execution_type_after_specified_days(reproductionInProcess, days):
     if reproductionInProcess.reproduction.preparation_date and not reproductionInProcess.reproduction.execution_date:
-        diff = datetime.now().date() - reproductionInProcess.reproduction.preparation_date.date()
+        diff = datetime.now().date() - reproductionInProcess.reproduction.preparation_date
         return diff.days > days
 
 
 def has_execution_after_specified_days(reproductionInProcess, days):
     if reproductionInProcess.reproduction.execution_date and not reproductionInProcess.reproduction.revision_date:
-        diff = datetime.now().date() - reproductionInProcess.reproduction.execution_date.date()
+        diff = datetime.now().date() - reproductionInProcess.reproduction.execution_date
         return diff.days > days
 
 
 def has_revision_after_specified_days(reproductionInProcess, days):
     if reproductionInProcess.reproduction.revision_date and not reproductionInProcess.reproduction.separation_date:
-        diff = datetime.now().date() - reproductionInProcess.reproduction.revision_date.date()
+        diff = datetime.now().date() - reproductionInProcess.reproduction.revision_date
         return diff.days > days
 
 
 def has_separation_after_specified_days(reproductionInProcess, days):
     if reproductionInProcess.reproduction.separation_date and not reproductionInProcess.reproduction.give_birth_date:
-        diff = datetime.now().date() - reproductionInProcess.reproduction.separation_date.date()
+        diff = datetime.now().date() - reproductionInProcess.reproduction.separation_date
         return diff.days > days
 
 
 def has_born_before_specified_days(animals, days):
     if animals.birthday:
-        diff = datetime.now().date() - animals.birthday.date()
+        diff = datetime.now().date() - animals.birthday
         return diff.days < days
 
 
 def has_born_after_specified_days(animals, days):
     if animals.birthday:
-        diff = datetime.now().date() - animals.birthday.date()
+        diff = datetime.now().date() - animals.birthday
         return diff.days > days
 
 
 def has_born_in_same_specified_days(animals, days):
     if animals.birthday:
-        diff = datetime.now().date() - animals.birthday.date()
+        diff = datetime.now().date() - animals.birthday
         return diff.days == days
 
 
 def has_finished_redroduction_before_specified_days(finishedReproduction, days):
     if finishedReproduction.finished_date:
-        diff = datetime.now().date() - finishedReproduction.finished_date.date()
+        diff = datetime.now().date() - finishedReproduction.finished_date
         return diff.days < days
 
 
 def has_finished_redroduction_after_specified_days(finishedReproduction, days):
     if finishedReproduction.finished_date:
-        diff = datetime.now().date() - finishedReproduction.finished_date.date()
+        diff = datetime.now().date() - finishedReproduction.finished_date
         return diff.days > days
 
 
 def has_finished_redroduction_in_same_specified_days(finishedReproduction, days):
     if finishedReproduction.finished_date:
-        diff = datetime.now().date() - finishedReproduction.finished_date.date()
+        diff = datetime.now().date() - finishedReproduction.finished_date
         return diff.days == days
 
 
 def has_become_vaquillona_before_specified_days(animal, days):
     if animal.birthday:
-        diff = datetime.now().date() - animal.birthday.date()
+        diff = datetime.now().date() - animal.birthday
         return diff.days < days
 
 
 def has_become_vaquillona_after_specified_days(animal, days):
     if animal.birthday:
-        diff = datetime.now().date() - animal.birthday.date()
+        diff = datetime.now().date() - animal.birthday
         return diff.days > days
 
 
 def has_become_vaquillona_in_same_specified_days(animal, days):
     if animal.birthday:
-        diff = datetime.now().date() - animal.birthday.date()
+        diff = datetime.now().date() - animal.birthday
         return diff.days == days
 
 

@@ -1,0 +1,43 @@
+{% extends 'breedingcows/base.html' %}
+{% load widget_tweaks %}
+
+{% block header %}
+    <h4 class="page-title pull-left">Libreta Sanitaria</h4>
+    <ul class="breadcrumbs pull-left">
+        <li><span>Libreta Sanitaria</span></li>
+    </ul>
+{% endblock %}
+
+{% block content %}
+    <div class="col-12 mt-5">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title">Libreta Sanitaria</h4>
+                <form method="POST" class="post-form">
+                    {% csrf_token %}
+                    <div class="form-group col-6">
+                        <label for="name">Nombre</label>
+                        {% render_field form.name class="form-control"%}
+
+                        <label for="description">Descripcion</label>
+                        {% render_field form.description class="form-control"%}
+
+                        <label for="protein">Antiparacitario</label>
+                        {% render_field form.antiparasitic class="form-control"%}
+
+                        <label for="energies">Cobre</label>
+                        {% render_field form.copper class="form-control"%}
+
+                        <label for="energies">Clostridiosis</label>
+                        {% render_field form.clostridiosis class="form-control"%}
+
+                        <label for="energies">Animales a los que se les aplica</label>
+                        {% render_field form.animal_type class="form-control"%}
+
+                        <button type="submit" class="btn btn-outline-success btn-lg btn-block mt-3">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

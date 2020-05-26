@@ -1,14 +1,17 @@
-from .models import Animals, AnimalRepoduction, AcquisitionType
+from .models import Animals, AnimalRepoduction, AcquisitionType, AnimalType, AnimalSanitary
 from breedingcows.models import BreedingCows
 from reproduction.models import Reproduction
 from diets.models import Diet
 from reproduction.forms import ReproductionForm
+from sanitarybook.models import Sanitary
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import (
     AnimalForm,
     AnimalDietForm,
     AnimalRepoductionForm,
-    PatherAnimalForm
+    PatherAnimalForm,
+    WearningAnimalForm,
+    AnimalSanitaryForm,
 )
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
@@ -48,7 +51,6 @@ def animal_new(request, breedingCowsPk):
             breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
             animal = animalForm.save(commit=False)
             animal.breeding_cows = breedingCows
-            animal.sexual_maturity = False
             animal.save()
 
         if isInsemination(animal.acquisition) or isNatural(animal.acquisition):
@@ -136,29 +138,70 @@ def animal_palpation_new(request, breedingCowsPk):
 
     else:
         breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
-        animals = Animals.objects.order_by('flock_number').filter(breeding_cows=breedingCows).exclude(animal_type="Toro")
-        return render(request, 'animals/animal_palpation_new.html', {'animals': animals, 'breeding_cow': breedingCows})
-
-
-@csrf_exempt
-def animal_weaning_new(request, breedingCowsPk):
-    if request.method == "POST":
-        animal = get_object_or_404(Animals, id=request.POST['idAnimal'])
-        species = request.POST['idSpecies']
-
-        if isFemale(species):
-            animal.animal_type = "Vaquillona"
-        else:
-            animal.animal_type = "Toro"
-
-        animal.save()
-        return breeding_cow_detail(request, pk=animal.pk)
-    else:
-        breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
         animals = Animals.objects.order_by('flock_number').filter(
-            breeding_cows=breedingCows,
-            animal_type="Ternero")
-        return render(request, 'animals/animal_weaning_new.html', {'animals': animals, 'breeding_cow': breedingCows})
+            breeding_cows=breedingCows
+        ).exclude(
+            animal_type="Toro")
+        return render(request, 'animals/animal_palpation_new.html', {
+            'animals': animals,
+            'breeding_cow': breedingCows}
+        )
+
+
+def animal_weaning_new(request, breedingCowsPk):
+    success = None
+    if request.method == "POST":
+        form = WearningAnimalForm(
+            request.POST,
+            breeding_cow=breedingCowsPk,
+            animal_type="Ternero",
+        )
+        if form.is_valid():
+            animalId = (form.cleaned_data['animals'].id)
+            animal = get_object_or_404(Animals, pk=animalId)
+            animal.flock_number = form.cleaned_data['flock_number']
+            sexType = form.cleaned_data['sex_type']
+            if isFemale(sexType):
+                animal.animal_type = AnimalType.VAQUILLONA.value
+            else:
+                animal.animal_type = AnimalType.TORO.value
+            animal.save()
+
+            sanitaryId = (form.cleaned_data['sanitary_books'].id)
+            sanitary = get_object_or_404(Sanitary, id=sanitaryId)
+
+            animalSanitaryForm = AnimalSanitaryForm()
+            animalSanitary = animalSanitaryForm.save(commit=False)
+            animalSanitary.animal = animal
+            animalSanitary.sanitary = sanitary
+            animalSanitary.done_date = timezone.now()
+            animalSanitary.save()
+
+            success = True
+
+    breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
+    nextAnimalToWeaning = Animals.objects.all().order_by(
+        'entry_date'
+    ).filter(
+        breeding_cows=breedingCows,
+        animal_type="Ternero"
+    ).first()
+    if nextAnimalToWeaning:
+        newForm = WearningAnimalForm(
+            breeding_cow=breedingCows,
+            animal_type="Ternero",
+            initial={'animals': nextAnimalToWeaning.pk}
+        )
+    else:
+        newForm = WearningAnimalForm(
+            breeding_cow=breedingCows,
+            animal_type="Ternero",
+        )
+    return render(request, 'animals/animal_weaning_new.html', {
+        'breeding_cow': breedingCows,
+        'form': newForm,
+        'success': success}
+    )
 
 
 @csrf_exempt
@@ -283,25 +326,6 @@ def animal_reproduction_success_new(request, breedingCowsPk):
         breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
         animals = getFemaleAnimalsWithReproductionExecution(breedingCows)
         return render(request, 'animals/animal_reproduction_success_new.html', {'animals': animals, 'breeding_cow': breedingCows})
-
-
-@csrf_exempt
-def animal_brood_new(request, breedingCowsPk):
-    if request.method == "POST":
-        acquisition = get_object_or_404(Animals, id=request.POST['id_acquisition'])
-
-        if isInsemination(acquisition):
-            mother = get_object_or_404(Animals, id=request.POST['selected_mother'])
-
-        if isNatural(acquisition):
-            mother = get_object_or_404(Animals, id=request.POST['selected_mother'])
-            father = get_object_or_404(Animals, id=request.POST['selected_father'])
-
-
-        return breeding_cow_detail(request, pk=animal.pk)
-
-
-
 
 
 def isAceptable(string):
