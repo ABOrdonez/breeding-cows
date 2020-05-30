@@ -26,12 +26,12 @@ class ReproductionProcessDays(Enum):
 
 class Reproduction(models.Model):
 	reproduction_type = models.CharField(choices=ReproductionType.choices(), default='', max_length=100)
-	preparation_date = models.DateTimeField(blank=True, null=True)
-	execution_date = models.DateTimeField(blank=True, null=True)
-	revision_date = models.DateTimeField(blank=True, null=True)
+	preparation_date = models.DateField(blank=True, null=True)
+	execution_date = models.DateField(blank=True, null=True)
+	revision_date = models.DateField(blank=True, null=True)
 	success_revision = models.BooleanField(blank=True, null=True)
-	separation_date = models.DateTimeField(blank=True, null=True)
-	give_birth_date = models.DateTimeField(blank=True, null=True)
+	separation_date = models.DateField(blank=True, null=True)
+	give_birth_date = models.DateField(blank=True, null=True)
 
 	def __str__(self):
 		return self.reproduction_type
