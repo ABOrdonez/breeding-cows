@@ -1,4 +1,5 @@
 {% extends 'breedingcows/base.html' %}
+{% load widget_tweaks %}
 
 {% block header %}
     <h4 class="page-title pull-left">Asociar palpitacion</h4>
@@ -9,7 +10,15 @@
 {% endblock %}
 
 {% block content %}
-	<div class="col-12 mt-3">
+	<div class="col-12 mt-5">
+		{% if request.GET.message != success %}
+			<div class="alert alert-success" role="alert">
+			    <strong>El destete se concreto con éxio.</strong> 
+			    Podés seguir efectuando destetes o 
+			    <a href="{% url 'breeding_cow_detail' pk=breeding_cow.pk %}" class="alert-link">hacer click aquí</a> 
+			    para volver al Rodeo de Cría.
+			</div>
+		{% endif %}
 		<div class="card">
 			<div class="invoice-head">
 		        <div class="iv-left col-6 mt-3">
@@ -28,13 +37,14 @@
 			          </select>
 			        </div>
 			      </div>
+
 			      <div class="col-sm-2 text-center">
-			        <a onclick="moves_out()">
-			        	<i class="fa fa-arrow-left"></i>
-			        </a>
-			        <a onclick="moves_in()">
-			        	<i class="fa fa-arrow-right"></i>
-			        </a>
+			      	<br><br><br>
+					<button onclick="moves_out()" type="button" class="btn btn-rounded btn-light mb-3">
+						<i class="fa fa-arrow-left"></i></button>
+
+					<button onclick="moves_in()" type="button" class="btn btn-rounded btn-light mb-3">
+						<i class="fa fa-arrow-right"></i></button>
 			      </div>
 
 			      <div class="col-sm-5">
@@ -58,52 +68,26 @@
 			</div>
 			<div class="modal-body">
 				<div class="row">
-					<div class="dropdown col-lg-6 col-md-4 col-sm-6">
-		                <button class="btn btn-rounded btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
-		                    Madurez sexual
-		                </button>
-		                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" x-placement="top-start" style="position: absolute; transform: translate3d(15px, -107px, 0px); top: 0px; left: 0px; will-change: transform;">
-		                    <a class="dropdown-item" onclick="added_selected_choice(id_maturity,'Aceptable')">Aceptable</a>
-		                    <a class="dropdown-item" onclick="added_selected_choice(id_maturity,'No aceptable')">No aceptable</a>
-		                </div>
-		            </div>
-		            <div class="col-sm-6 text-md-right">
-		            	<span id="id_maturity" class="h5 text-success"></span>
-		            </div>
+					<div class="form-group col-6">
+						<label for="sexual_maturity">Madurez sexual</label>
+                       	{{form.sexual_maturity}}
+                       	<label for="body_development">Desarrollo corporal</label>
+                       	{{form.body_development}}
+					</div>
+                    <div class="form-group col-6">
+                    	<label for="disease">Problemas reproductivos</label>
+                       	{{form.disease}}
+                       	<div id="disease_description_div">
+                       		<label for="disease_description">Descripcion de los problemas reproductivos</label>
+							{% render_field form.disease_description class="form-control" type="textarea" placeholder="Ingrese los motivos por los cuales se detectaron problemas Resultadosproductivos"%}
+                       	</div>
+                    </div>
+				 	<button type="submit" name="action" class="btn btn-outline-success btn-lg btn-block mt-3" data-dismiss="modal" onclick="submit({{ breeding_cow.pk }})">Guardar</button>
 				</div>
-				<div class="row">
-					<div class="dropdown col-lg-6 col-md-4 col-sm-6 mt-3">
-		                <button class="btn btn-rounded btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
-		                    Desarrollo corporal
-		                </button>
-		                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" x-placement="top-start" style="position: absolute; transform: translate3d(15px, -107px, 0px); top: 0px; left: 0px; will-change: transform;">
-		                    <a class="dropdown-item" onclick="added_selected_choice(id_development,'Aceptable')">Aceptable</a>
-		                    <a class="dropdown-item" onclick="added_selected_choice(id_development,'No aceptable')">No aceptable</a>
-		                </div>
-		            </div>
-		            <div class="col-sm-6 text-md-right">
-		            	<span id="id_development" class="h5 text-success"></span>
-		            </div>
-				</div>
-				<div class="row">
-					<div class="dropdown col-lg-6 col-md-4 col-sm-6 mt-3">
-		                <button class="btn btn-rounded btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
-		                    Enfermedades
-		                </button>
-		                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" x-placement="top-start" style="position: absolute; transform: translate3d(15px, -107px, 0px); top: 0px; left: 0px; will-change: transform;">
-		                    <a class="dropdown-item" onclick="added_selected_choice(id_disease,'Contiene')">Conotiene</a>
-		                    <a class="dropdown-item" onclick="added_selected_choice(id_disease,'No contiene')">No conotiene</a>
-		                </div>
-		            </div>
-		            <div class="col-sm-6 text-md-right">
-		            	<span id="id_disease" class="h5 text-success"></span>
-		            </div>
-				</div>
-
-				 <button type="submit" name="action" class="btn btn-outline-success btn-lg btn-block mt-3" data-dismiss="modal" onclick="save({{ breeding_cow.pk }})">Guardar</button>
-				</div>
+			</div>
 		</div>
 	</div>
+
 
 	<script>
       function moves_in(){
@@ -136,41 +120,47 @@
     </script>
 
 	<script>
-      function added_selected_choice(idSpam, selectedChoice){
-      	$("#"+idSpam.id).text(selectedChoice)
-        };
-    </script>
+		function try_to_disable_description(){
+			var selected_disease_option = $('#id_disease').val();
+			if (selected_disease_option == "Negativo"){
+				$('#disease_description_div').find(':input').prop('disabled', true);
+                $('#id_disease_description').val('');
+			} else {
+				$('#disease_description_div').find(':input').prop('disabled', false);
+
+			}
+
+		}
+	</script>
+
+	<script>
+		function submit(breedingCowPk){
+			var selected_animlas = $("#id_selected_animals_to option");
+			var selected_sexual_maturity_option = $('#id_sexual_maturity').val();
+			var selected_body_development_option = $('#id_body_development').val();
+			var selected_disease_option = $('#id_disease').val();
+			var disease_description = $('#id_disease_description').val();
 
 
+			$.each(selected_animlas, function(id, option) {
+				added_animal_palpation(breedingCowPk, option.id, selected_sexual_maturity_option, selected_body_development_option, selected_disease_option, disease_description);
+			});
+		}
+	</script>
 
-    <script>
-      function save(breedingCowPk){
-        var selected_animlas = $("#id_selected_animals_to option");
-        var maturity = $("#id_maturity").text()
- 		var development = $("#id_development").text()
- 		var disease = $("#id_disease").text()
-
-        $.each(selected_animlas, function(id, option) {
-	        added_palpation_animal(breedingCowPk, option.id, development, maturity, disease);
-        });
-    }
-    </script>
-
-    <script>
-      function added_palpation_animal(breedingCowPk, idAnimal, development, maturity, disease){
-          $.ajax({
-            type: 'POST',
-            url: '/'+breedingCowPk+'/animals/palpation/new/',
-            data: {idAnimal: idAnimal, development: development, maturity:maturity, disease:disease},
-            success: function (data) {
-            	console.log("success")
-            },
-            error: function(data) {
-            	console.log("error")
-            }
-          });
-        };
-    </script>
-
-    
+	<script>
+		function added_animal_palpation(breedingCowPk, idAnimal, sexualMaturity, bodyDevelopment, disease, diseaseDescription){
+			$.ajax({
+				type: 'POST',
+				url: '/'+breedingCowPk+'/animals/palpation/new/',
+				data: {idAnimal: idAnimal, sexualMaturity: sexualMaturity, bodyDevelopment:bodyDevelopment, disease:disease, diseaseDescription:diseaseDescription},
+				success: function (data) {
+					window.location = "?message=success";
+				},
+					error: function(data) {
+					console.log("error")
+				}
+			});
+		};
+	</script>
 {% endblock %}

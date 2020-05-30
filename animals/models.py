@@ -74,10 +74,12 @@ class Animals(models.Model):
         max_length=100)
     sexual_maturity = models.BooleanField(blank=True, null=True)
     body_development = models.BooleanField(blank=True, null=True)
+    disease = models.BooleanField(blank=True, null=True)
     acquisition = models.CharField(
         choices=AcquisitionType.choices(),
         default='',
         max_length=50)
+    disease_description = models.CharField(default='', max_length=100)
     brood = models.ManyToManyField(
         'self',
         blank=True,

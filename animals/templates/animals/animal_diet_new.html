@@ -9,7 +9,15 @@
 {% endblock %}
 
 {% block content %}
-	<div class="col-12 mt-3">
+	<div class="col-12 mt-5">
+		{% if request.GET.message != success %}
+			<div class="alert alert-success" role="alert">
+			    <strong>El destete se concreto con éxio.</strong> 
+			    Podés seguir efectuando destetes o 
+			    <a href="{% url 'breeding_cow_detail' pk=breeding_cow.pk %}" class="alert-link">hacer click aquí</a> 
+			    para volver al Rodeo de Cría.
+			</div>
+		{% endif %}
 		<div class="card">
 			<div class="invoice-head">
 		        <div class="iv-left col-6 mt-3">
@@ -59,16 +67,16 @@
 		        </div>
 			</div>
 			<div class="modal-body col-sm-12">
-				<div class="selector-available"> 
-			          <select onclick="added_diet_animal_name()" name="all_diets" class="filtered form-control" id="id_all_diets" multiple="">
-				            {% for diet in diets %}
-						       <option id="{{diet.id}}" value="{{diet.name}}" title="{{diet.id}}">{{diet.name}}</option>
-						    {% endfor %}
-			          </select>
-			      </div>
+
+				<select name="all_diets" class="form-control" id="id_all_diets">
+					{% for diet in diets %}
+				       <option id="{{diet.id}}" value="{{diet.name}}" title="{{diet.id}}">{{diet.name}}</option>
+				    {% endfor %}
+				</select>
+
 			 </div>
 
-			 <button type="submit" name="action" class="btn btn-outline-success btn-lg btn-block mt-3" data-dismiss="modal" onclick="invitar_grupo({{ breeding_cow.pk }})">Guardar</button>
+			 <button type="submit" name="action" class="btn btn-outline-success btn-lg btn-block mt-3" data-dismiss="modal" onclick="submit({{ breeding_cow.pk }})">Guardar</button>
 		</div>
 	</div>
 
@@ -103,13 +111,16 @@
     </script>
 
     <script>
-      function invitar_grupo(breedingCowPk){
+      function submit(breedingCowPk){
         var selected_animlas = $("#id_selected_animals_to option");
-        var diet = $("#id_diet_id").text()
+        var diet = $("#id_all_diets").find('option:selected')[0].id;
 
         $.each(selected_animlas, function(id, option) {
 	        added_diet_animal(breedingCowPk, option.id, diet);
         });
+        if (isEmpty(selected_animlas)) {
+			window.location = "?message=error";
+        }
     }
     </script>
 
@@ -119,15 +130,14 @@
             type: 'POST',
             url: '/'+breedingCowPk+'/animals/diet/new/',
             data: {idAnimal: idAnimal, idDiet: idDiet},
+            success: function (data) {
+				window.location = "?message=success";
+			},
+			error: function(data) {
+				window.location = "?message=error";
+			}
           });
         };
     </script>
 
-    <script>
-      function added_diet_animal_name(name){
-      	var selected_diet = $("#id_all_diets option:selected");      	
-      	$("#id_diet_name").text(selected_diet[0].value)
-      	$("#id_diet_id").text(selected_diet[0].id)
-        };
-    </script>
 {% endblock %}

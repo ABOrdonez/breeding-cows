@@ -7,6 +7,7 @@ from .models import (
     AcquisitionType,
     sexType,
     AnimalSanitary,
+    ReproductiveStatus,
 )
 from sanitarybook.models import Sanitary
 
@@ -99,6 +100,27 @@ class WearningAnimalForm(forms.Form):
         choices=sexType.choices,
         widget=forms.Select(attrs={'class': 'form-control'})
     )
+
+
+class AnimalPalpitationForm(forms.Form):
+    sexual_maturity = forms.ChoiceField(
+        choices=ReproductiveStatus.choices,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    body_development = forms.ChoiceField(
+        choices=ReproductiveStatus.choices,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    disease = forms.ChoiceField(
+        choices=ReproductiveStatus.choices,
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control',
+                'onchange': 'try_to_disable_description();'
+            }
+        )
+    )
+    disease_description = forms.CharField(required=False)
 
 
 class PatherAnimalForm(forms.Form):

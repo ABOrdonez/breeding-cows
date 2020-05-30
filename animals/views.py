@@ -12,6 +12,7 @@ from .forms import (
     PatherAnimalForm,
     WearningAnimalForm,
     AnimalSanitaryForm,
+    AnimalPalpitationForm,
 )
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
@@ -43,7 +44,6 @@ def animal_edit(request, pk):
     return render(request, 'animals/animal_edit.html', {'form': form})
 
 
-@csrf_exempt
 def animal_new(request, breedingCowsPk):
     if request.method == "POST":
         animalForm = AnimalForm(request.POST, prefix="animalForm")
@@ -112,44 +112,51 @@ def animal_diet_new(request, breedingCowsPk):
         animalDiet.diet = diet
         animalDiet.diagnosis_date = timezone.now()
         animalDiet.save()
-        return breeding_cow_detail(request, pk=animal.pk)
 
-    else:
-        breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
-        animals = Animals.objects.order_by('flock_number').filter(
-            breeding_cows=breedingCows)
-        diets = Diet.objects.order_by('name')
-        return render(request, 'animals/animal_diet_new.html', {'animals': animals, 'breeding_cow': breedingCows, 'diets': diets})
+    breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
+    animals = Animals.objects.order_by('flock_number').filter(
+        breeding_cows=breedingCows)
+    diets = Diet.objects.order_by('name')
+    return render(request, 'animals/animal_diet_new.html', {'animals': animals, 'breeding_cow': breedingCows, 'diets': diets})
 
 
 @csrf_exempt
 def animal_palpation_new(request, breedingCowsPk):
+    success = None
     if request.method == "POST":
         animal = get_object_or_404(Animals, id=request.POST['idAnimal'])
-        maturity = request.POST['maturity']
-        development = request.POST['development']
+        sexualMaturity = request.POST['sexualMaturity']
+        bodyDevelopment = request.POST['bodyDevelopment']
         disease = request.POST['disease']
+        diseaseDescription = request.POST['diseaseDescription']
 
-        animal.sexual_maturity = isAceptable(maturity)
-        animal.body_development = isAceptable(development)
+        animal.sexual_maturity = isPositive(sexualMaturity)
+        animal.body_development = isPositive(bodyDevelopment)
+        animal.disease = isPositive(disease)
+        if isPositive(disease):
+            animal.disease_description = diseaseDescription
+
         animal.save()
+        success = True
 
-        return breeding_cow_detail(request, pk=animal.pk)
 
-    else:
-        breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
-        animals = Animals.objects.order_by('flock_number').filter(
-            breeding_cows=breedingCows
-        ).exclude(
-            animal_type="Toro")
-        return render(request, 'animals/animal_palpation_new.html', {
-            'animals': animals,
-            'breeding_cow': breedingCows}
-        )
+    breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
+    form = AnimalPalpitationForm()
+    animals = Animals.objects.order_by('flock_number').filter(
+        breeding_cows=breedingCows
+    ).exclude(
+        animal_type="Toro"
+    ).exclude(
+        animal_type="Ternero")
+    return render(request, 'animals/animal_palpation_new.html', {
+        'animals': animals,
+        'breeding_cow': breedingCows,
+        'form': form,
+        'success': success}
+    )
 
 
 def animal_weaning_new(request, breedingCowsPk):
-    success = None
     if request.method == "POST":
         form = WearningAnimalForm(
             request.POST,
@@ -177,8 +184,6 @@ def animal_weaning_new(request, breedingCowsPk):
             animalSanitary.done_date = timezone.now()
             animalSanitary.save()
 
-            success = True
-
     breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
     nextAnimalToWeaning = Animals.objects.all().order_by(
         'entry_date'
@@ -199,8 +204,7 @@ def animal_weaning_new(request, breedingCowsPk):
         )
     return render(request, 'animals/animal_weaning_new.html', {
         'breeding_cow': breedingCows,
-        'form': newForm,
-        'success': success}
+        'form': newForm}
     )
 
 
