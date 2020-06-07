@@ -10,6 +10,14 @@
 
 {% block content %}
 	<div class="col-12 mt-3">
+		{% if request.GET.message != success %}
+			<div class="alert alert-success" role="alert">
+			    <strong>La proceso se inicio con éxio.</strong> 
+			    Podés seguir iniciando procesos o 
+			    <a href="{% url 'breeding_cow_detail' pk=breeding_cow.pk %}" class="alert-link">hacer click aquí</a> 
+			    para volver al Rodeo de Cría.
+			</div>
+		{% endif %}
 		<div class="card">
 			<div class="invoice-head" style="
     margin-bottom: 5px;">
@@ -49,29 +57,38 @@
 			 </div>
 		</div>
 	</div>
+
 	<div class="col-12 mt-3">
 		<div class="card">
-			<div class="invoice-head" style="
-    margin-bottom: 5px;">
-		        <div class="iv-left col-6 mt-3">
-		            <span>Seleccione la tipo de Servicio: </span>
-		            <span class="text-info" id="id_reproduction_type_name"><a href=""></a></span>
-		        </div>
-			</div>
-			<div class="modal-body">
-				<div class="row">
-					<div class="dropdown col-lg-6">
-		                <button class="btn btn-rounded btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
-		                	Servicio
-		                </button>
-		                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-		                    <a class="dropdown-item" onclick="added_selected_choice('Inseminacion Artificial')">Inseminacion Artificial</a>
-		                    <a class="dropdown-item" onclick="added_selected_choice('Natural')">Natural</a>
-		                </div>
-		            </div>
+			<div class="invoice-head" style="margin-bottom: 5px;">
+				<div class="iv-left col-12 mt-3">
+					<span>Datos necesarios para preparar al animal previo servicio:</span>
 				</div>
 			</div>
-			<button type="submit" name="action" class="btn btn-outline-success btn-lg btn-block mt-3" data-dismiss="modal" onclick="select_reproduction_type({{ breeding_cow.pk }})">Guardar</button>
+			<div class="modal-body">
+				<div class="row"> 
+					<div class="col-sm-6">
+						<label for="reproduction_type">Tipo de servivio</label>
+						<select id="all_reproduction_type" class="form-control">
+                            <option>Inseminacion Artificial A Tiempos Fijos</option>
+                            <option>Monta Natural</option>
+                        </select>						
+					</div>
+					<div class="col-sm-6">
+						<br>
+						<div class="custom-control custom-checkbox">
+						    <input type="checkbox" class="custom-control-input" id="has_prostaglandin_vaccine">
+						    <label class="custom-control-label" for="has_prostaglandin_vaccine">Se coloca dispositivo vagina</label>
+						</div>
+						<div class="custom-control custom-checkbox">
+							<input type="checkbox" class="custom-control-input" id="has_vaginal_device">
+						    <label class="custom-control-label" for="has_vaginal_device">Se coloca vacuna con prostaglandina</label>
+						</div>
+					</div>
+				</div>
+				<br>
+				<button type="submit" name="action" class="btn btn-outline-success btn-lg btn-block mt-3" data-dismiss="modal" onclick="submit({{ breeding_cow.pk }})">Guardar</button>
+			</div>
 		</div>
 	</div>
 
@@ -112,22 +129,30 @@
     </script>
 
       <script>
-      function select_reproduction_type(breedingCowPk){
+      function submit(breedingCowPk){
         var selected_animlas = $("#id_selected_animals_to option");
-        var reproduction_type = $("#id_reproduction_type_name").text()
+        var reproduction_type = $("#all_reproduction_type").val();
+        var has_prostaglandin_vaccine = $('#has_prostaglandin_vaccine').is(":checked");
+        var has_vaginal_device = $('#has_vaginal_device').is(":checked");
 
         $.each(selected_animlas, function(id, option) {
-	        add_animal_reproduction_type(breedingCowPk, option.id, reproduction_type);
+	        add_animal_reproduction_type(breedingCowPk, option.id, reproduction_type, has_prostaglandin_vaccine, has_vaginal_device);
         });
     }
     </script>
 
     <script>
-      function add_animal_reproduction_type(breedingCowPk, idAnimal, idReproduction){
+      function add_animal_reproduction_type(breedingCowPk, idAnimal, idReproduction, has_prostaglandin_vaccine, has_vaginal_device){
           $.ajax({
             type: 'POST',
             url: '/'+breedingCowPk+'/animals/reproductiontype/new/',
-            data: {idAnimal: idAnimal, idReproduction: idReproduction},
+            data: {idAnimal: idAnimal, idReproduction: idReproduction, has_prostaglandin_vaccine: has_prostaglandin_vaccine, has_vaginal_device: has_vaginal_device},
+            success: function (data) {
+				window.location = "?message=success";
+			},
+			error: function(data) {
+				window.location = "?message=error";
+			}
           });
         };
     </script>

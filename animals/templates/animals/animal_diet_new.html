@@ -12,8 +12,8 @@
 	<div class="col-12 mt-5">
 		{% if request.GET.message != success %}
 			<div class="alert alert-success" role="alert">
-			    <strong>El destete se concreto con éxio.</strong> 
-			    Podés seguir efectuando destetes o 
+			    <strong>La dieta se concreto con éxio.</strong> 
+			    Podés seguir asociando dietas o 
 			    <a href="{% url 'breeding_cow_detail' pk=breeding_cow.pk %}" class="alert-link">hacer click aquí</a> 
 			    para volver al Rodeo de Cría.
 			</div>
@@ -118,9 +118,6 @@
         $.each(selected_animlas, function(id, option) {
 	        added_diet_animal(breedingCowPk, option.id, diet);
         });
-        if (isEmpty(selected_animlas)) {
-			window.location = "?message=error";
-        }
     }
     </script>
 

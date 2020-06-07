@@ -1,4 +1,10 @@
-from .models import Animals, AnimalRepoduction, AcquisitionType, AnimalType, AnimalSanitary
+from .models import (
+    Animals,
+    AnimalRepoduction,
+    AcquisitionType,
+    AnimalType,
+    AnimalSanitary
+)
 from breedingcows.models import BreedingCows
 from reproduction.models import Reproduction
 from diets.models import Diet
@@ -117,7 +123,11 @@ def animal_diet_new(request, breedingCowsPk):
     animals = Animals.objects.order_by('flock_number').filter(
         breeding_cows=breedingCows)
     diets = Diet.objects.order_by('name')
-    return render(request, 'animals/animal_diet_new.html', {'animals': animals, 'breeding_cow': breedingCows, 'diets': diets})
+    return render(request, 'animals/animal_diet_new.html', {
+        'animals': animals,
+        'breeding_cow': breedingCows,
+        'diets': diets}
+    )
 
 
 @csrf_exempt
@@ -138,7 +148,6 @@ def animal_palpation_new(request, breedingCowsPk):
 
         animal.save()
         success = True
-
 
     breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
     form = AnimalPalpitationForm()
@@ -218,6 +227,8 @@ def animal_reproduction_type_new(request, breedingCowsPk):
         animalRepoduction = animalRepoductionForm.save(commit=False)
 
         reproduction.reproduction_type = request.POST['idReproduction']
+        reproduction.has_prostaglandin_vaccine = isTrue(request.POST['has_prostaglandin_vaccine'])
+        reproduction.has_vaginal_device = isTrue(request.POST['has_vaginal_device'])
         reproduction.preparation_date = timezone.now()
         reproduction.save()
 
@@ -232,7 +243,10 @@ def animal_reproduction_type_new(request, breedingCowsPk):
     else:
         breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
         animals = getFemaleAnimalsWithoutReproductionInProcess(breedingCows)
-        return render(request, 'animals/animal_reproduction_type_new.html', {'animals': animals, 'breeding_cow': breedingCows})
+        return render(request, 'animals/animal_reproduction_type_new.html', {
+            'animals': animals,
+            'breeding_cow': breedingCows,
+        })
 
 
 @csrf_exempt
@@ -350,6 +364,10 @@ def isPositive(string):
 
 def isSuccess(string):
     return string == "Éxitoso"
+
+
+def isTrue(string):
+    return string == "true"
 
 
 def isInsemination(string):
