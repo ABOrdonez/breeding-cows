@@ -10,6 +10,14 @@
 
 {% block content %}
 	<div class="col-12 mt-3">
+		{% if request.GET.message != success %}
+			<div class="alert alert-success" role="alert">
+			    <strong>La ecografía se concreto con éxio.</strong> 
+			    Podés seguir efectuando ecografías o 
+			    <a href="{% url 'breeding_cow_detail' pk=breeding_cow.pk %}" class="alert-link">hacer click aquí</a> 
+			    para volver al Rodeo de Cría.
+			</div>
+		{% endif %}
 		<div class="card">
 			<div class="invoice-head" style="
     margin-bottom: 5px;">
@@ -49,6 +57,7 @@
 			 </div>
 		</div>
 	</div>
+
 	<div class="col-12 mt-3">
 		<div class="card">
 			<div class="invoice-head" style="
@@ -61,17 +70,19 @@
 			<div class="modal-body">
 				<div class="row">
 					<div class="dropdown col-lg-6">
-		                <button class="btn btn-rounded btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
-		                	Resultado
-		                </button>
-		                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-		                    <a class="dropdown-item" onclick="added_selected_choice('Positivo')">Positivo</a>
-		                    <a class="dropdown-item" onclick="added_selected_choice('Negativo')">Negativo</a>
-		                </div>
+		               <label for="result">Resultado de la ecografía</label>
+						<select id="result_id" class="form-control">
+                            <option>Positivo</option>
+                            <option>Negativo</option>
+                        </select>
+		            </div>
+		            <div class="form-group col-lg-6">
+		            	<label for="potential_give_birth_date">Fecha de posible parto</label>
+		            	<input class="form-control" type="date" id="potential_give_birth_date_id">
 		            </div>
 				</div>
 			</div>
-			<button type="submit" name="action" class="btn btn-outline-success btn-lg btn-block mt-3" data-dismiss="modal" onclick="revision({{ breeding_cow.pk }})">Guardar</button>
+			<button type="submit" name="action" class="btn btn-outline-success btn-lg btn-block mt-3" data-dismiss="modal" onclick="submit({{ breeding_cow.pk }})">Guardar</button>
 		</div>
 	</div>
 
@@ -105,29 +116,30 @@
       };
     </script>
 
-    <script>
-      function added_selected_choice(selectedChoice){
-      	$("#id_result_name").text(selectedChoice);
-        };
-    </script>
-
       <script>
-      function revision(breedingCowPk){
+      function submit(breedingCowPk){
         var selected_animlas = $("#id_selected_animals_to option");
-        var result = $("#id_result_name").text()
+        var result = $("#result_id").val();
+        var potential_give_birth_date = $("#potential_give_birth_date_id").val();
 
         $.each(selected_animlas, function(id, option) {
-	        add_animal_revision(breedingCowPk, option.id, result);
+	        add_animal_revision(breedingCowPk, option.id, result, potential_give_birth_date);
         });
     }
     </script>
 
     <script>
-      function add_animal_revision(breedingCowPk, idAnimal, idResult){
+      function add_animal_revision(breedingCowPk, idAnimal, idResult, potentialGiveBirthDate){
           $.ajax({
             type: 'POST',
             url: '/'+breedingCowPk+'/animals/revision/new/',
-            data: {idAnimal: idAnimal, idResult: idResult},
+            data: {idAnimal: idAnimal, idResult: idResult, potentialGiveBirthDate: potentialGiveBirthDate},
+            success: function (data) {
+				window.location = "?message=success";
+			},
+			error: function(data) {
+				console.log("error")
+			}
           });
         };
     </script>

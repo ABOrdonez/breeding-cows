@@ -10,6 +10,14 @@
 
 {% block content %}
 	<div class="col-12 mt-3">
+		{% if request.GET.message != success %}
+			<div class="alert alert-success" role="alert">
+			    <strong>La separación se concreto con éxio.</strong> 
+			    Podés seguir separando y asociando dietas o 
+			    <a href="{% url 'breeding_cow_detail' pk=breeding_cow.pk %}" class="alert-link">hacer click aquí</a> 
+			    para volver al Rodeo de Cría.
+			</div>
+		{% endif %}
 		<div class="card">
 			<div class="invoice-head" style="
     margin-bottom: 5px;">
@@ -49,15 +57,24 @@
 			 </div>
 		</div>
 	</div>
+
 	<div class="col-12 mt-3">
 		<div class="card">
 			<div class="invoice-head" style="
     margin-bottom: 5px;">
 		        <div class="iv-left col-6 mt-3">
-		            <span>Confirmar la separacion del rodeo</span>
+		            <span>Seleccione dieta a aplicar: </span>
+		            <span class="text-info" id="id_result_name"><a href=""></a></span>
 		        </div>
 			</div>
-			<button type="submit" name="action" class="btn btn-outline-success btn-lg btn-block mt-3" data-dismiss="modal" onclick="select_reproduction_separation({{ breeding_cow.pk }})">Guardar</button>
+			<div class="modal-body">
+				<select name="all_diets" class="form-control" id="id_all_diets">
+						{% for diet in diets %}
+					       <option id="{{diet.id}}" value="{{diet.name}}" title="{{diet.id}}">{{diet.name}}</option>
+					    {% endfor %}
+				</select>
+			</div>
+			<button type="submit" name="action" class="btn btn-outline-success btn-lg btn-block mt-3" data-dismiss="modal" onclick="submit({{ breeding_cow.pk }})">Guardar</button>
 		</div>
 	</div>
 
@@ -92,22 +109,44 @@
     </script>
 
     <script>
-      function select_reproduction_separation(breedingCowPk){
-        var selected_animlas = $("#id_selected_animals_to option");
+		function submit(breedingCowPk){
+			var selected_animlas = $("#id_selected_animals_to option");
+			var diet = $("#id_all_diets").find('option:selected')[0].id;
 
-        $.each(selected_animlas, function(id, option) {
-	        add_reproduction_separation(breedingCowPk, option.id);
-        });
-    }
+			$.each(selected_animlas, function(id, option) {
+			    add_reproduction_separation(breedingCowPk, option.id, diet);
+			});
+    	}
     </script>
 
     <script>
-      function add_reproduction_separation(breedingCowPk, idAnimal){
-          $.ajax({
-            type: 'POST',
-            url: '/'+breedingCowPk+'/animals/reproductionseparation/new/',
-            data: {idAnimal: idAnimal},
-          });
-        };
+		function add_reproduction_separation(breedingCowPk, idAnimal, idDiet){
+			$.ajax({
+				type: 'POST',
+				url: '/'+breedingCowPk+'/animals/reproductionseparation/new/',
+				data: {idAnimal: idAnimal},
+				success: function() {
+					add_diet(breedingCowPk, idAnimal, idDiet)
+				},
+				error: function() {
+					window.location = "?message=error";
+				}
+			});
+		};
+    </script>
+    <script>
+		function add_diet(breedingCowPk, idAnimal, idDiet){
+			$.ajax({
+				type: 'POST',
+				url: '/'+breedingCowPk+'/animals/diet/new/',
+				data: {idAnimal: idAnimal, idDiet: idDiet},
+				success: function (data) {
+					window.location = "?message=success";
+				},
+				error: function(data) {
+					window.location = "?message=error";
+				}
+			});
+		};
     </script>
 {% endblock %}

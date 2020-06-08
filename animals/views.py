@@ -23,6 +23,7 @@ from .forms import (
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from breedingcows.views import breeding_cow_detail
+from django.utils.dateparse import parse_date
 
 
 def animals_list(request):
@@ -110,8 +111,10 @@ def animal_new(request, breedingCowsPk):
 @csrf_exempt
 def animal_diet_new(request, breedingCowsPk):
     if request.method == "POST":
+        print(request.POST['idDiet'])
         animal = get_object_or_404(Animals, id=request.POST['idAnimal'])
         diet = get_object_or_404(Diet, id=request.POST['idDiet'])
+        print(diet)
         animalDietForm = AnimalDietForm()
         animalDiet = animalDietForm.save(commit=False)
         animalDiet.animal = animal
@@ -227,8 +230,12 @@ def animal_reproduction_type_new(request, breedingCowsPk):
         animalRepoduction = animalRepoductionForm.save(commit=False)
 
         reproduction.reproduction_type = request.POST['idReproduction']
-        reproduction.has_prostaglandin_vaccine = isTrue(request.POST['has_prostaglandin_vaccine'])
-        reproduction.has_vaginal_device = isTrue(request.POST['has_vaginal_device'])
+        reproduction.has_prostaglandin_vaccine = isTrue(
+            request.POST['has_prostaglandin_vaccine']
+        )
+        reproduction.has_vaginal_device = isTrue(
+            request.POST['has_vaginal_device']
+        )
         reproduction.preparation_date = timezone.now()
         reproduction.save()
 
@@ -267,7 +274,11 @@ def animal_reproduction_execution_new(request, breedingCowsPk):
     else:
         breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
         animals = getFemaleAnimalsWithoutReproductionExecution(breedingCows)
-        return render(request, 'animals/animal_reproduction_execution_new.html', {'animals': animals, 'breeding_cow': breedingCows})
+        return render(
+            request,
+            'animals/animal_reproduction_execution_new.html',
+            {'animals': animals, 'breeding_cow': breedingCows}
+        )
 
 
 @csrf_exempt
@@ -275,46 +286,55 @@ def animal_reproduction_revision_new(request, breedingCowsPk):
     if request.method == "POST":
         animal = get_object_or_404(Animals, id=request.POST['idAnimal'])
         result = request.POST['idResult']
-        animalReproductions = AnimalRepoduction.objects.filter(
+        potentialGiveBirthDate = request.POST['potentialGiveBirthDate']
+        animalReproduction = AnimalRepoduction.objects.filter(
             animal=animal,
-            finished_date__isnull=True)
+            finished_date__isnull=True
+        ).first()
 
-        for animalReproduction in animalReproductions:
-            reproduction = animalReproduction.reproduction
-            reproduction.revision_date = timezone.now()
-            reproduction.success_revision = isPositive(result)
-            if not isPositive(result):
-                animalReproduction.finished_date = timezone.now()
-                animalReproduction.save()
-            reproduction.save()
+        reproduction = animalReproduction.reproduction
+        reproduction.revision_date = timezone.now()
+        reproduction.success_revision = isPositive(result)
+        if not isPositive(result):
+            animalReproduction.finished_date = timezone.now()
+            animalReproduction.save()
+        else:
+            reproduction.potential_give_birth_date = parse_date(
+                potentialGiveBirthDate
+            )
 
-        return breeding_cow_detail(request, pk=animal.pk)
+        reproduction.save()
 
-    else:
-        breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
-        animals = getFemaleAnimalsWithoutRevisionExecution(breedingCows)
-        return render(request, 'animals/animal_reproduction_revision_new.html', {'animals': animals, 'breeding_cow': breedingCows})
+    breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
+    animals = getFemaleAnimalsWithoutRevisionExecution(breedingCows)
+    return render(
+        request,
+        'animals/animal_reproduction_revision_new.html',
+        {'animals': animals, 'breeding_cow': breedingCows}
+    )
 
 
 @csrf_exempt
 def animal_reproduction_separation_new(request, breedingCowsPk):
     if request.method == "POST":
         animal = get_object_or_404(Animals, id=request.POST['idAnimal'])
-        animalReproductions = AnimalRepoduction.objects.filter(
+        animalReproduction = AnimalRepoduction.objects.filter(
             animal=animal,
-            finished_date__isnull=True)
+            finished_date__isnull=True
+        ).first()
 
-        for animalReproduction in animalReproductions:
-            reproduction = animalReproduction.reproduction
-            reproduction.separation_date = timezone.now()
-            reproduction.save()
+        reproduction = animalReproduction.reproduction
+        reproduction.separation_date = timezone.now()
+        reproduction.save()
 
-        return breeding_cow_detail(request, pk=animal.pk)
-
-    else:
-        breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
-        animals = getFemaleAnimalsWithoutSeparationExecution(breedingCows)
-        return render(request, 'animals/animal_reproduction_separation_new.html', {'animals': animals, 'breeding_cow': breedingCows})
+    breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
+    diets = Diet.objects.order_by('name')
+    animals = getFemaleAnimalsWithoutSeparationExecution(breedingCows)
+    return render(
+        request,
+        'animals/animal_reproduction_separation_new.html',
+        {'animals': animals, 'breeding_cow': breedingCows, 'diets': diets}
+    )
 
 
 @csrf_exempt
