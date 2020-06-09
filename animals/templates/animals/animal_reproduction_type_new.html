@@ -1,16 +1,16 @@
 {% extends 'breedingcows/base.html' %}
 
 {% block header %}
-    <h4 class="page-title pull-left">Asociar tipo de servicio</h4>
+    <h4 class="page-title pull-left">Proceso pervio al servivio</h4>
     <ul class="breadcrumbs pull-left">
         <li><a href="{% url 'breeding_cow_detail' pk=breeding_cow.pk %}">Detalle del Rodeo de Cría</a></li>
-        <li><span>Asociar Servicio</span></li>
+        <li><span>Iniciar proceso</span></li>
     </ul>
 {% endblock %}
 
 {% block content %}
 	<div class="col-12 mt-3">
-		{% if request.GET.message != success %}
+		{% if request.GET.message == 'success' %}
 			<div class="alert alert-success" role="alert">
 			    <strong>La proceso se inicio con éxio.</strong> 
 			    Podés seguir iniciando procesos o 
@@ -19,8 +19,7 @@
 			</div>
 		{% endif %}
 		<div class="card">
-			<div class="invoice-head" style="
-    margin-bottom: 5px;">
+			<div class="invoice-head" style="margin-bottom: 5px;">
 		        <div class="iv-left col-6 mt-3">
 		            <span>Selección de Animales</span>
 		        </div>
@@ -72,14 +71,17 @@
 						<select id="all_reproduction_type" class="form-control">
                             <option>Inseminacion Artificial A Tiempos Fijos</option>
                             <option>Monta Natural</option>
-                        </select>						
-					</div>
-					<div class="col-sm-6">
-						<br>
-						<div class="custom-control custom-checkbox">
+                        </select>	
+                        <br>
+                        <div class="custom-control custom-checkbox">
 						    <input type="checkbox" class="custom-control-input" id="has_prostaglandin_vaccine">
 						    <label class="custom-control-label" for="has_prostaglandin_vaccine">Se coloca dispositivo vagina</label>
 						</div>
+					</div>
+					<div class="col-sm-6">
+                        <label for="execution_date">Fecha en la que se ejecutó la acción</label>
+						<input class="form-control" type="date" id="execution_date_id">
+						<br>
 						<div class="custom-control custom-checkbox">
 							<input type="checkbox" class="custom-control-input" id="has_vaginal_device">
 						    <label class="custom-control-label" for="has_vaginal_device">Se coloca vacuna con prostaglandina</label>
@@ -123,30 +125,31 @@
     </script>
 
     <script>
-      function added_selected_choice(selectedChoice){
-      	$("#id_reproduction_type_name").text(selectedChoice);
-        };
-    </script>
-
-      <script>
       function submit(breedingCowPk){
         var selected_animlas = $("#id_selected_animals_to option");
         var reproduction_type = $("#all_reproduction_type").val();
         var has_prostaglandin_vaccine = $('#has_prostaglandin_vaccine').is(":checked");
         var has_vaginal_device = $('#has_vaginal_device').is(":checked");
+        var execution_date_id = $("#execution_date_id").val();
 
         $.each(selected_animlas, function(id, option) {
-	        add_animal_reproduction_type(breedingCowPk, option.id, reproduction_type, has_prostaglandin_vaccine, has_vaginal_device);
+	        add_animal_reproduction_type(breedingCowPk, option.id, reproduction_type, has_prostaglandin_vaccine, has_vaginal_device, execution_date_id);
         });
     }
     </script>
 
     <script>
-      function add_animal_reproduction_type(breedingCowPk, idAnimal, idReproduction, has_prostaglandin_vaccine, has_vaginal_device){
+      function add_animal_reproduction_type(breedingCowPk, idAnimal, idReproduction, has_prostaglandin_vaccine, has_vaginal_device, execution_date){
           $.ajax({
             type: 'POST',
             url: '/'+breedingCowPk+'/animals/reproductiontype/new/',
-            data: {idAnimal: idAnimal, idReproduction: idReproduction, has_prostaglandin_vaccine: has_prostaglandin_vaccine, has_vaginal_device: has_vaginal_device},
+            data: {
+            	idAnimal: idAnimal,
+            	idReproduction: idReproduction,
+            	has_prostaglandin_vaccine: has_prostaglandin_vaccine,
+            	has_vaginal_device: has_vaginal_device,
+            	execution_date: execution_date
+            },
             success: function (data) {
 				window.location = "?message=success";
 			},

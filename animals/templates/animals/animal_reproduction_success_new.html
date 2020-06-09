@@ -9,7 +9,15 @@
 {% endblock %}
 
 {% block content %}
-	<div class="col-12 mt-3">
+	<div class="col-12 mt-5">
+		{% if request.GET.message != success %}
+			<div class="alert alert-success" role="alert">
+			    <strong>El servicio finalizó con con éxio.</strong> 
+			    Podés seguir sinalizando servicios o 
+			    <a href="{% url 'breeding_cow_detail' pk=breeding_cow.pk %}" class="alert-link">hacer click aquí</a> 
+			    para volver al Rodeo de Cría.
+			</div>
+		{% endif %}
 		<div class="card">
 			<div class="invoice-head" style="
     margin-bottom: 5px;">
@@ -59,21 +67,18 @@
 		        </div>
 			</div>
 			<div class="modal-body">
-				<div class="row">
-					<div class="dropdown col-lg-6">
-		                <button class="btn btn-rounded btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
-		                	Resultado
-		                </button>
-		                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-		                    <a class="dropdown-item" onclick="added_selected_choice('Éxitoso')">Éxitoso</a>
-		                    <a class="dropdown-item" onclick="added_selected_choice('Sin éxito')">Sin éxito</a>
-		                </div>
-		            </div>
-				</div>
+				<div class="dropdown col-lg-12">
+	               <label for="result">Resultado del servicio</label>
+					<select id="result_id" class="form-control">
+                        <option>Positivo</option>
+                        <option>Negativo</option>
+                    </select>
+	            </div>
 			</div>
-			<button type="submit" name="action" class="btn btn-outline-success btn-lg btn-block mt-3" data-dismiss="modal" onclick="success({{ breeding_cow.pk }})">Guardar</button>
+			<button type="submit" name="action" class="btn btn-outline-success btn-lg btn-block mt-3" data-dismiss="modal" onclick="submit({{ breeding_cow.pk }})">Guardar</button>
 		</div>
 	</div>
+
 
 	<script>
       function moves_in(){
@@ -105,30 +110,30 @@
       };
     </script>
 
-    <script>
-      function added_selected_choice(selectedChoice){
-      	$("#id_result_name").text(selectedChoice);
-        };
-    </script>
+	<script>
+		function submit(breedingCowPk){
+			var selected_animlas = $("#id_selected_animals_to option");
+			var result = $("#result_id").val();
 
-      <script>
-      function success(breedingCowPk){
-        var selected_animlas = $("#id_selected_animals_to option");
-        var result = $("#id_result_name").text()
+			$.each(selected_animlas, function(id, option) {
+			    add_animal_result(breedingCowPk, option.id, result);
+			});
+		}
+	</script>
 
-        $.each(selected_animlas, function(id, option) {
-	        add_animal_success(breedingCowPk, option.id, result);
-        });
-    }
-    </script>
-
-    <script>
-      function add_animal_success(breedingCowPk, idAnimal, idResult){
-          $.ajax({
-            type: 'POST',
-            url: '/'+breedingCowPk+'/animals/reproductionsuccess/new/',
-            data: {idAnimal: idAnimal, idResult: idResult},
-          });
-        };
-    </script>
+	<script>
+		function add_animal_result(breedingCowPk, idAnimal, idResult){
+			$.ajax({
+				type: 'POST',
+				url: '/'+breedingCowPk+'/animals/reproductionsuccess/new/',
+				data: {idAnimal: idAnimal, idResult: idResult},
+				success: function (data) {
+					window.location = "?message=success";
+				},
+				error: function(data) {
+					console.log("error")
+				}
+			});
+		}
+	</script>
 {% endblock %}

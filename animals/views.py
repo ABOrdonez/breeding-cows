@@ -236,7 +236,11 @@ def animal_reproduction_type_new(request, breedingCowsPk):
         reproduction.has_vaginal_device = isTrue(
             request.POST['has_vaginal_device']
         )
-        reproduction.preparation_date = timezone.now()
+        reproduction.preparation_date = parse_date(
+            request.POST['execution_date']
+        )
+        if reproduction.preparation_date is None:
+            reproduction.preparation_date = timezone.now()
         reproduction.save()
 
         animalRepoduction.reproduction = reproduction
@@ -245,15 +249,12 @@ def animal_reproduction_type_new(request, breedingCowsPk):
         animalRepoduction.breeding_cow = animal.breeding_cows
         animalRepoduction.save()
 
-        return breeding_cow_detail(request, pk=animal.pk)
-
-    else:
-        breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
-        animals = getFemaleAnimalsWithoutReproductionInProcess(breedingCows)
-        return render(request, 'animals/animal_reproduction_type_new.html', {
-            'animals': animals,
-            'breeding_cow': breedingCows,
-        })
+    breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
+    animals = getFemaleAnimalsWithoutReproductionInProcess(breedingCows)
+    return render(request, 'animals/animal_reproduction_type_new.html', {
+        'animals': animals,
+        'breeding_cow': breedingCows,
+    })
 
 
 @csrf_exempt
@@ -358,12 +359,9 @@ def animal_reproduction_success_new(request, breedingCowsPk):
             reproduction.save()
             animalReproduction.save()
 
-        return breeding_cow_detail(request, pk=animal.pk)
-
-    else:
-        breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
-        animals = getFemaleAnimalsWithReproductionExecution(breedingCows)
-        return render(request, 'animals/animal_reproduction_success_new.html', {'animals': animals, 'breeding_cow': breedingCows})
+    breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
+    animals = getFemaleAnimalsWithReproductionExecution(breedingCows)
+    return render(request, 'animals/animal_reproduction_success_new.html', {'animals': animals, 'breeding_cow': breedingCows})
 
 
 def isAceptable(string):
