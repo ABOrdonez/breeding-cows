@@ -11,10 +11,10 @@
 
 {% block content %}
 	<div class="col-12 mt-5">
-		{% if request.GET.message != success %}
+		{% if request.GET.message == 'success' %}
 			<div class="alert alert-success" role="alert">
-			    <strong>El destete se concreto con éxio.</strong> 
-			    Podés seguir efectuando destetes o 
+			    <strong>El la palpitación se concreto con éxio.</strong> 
+			    Podés seguir efectuando palpitaciones o 
 			    <a href="{% url 'breeding_cow_detail' pk=breeding_cow.pk %}" class="alert-link">hacer click aquí</a> 
 			    para volver al Rodeo de Cría.
 			</div>
@@ -37,7 +37,6 @@
 			          </select>
 			        </div>
 			      </div>
-
 			      <div class="col-sm-2 text-center">
 			      	<br><br><br>
 					<button onclick="moves_out()" type="button" class="btn btn-rounded btn-light mb-3">
@@ -46,7 +45,6 @@
 					<button onclick="moves_in()" type="button" class="btn btn-rounded btn-light mb-3">
 						<i class="fa fa-arrow-right"></i></button>
 			      </div>
-
 			      <div class="col-sm-5">
 			      	<h4 class="header-title">Aplicado en</h4>
 			         <div class="selector-chosen">
@@ -158,7 +156,7 @@
 					window.location = "?message=success";
 				},
 					error: function(data) {
-					console.log("error")
+					window.location = "?message=error";
 				}
 			});
 		};

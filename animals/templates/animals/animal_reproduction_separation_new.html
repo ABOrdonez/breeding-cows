@@ -10,10 +10,10 @@
 
 {% block content %}
 	<div class="col-12 mt-3">
-		{% if request.GET.message != success %}
+		{% if request.GET.message == 'success' %}
 			<div class="alert alert-success" role="alert">
 			    <strong>La separación se concreto con éxio.</strong> 
-			    Podés seguir separando y asociando dietas o 
+			    Podés seguir separando animales y asociando dietas o 
 			    <a href="{% url 'breeding_cow_detail' pk=breeding_cow.pk %}" class="alert-link">hacer click aquí</a> 
 			    para volver al Rodeo de Cría.
 			</div>
@@ -38,14 +38,13 @@
 			        </div>
 			      </div>
 			      <div class="col-sm-2 text-center">
-			        <a onclick="moves_out()">
-			        	<i class="fa fa-arrow-left"></i>
-			        </a>
-			        <a onclick="moves_in()">
-			        	<i class="fa fa-arrow-right"></i>
-			        </a>
-			      </div>
+			      	<br><br><br>
+					<button onclick="moves_out()" type="button" class="btn btn-rounded btn-light mb-3">
+						<i class="fa fa-arrow-left"></i></button>
 
+					<button onclick="moves_in()" type="button" class="btn btn-rounded btn-light mb-3">
+						<i class="fa fa-arrow-right"></i></button>
+			      </div>
 			      <div class="col-sm-5">
 			      	<h4 class="header-title">Aplicado en</h4>
 			         <div class="selector-chosen">
@@ -60,19 +59,29 @@
 
 	<div class="col-12 mt-3">
 		<div class="card">
-			<div class="invoice-head" style="
-    margin-bottom: 5px;">
+			<div class="invoice-head" style="_margin-bottom: 5px;">
 		        <div class="iv-left col-6 mt-3">
-		            <span>Seleccione dieta a aplicar: </span>
-		            <span class="text-info" id="id_result_name"><a href=""></a></span>
+		        	<span>Datos necesarios para separar al animal:</span>
 		        </div>
 			</div>
 			<div class="modal-body">
-				<select name="all_diets" class="form-control" id="id_all_diets">
-						{% for diet in diets %}
-					       <option id="{{diet.id}}" value="{{diet.name}}" title="{{diet.id}}">{{diet.name}}</option>
-					    {% endfor %}
-				</select>
+				<div class="modal-body">
+					<div class="row">
+			            <div class="form-group col-lg-6">
+			            	<label for="execution_date">Seleccione dieta a aplicar</label>
+			            	<select name="all_diets" class="form-control" id="id_all_diets">
+								{% for diet in diets %}
+							       <option id="{{diet.id}}" value="{{diet.name}}" title="{{diet.id}}">{{diet.name}}</option>
+							    {% endfor %}
+							</select>
+			            </div>
+			            <div class="dropdown col-lg-6">
+			               	<label for="execution_date">Fecha en la que se separó al animal</label>
+							<input class="form-control" type="date" id="execution_date_id">
+			            </div>
+					</div>
+				</div>
+				
 			</div>
 			<button type="submit" name="action" class="btn btn-outline-success btn-lg btn-block mt-3" data-dismiss="modal" onclick="submit({{ breeding_cow.pk }})">Guardar</button>
 		</div>
@@ -112,19 +121,21 @@
 		function submit(breedingCowPk){
 			var selected_animlas = $("#id_selected_animals_to option");
 			var diet = $("#id_all_diets").find('option:selected')[0].id;
+			var execution_date_id = $("#execution_date_id").val();
+
 
 			$.each(selected_animlas, function(id, option) {
-			    add_reproduction_separation(breedingCowPk, option.id, diet);
+			    add_reproduction_separation(breedingCowPk, option.id, diet, execution_date_id);
 			});
     	}
     </script>
 
     <script>
-		function add_reproduction_separation(breedingCowPk, idAnimal, idDiet){
+		function add_reproduction_separation(breedingCowPk, idAnimal, idDiet, executionDate){
 			$.ajax({
 				type: 'POST',
 				url: '/'+breedingCowPk+'/animals/reproductionseparation/new/',
-				data: {idAnimal: idAnimal},
+				data: {idAnimal: idAnimal, executionDate: executionDate},
 				success: function() {
 					add_diet(breedingCowPk, idAnimal, idDiet)
 				},

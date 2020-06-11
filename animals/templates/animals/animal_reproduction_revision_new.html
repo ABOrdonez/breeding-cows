@@ -10,7 +10,7 @@
 
 {% block content %}
 	<div class="col-12 mt-3">
-		{% if request.GET.message != success %}
+		{% if request.GET.message == 'success' %}
 			<div class="alert alert-success" role="alert">
 			    <strong>La ecografía se concreto con éxio.</strong> 
 			    Podés seguir efectuando ecografías o 
@@ -38,14 +38,13 @@
 			        </div>
 			      </div>
 			      <div class="col-sm-2 text-center">
-			        <a onclick="moves_out()">
-			        	<i class="fa fa-arrow-left"></i>
-			        </a>
-			        <a onclick="moves_in()">
-			        	<i class="fa fa-arrow-right"></i>
-			        </a>
-			      </div>
+			      	<br><br><br>
+					<button onclick="moves_out()" type="button" class="btn btn-rounded btn-light mb-3">
+						<i class="fa fa-arrow-left"></i></button>
 
+					<button onclick="moves_in()" type="button" class="btn btn-rounded btn-light mb-3">
+						<i class="fa fa-arrow-right"></i></button>
+			      </div>
 			      <div class="col-sm-5">
 			      	<h4 class="header-title">Aplicado en</h4>
 			         <div class="selector-chosen">
@@ -63,22 +62,23 @@
 			<div class="invoice-head" style="
     margin-bottom: 5px;">
 		        <div class="iv-left col-6 mt-3">
-		            <span>Seleccione resultado de la ecografía: </span>
-		            <span class="text-info" id="id_result_name"><a href=""></a></span>
+		        	<span>Datos necesarios para ejecutar la ecografía:</span>
 		        </div>
 			</div>
 			<div class="modal-body">
 				<div class="row">
-					<div class="dropdown col-lg-6">
+		            <div class="form-group col-lg-6">
+		            	<label for="potential_give_birth_date">Fecha de posible parto</label>
+		            	<input class="form-control" type="date" id="potential_give_birth_date_id">
+		            	<label for="execution_date">Fecha en la que se ejecutó la ecografía</label>
+						<input class="form-control" type="date" id="execution_date_id">
+		            </div>
+		            <div class="dropdown col-lg-6">
 		               <label for="result">Resultado de la ecografía</label>
 						<select id="result_id" class="form-control">
                             <option>Positivo</option>
                             <option>Negativo</option>
                         </select>
-		            </div>
-		            <div class="form-group col-lg-6">
-		            	<label for="potential_give_birth_date">Fecha de posible parto</label>
-		            	<input class="form-control" type="date" id="potential_give_birth_date_id">
 		            </div>
 				</div>
 			</div>
@@ -121,24 +121,30 @@
         var selected_animlas = $("#id_selected_animals_to option");
         var result = $("#result_id").val();
         var potential_give_birth_date = $("#potential_give_birth_date_id").val();
+        var execution_date_id = $("#execution_date_id").val();
 
         $.each(selected_animlas, function(id, option) {
-	        add_animal_revision(breedingCowPk, option.id, result, potential_give_birth_date);
+	        add_animal_revision(breedingCowPk, option.id, result, potential_give_birth_date, execution_date_id);
         });
     }
     </script>
 
     <script>
-      function add_animal_revision(breedingCowPk, idAnimal, idResult, potentialGiveBirthDate){
+      function add_animal_revision(breedingCowPk, idAnimal, idResult, potentialGiveBirthDate, executionDate){
           $.ajax({
             type: 'POST',
             url: '/'+breedingCowPk+'/animals/revision/new/',
-            data: {idAnimal: idAnimal, idResult: idResult, potentialGiveBirthDate: potentialGiveBirthDate},
+            data: {
+            	idAnimal: idAnimal,
+            	idResult: idResult,
+            	potentialGiveBirthDate: potentialGiveBirthDate,
+            	executionDate: executionDate
+            },
             success: function (data) {
 				window.location = "?message=success";
 			},
 			error: function(data) {
-				console.log("error")
+				window.location = "?message=error";
 			}
           });
         };

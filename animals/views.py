@@ -22,7 +22,6 @@ from .forms import (
 )
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
-from breedingcows.views import breeding_cow_detail
 from django.utils.dateparse import parse_date
 
 
@@ -126,10 +125,10 @@ def animal_diet_new(request, breedingCowsPk):
     animals = Animals.objects.order_by('flock_number').filter(
         breeding_cows=breedingCows)
     diets = Diet.objects.order_by('name')
-    return render(request, 'animals/animal_diet_new.html', {
-        'animals': animals,
-        'breeding_cow': breedingCows,
-        'diets': diets}
+    return render(
+        request,
+        'animals/animal_diet_new.html',
+        {'animals': animals, 'breeding_cow': breedingCows, 'diets': diets}
     )
 
 
@@ -159,13 +158,14 @@ def animal_palpation_new(request, breedingCowsPk):
     ).exclude(
         animal_type="Toro"
     ).exclude(
-        animal_type="Ternero")
+        animal_type="Ternero"
+    )
     return render(request, 'animals/animal_palpation_new.html', {
         'animals': animals,
         'breeding_cow': breedingCows,
         'form': form,
-        'success': success}
-    )
+        'success': success
+    })
 
 
 def animal_weaning_new(request, breedingCowsPk):
@@ -214,9 +214,10 @@ def animal_weaning_new(request, breedingCowsPk):
             breeding_cow=breedingCows,
             animal_type="Ternero",
         )
-    return render(request, 'animals/animal_weaning_new.html', {
-        'breeding_cow': breedingCows,
-        'form': newForm}
+    return render(
+        request,
+        'animals/animal_weaning_new.html',
+        {'breeding_cow': breedingCows, 'form': newForm}
     )
 
 
@@ -251,35 +252,37 @@ def animal_reproduction_type_new(request, breedingCowsPk):
 
     breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
     animals = getFemaleAnimalsWithoutReproductionInProcess(breedingCows)
-    return render(request, 'animals/animal_reproduction_type_new.html', {
-        'animals': animals,
-        'breeding_cow': breedingCows,
-    })
+    return render(
+        request,
+        'animals/animal_reproduction_type_new.html',
+        {'animals': animals, 'breeding_cow': breedingCows}
+    )
 
 
 @csrf_exempt
 def animal_reproduction_execution_new(request, breedingCowsPk):
     if request.method == "POST":
         animal = get_object_or_404(Animals, id=request.POST['idAnimal'])
-        animalReproductions = AnimalRepoduction.objects.filter(
+        animalReproduction = AnimalRepoduction.objects.filter(
             animal=animal,
-            finished_date__isnull=True)
+            finished_date__isnull=True
+        ).first()
 
-        for animalReproduction in animalReproductions:
-            reproduction = animalReproduction.reproduction
-            reproduction.execution_date = timezone.now()
-            reproduction.save()
-
-        return breeding_cow_detail(request, pk=animal.pk)
-
-    else:
-        breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
-        animals = getFemaleAnimalsWithoutReproductionExecution(breedingCows)
-        return render(
-            request,
-            'animals/animal_reproduction_execution_new.html',
-            {'animals': animals, 'breeding_cow': breedingCows}
+        reproduction = animalReproduction.reproduction
+        reproduction.execution_date = parse_date(
+            request.POST['executionDate']
         )
+        if reproduction.execution_date is None:
+            reproduction.execution_date = timezone.now()
+        reproduction.save()
+
+    breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
+    animals = getFemaleAnimalsWithoutReproductionExecution(breedingCows)
+    return render(
+        request,
+        'animals/animal_reproduction_execution_new.html',
+        {'animals': animals, 'breeding_cow': breedingCows}
+    )
 
 
 @csrf_exempt
@@ -296,14 +299,20 @@ def animal_reproduction_revision_new(request, breedingCowsPk):
         reproduction = animalReproduction.reproduction
         reproduction.revision_date = timezone.now()
         reproduction.success_revision = isPositive(result)
-        if not isPositive(result):
-            animalReproduction.finished_date = timezone.now()
-            animalReproduction.save()
-        else:
+        if isPositive(result):
             reproduction.potential_give_birth_date = parse_date(
                 potentialGiveBirthDate
             )
-
+        else:
+            animalReproduction.finished_date = timezone.now()
+            animalReproduction.save()
+        reproduction.revision_date = parse_date(
+            request.POST['executionDate']
+        )
+        if reproduction.revision_date is None:
+            reproduction.revision_date = timezone.now()
+        if reproduction.potential_give_birth_date is None:
+            reproduction.potential_give_birth_date = timezone.now()
         reproduction.save()
 
     breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
@@ -325,7 +334,11 @@ def animal_reproduction_separation_new(request, breedingCowsPk):
         ).first()
 
         reproduction = animalReproduction.reproduction
-        reproduction.separation_date = timezone.now()
+        reproduction.separation_date = parse_date(
+            request.POST['executionDate']
+        )
+        if reproduction.separation_date is None:
+            reproduction.separation_date = timezone.now()
         reproduction.save()
 
     breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
@@ -343,25 +356,34 @@ def animal_reproduction_success_new(request, breedingCowsPk):
     if request.method == "POST":
         animal = get_object_or_404(Animals, id=request.POST['idAnimal'])
         result = request.POST['idResult']
-        animalReproductions = AnimalRepoduction.objects.filter(
+        animalReproduction = AnimalRepoduction.objects.filter(
             animal=animal,
-            finished_date__isnull=True)
+            finished_date__isnull=True
+        ).first()
 
         if animal.animal_type == "Vaquillona":
             animal.animal_type = "Vaca"
             animal.save()
 
-        for animalReproduction in animalReproductions:
+        animalReproduction.finished_date = parse_date(
+            request.POST['executionDate']
+        )
+        if animalReproduction.finished_date is None:
             animalReproduction.finished_date = timezone.now()
-            reproduction = animalReproduction.reproduction
-            if isSuccess(result):
-                reproduction.give_birth_date = timezone.now()
-            reproduction.save()
-            animalReproduction.save()
+        animalReproduction.save()
+
+        reproduction = animalReproduction.reproduction
+        if isPositive(result):
+            reproduction.give_birth_date = animalReproduction.finished_date
+        reproduction.save()
 
     breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
     animals = getFemaleAnimalsWithReproductionExecution(breedingCows)
-    return render(request, 'animals/animal_reproduction_success_new.html', {'animals': animals, 'breeding_cow': breedingCows})
+    return render(
+        request,
+        'animals/animal_reproduction_success_new.html',
+        {'animals': animals, 'breeding_cow': breedingCows}
+    )
 
 
 def isAceptable(string):

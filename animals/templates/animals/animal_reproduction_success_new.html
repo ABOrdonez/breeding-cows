@@ -10,17 +10,16 @@
 
 {% block content %}
 	<div class="col-12 mt-5">
-		{% if request.GET.message != success %}
+		{% if request.GET.message == 'success' %}
 			<div class="alert alert-success" role="alert">
 			    <strong>El servicio finalizó con con éxio.</strong> 
-			    Podés seguir sinalizando servicios o 
+			    Podés seguir finalizando servicios o 
 			    <a href="{% url 'breeding_cow_detail' pk=breeding_cow.pk %}" class="alert-link">hacer click aquí</a> 
 			    para volver al Rodeo de Cría.
 			</div>
 		{% endif %}
 		<div class="card">
-			<div class="invoice-head" style="
-    margin-bottom: 5px;">
+			<div class="invoice-head" style="margin-bottom: 5px;">
 		        <div class="iv-left col-6 mt-3">
 		            <span>Selección de Animales</span>
 		        </div>
@@ -67,13 +66,20 @@
 		        </div>
 			</div>
 			<div class="modal-body">
-				<div class="dropdown col-lg-12">
-	               <label for="result">Resultado del servicio</label>
-					<select id="result_id" class="form-control">
-                        <option>Positivo</option>
-                        <option>Negativo</option>
-                    </select>
-	            </div>
+				<div class="row">
+					 <div class="dropdown col-lg-6">
+						<label for="result">Resultado del servicio</label>
+						<select id="result_id" class="form-control">
+						    <option>Positivo</option>
+						    <option>Negativo</option>
+						</select>
+		            </div>
+		            <div class="form-group col-lg-6">
+		            	<label for="execution_date">Fecha en la que se finalizo el servicio</label>
+						<input class="form-control" type="date" id="execution_date_id">
+		            </div>
+		           
+				</div>
 			</div>
 			<button type="submit" name="action" class="btn btn-outline-success btn-lg btn-block mt-3" data-dismiss="modal" onclick="submit({{ breeding_cow.pk }})">Guardar</button>
 		</div>
@@ -114,24 +120,25 @@
 		function submit(breedingCowPk){
 			var selected_animlas = $("#id_selected_animals_to option");
 			var result = $("#result_id").val();
+			var execution_date_id = $("#execution_date_id").val();
 
 			$.each(selected_animlas, function(id, option) {
-			    add_animal_result(breedingCowPk, option.id, result);
+			    add_animal_result(breedingCowPk, option.id, result, execution_date_id);
 			});
 		}
 	</script>
 
 	<script>
-		function add_animal_result(breedingCowPk, idAnimal, idResult){
+		function add_animal_result(breedingCowPk, idAnimal, idResult, executionDate){
 			$.ajax({
 				type: 'POST',
 				url: '/'+breedingCowPk+'/animals/reproductionsuccess/new/',
-				data: {idAnimal: idAnimal, idResult: idResult},
+				data: {idAnimal: idAnimal, idResult: idResult, executionDate: executionDate},
 				success: function (data) {
 					window.location = "?message=success";
 				},
 				error: function(data) {
-					console.log("error")
+					window.location = "?message=error";
 				}
 			});
 		}

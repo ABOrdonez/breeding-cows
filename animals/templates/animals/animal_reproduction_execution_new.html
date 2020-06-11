@@ -10,9 +10,16 @@
 
 {% block content %}
 	<div class="col-12 mt-3">
+		{% if request.GET.message == 'success' %}
+			<div class="alert alert-success" role="alert">
+			    <strong>El servicio se ejecutó con éxio.</strong> 
+			    Podés seguir ejecutando servicios o 
+			    <a href="{% url 'breeding_cow_detail' pk=breeding_cow.pk %}" class="alert-link">hacer click aquí</a> 
+			    para volver al Rodeo de Cría.
+			</div>
+		{% endif %}
 		<div class="card">
-			<div class="invoice-head" style="
-    margin-bottom: 5px;">
+			<div class="invoice-head" style="margin-bottom: 5px;">
 		        <div class="iv-left col-6 mt-3">
 		            <span>Selección de Animales</span>
 		        </div>
@@ -30,14 +37,13 @@
 			        </div>
 			      </div>
 			      <div class="col-sm-2 text-center">
-			        <a onclick="moves_out()">
-			        	<i class="fa fa-arrow-left"></i>
-			        </a>
-			        <a onclick="moves_in()">
-			        	<i class="fa fa-arrow-right"></i>
-			        </a>
-			      </div>
+			      	<br><br><br>
+					<button onclick="moves_out()" type="button" class="btn btn-rounded btn-light mb-3">
+						<i class="fa fa-arrow-left"></i></button>
 
+					<button onclick="moves_in()" type="button" class="btn btn-rounded btn-light mb-3">
+						<i class="fa fa-arrow-right"></i></button>
+			      </div>
 			      <div class="col-sm-5">
 			      	<h4 class="header-title">Aplicado en</h4>
 			         <div class="selector-chosen">
@@ -51,13 +57,21 @@
 	</div>
 	<div class="col-12 mt-3">
 		<div class="card">
-			<div class="invoice-head" style="
-    margin-bottom: 5px;">
+			<div class="invoice-head" style="margin-bottom: 5px;">
 		        <div class="iv-left col-6 mt-3">
-		            <span>Confirmar la ejecucion del servicio</span>
+					<span>Datos necesarios para ejecutar el servicio:</span>
 		        </div>
 			</div>
-			<button type="submit" name="action" class="btn btn-outline-success btn-lg btn-block mt-3" data-dismiss="modal" onclick="select_reproduction_execution({{ breeding_cow.pk }})">Guardar</button>
+			<div class="modal-body">
+				<div class="row"> 
+					<div class="col-sm-6">
+                        <label for="execution_date">Fecha en la que se ejecutó la acción</label>
+						<input class="form-control" type="date" id="execution_date_id">
+					</div>
+				</div>
+				<br>
+				<button type="submit" name="action" class="btn btn-outline-success btn-lg btn-block mt-3" data-dismiss="modal" onclick="submit({{ breeding_cow.pk }})">Guardar</button>
+			</div>
 		</div>
 	</div>
 
@@ -91,22 +105,29 @@
       };
     </script>
 
-    <script>
-      function select_reproduction_execution(breedingCowPk){
-        var selected_animlas = $("#id_selected_animals_to option");
+	<script>
+		function submit(breedingCowPk){
+			var selected_animlas = $("#id_selected_animals_to option");
+			var execution_date_id = $("#execution_date_id").val();
 
-        $.each(selected_animlas, function(id, option) {
-	        add_reproduction_execution(breedingCowPk, option.id);
-        });
-    }
-    </script>
+			$.each(selected_animlas, function(id, option) {
+			    add_reproduction_execution(breedingCowPk, option.id, execution_date_id);
+			});
+		}
+	</script>
 
     <script>
-      function add_reproduction_execution(breedingCowPk, idAnimal){
+      function add_reproduction_execution(breedingCowPk, idAnimal, executionDate){
           $.ajax({
             type: 'POST',
             url: '/'+breedingCowPk+'/animals/reproductionexecution/new/',
-            data: {idAnimal: idAnimal},
+            data: {idAnimal: idAnimal, executionDate: executionDate},
+            success: function (data) {
+				window.location = "?message=success";
+			},
+			error: function(data) {
+				window.location = "?message=error";
+			}
           });
         };
     </script>

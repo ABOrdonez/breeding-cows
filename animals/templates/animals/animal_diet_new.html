@@ -10,7 +10,7 @@
 
 {% block content %}
 	<div class="col-12 mt-5">
-		{% if request.GET.message != success %}
+		{% if request.GET.message == 'success' %}
 			<div class="alert alert-success" role="alert">
 			    <strong>La dieta se concreto con éxio.</strong> 
 			    Podés seguir asociando dietas o 
@@ -44,7 +44,6 @@
 					<button onclick="moves_in()" type="button" class="btn btn-rounded btn-light mb-3">
 						<i class="fa fa-arrow-right"></i></button>
 			      </div>
-
 			      <div class="col-sm-5">
 			      	<h4 class="header-title">Aplicado en</h4>
 			         <div class="selector-chosen">
