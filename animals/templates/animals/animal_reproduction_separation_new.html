@@ -123,7 +123,6 @@
 			var diet = $("#id_all_diets").find('option:selected')[0].id;
 			var execution_date_id = $("#execution_date_id").val();
 
-
 			$.each(selected_animlas, function(id, option) {
 			    add_reproduction_separation(breedingCowPk, option.id, diet, execution_date_id);
 			});
@@ -145,6 +144,7 @@
 			});
 		};
     </script>
+    
     <script>
 		function add_diet(breedingCowPk, idAnimal, idDiet){
 			$.ajax({

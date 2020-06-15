@@ -1,26 +1,25 @@
 {% extends 'breedingcows/base.html' %}
-{% load widget_tweaks %}
 
 {% block header %}
-    <h4 class="page-title pull-left">Asociar palpitacion</h4>
+    <h4 class="page-title pull-left">Rechazar animal</h4>
     <ul class="breadcrumbs pull-left">
         <li><a href="{% url 'breeding_cow_detail' pk=breeding_cow.pk %}">Detalle del Rodeo de Cría</a></li>
-        <li><span>Asociar palpitacion</span></li>
+        <li><span>Rechazar animal</span></li>
     </ul>
 {% endblock %}
 
 {% block content %}
-	<div class="col-12 mt-5">
+	<div class="col-12 mt-3">
 		{% if request.GET.message == 'success' %}
 			<div class="alert alert-success" role="alert">
-			    <strong>El la palpitación se concreto con éxio.</strong> 
-			    Podés seguir efectuando palpitaciones o 
+			    <strong>El rechazo se ejecutó con éxio.</strong> 
+			    Podés seguir rechazando animales o 
 			    <a href="{% url 'breeding_cow_detail' pk=breeding_cow.pk %}" class="alert-link">hacer click aquí</a> 
 			    para volver al Rodeo de Cría.
 			</div>
 		{% endif %}
 		<div class="card">
-			<div class="invoice-head">
+			<div class="invoice-head" style="margin-bottom: 5px;">
 		        <div class="iv-left col-6 mt-3">
 		            <span>Selección de Animales</span>
 		        </div>
@@ -58,29 +57,28 @@
 	</div>
 	<div class="col-12 mt-3">
 		<div class="card">
-			<div class="invoice-head">
+			<div class="invoice-head" style="margin-bottom: 5px;">
 		        <div class="iv-left col-6 mt-3">
-		            <span>Resultados del analisis: </span>
+					<span>Datos necesarios para rechazar animales:</span>
 		        </div>
 			</div>
 			<div class="modal-body">
-				<div class="row">
-					<div class="form-group col-6">
-						<label for="sexual_maturity">Madurez sexual</label>
-                       	{{form.sexual_maturity}}
-                       	<label for="body_development">Desarrollo corporal</label>
-                       	{{form.body_development}}
+				<div class="row"> 
+					<div class="col-sm-6">
+                        <label for="execution_date">Fecha en la que se ejecutó la acción</label>
+						<input class="form-control" type="date" id="execution_date_id">
 					</div>
-                    <div class="form-group col-6">
-                    	<label for="disease">Problemas reproductivos</label>
-                       	{{form.disease}}
-                       	<div id="disease_description_div">
-                       		<label for="disease_description">Descripcion de los problemas reproductivos</label>
-							{% render_field form.disease_description class="form-control" type="textarea" placeholder="Ingrese los motivos por los cuales se detectaron problemas Resultadosproductivos"%}
-                       	</div>
-                    </div>
-				 	<button type="submit" name="action" class="btn btn-outline-success btn-lg btn-block mt-3" data-dismiss="modal" onclick="submit({{ breeding_cow.pk }})">Guardar</button>
+					 <div class="form-group col-lg-6 mt-1">
+		            	<label for="execution_date">Seleccione dieta a aplicar</label>
+		            	<select name="all_diets" class="form-control" id="id_all_diets">
+							{% for diet in diets %}
+						       <option id="{{diet.id}}" value="{{diet.name}}" title="{{diet.id}}">{{diet.name}}</option>
+						    {% endfor %}
+						</select>
+		            </div>
 				</div>
+				<br>
+				<button type="submit" name="action" class="btn btn-outline-success btn-lg btn-block mt-3" data-dismiss="modal" onclick="submit({{ breeding_cow.pk }})">Guardar</button>
 			</div>
 		</div>
 	</div>
@@ -116,45 +114,46 @@
     </script>
 
 	<script>
-		function try_to_disable_description(){
-			var selected_disease_option = $('#id_disease').val();
-			if (selected_disease_option == "Negativo"){
-				$('#disease_description_div').find(':input').prop('disabled', true);
-                $('#id_disease_description').val('');
-			} else {
-				$('#disease_description_div').find(':input').prop('disabled', false);
-
-			}
-		}
-	</script>
-
-	<script>
 		function submit(breedingCowPk){
 			var selected_animlas = $("#id_selected_animals_to option");
-			var selected_sexual_maturity_option = $('#id_sexual_maturity').val();
-			var selected_body_development_option = $('#id_body_development').val();
-			var selected_disease_option = $('#id_disease').val();
-			var disease_description = $('#id_disease_description').val();
+			var execution_date = $("#execution_date_id").val();
+			var diet_id = $("#id_all_diets").find('option:selected')[0].id;
 
 			$.each(selected_animlas, function(id, option) {
-				added_animal_palpation(breedingCowPk, option.id, selected_sexual_maturity_option, selected_body_development_option, selected_disease_option, disease_description);
+			    reject_animal(breedingCowPk, option.id, execution_date, diet_id);
 			});
 		}
 	</script>
 
-	<script>
-		function added_animal_palpation(breedingCowPk, idAnimal, sexualMaturity, bodyDevelopment, disease, diseaseDescription){
+    <script>
+      function reject_animal(breedingCowPk, idAnimal, executionDate, idDiet){
+          $.ajax({
+            type: 'POST',
+            url: '/'+breedingCowPk+'/animals/rejected/new/',
+            data: {idAnimal: idAnimal, executionDate: executionDate, idDiet:idDiet},
+            success: function (data) {
+				add_diet(breedingCowPk, idAnimal, idDiet)
+			},
+			error: function(data) {
+				window.location = "?message=error";
+			}
+          });
+        };
+    </script>
+
+    <script>
+		function add_diet(breedingCowPk, idAnimal, idDiet){
 			$.ajax({
 				type: 'POST',
-				url: '/'+breedingCowPk+'/animals/palpation/new/',
-				data: {idAnimal: idAnimal, sexualMaturity: sexualMaturity, bodyDevelopment:bodyDevelopment, disease:disease, diseaseDescription:diseaseDescription},
+				url: '/'+breedingCowPk+'/animals/diet/new/',
+				data: {idAnimal: idAnimal, idDiet: idDiet},
 				success: function (data) {
 					window.location = "?message=success";
 				},
-					error: function(data) {
+				error: function(data) {
 					window.location = "?message=error";
 				}
 			});
 		};
-	</script>
+    </script>
 {% endblock %}

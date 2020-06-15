@@ -386,6 +386,51 @@ def animal_reproduction_success_new(request, breedingCowsPk):
     )
 
 
+@csrf_exempt
+def animal_rejected_new(request, breedingCowsPk):
+    if request.method == "POST":
+        animal = get_object_or_404(Animals, id=request.POST['idAnimal'])
+        animal.rejection_date = parse_date(
+            request.POST['executionDate']
+        )
+        if animal.rejection_date is None:
+            animal.rejection_date = timezone.now()
+        animal.save()
+
+    diets = Diet.objects.order_by('name')
+    potentialRejectedAnimals = []
+    breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
+    animals = Animals.objects.all().order_by(
+        'entry_date'
+    ).filter(
+        breeding_cows=breedingCows,
+        rejection_date__isnull=True
+    )
+    for animal in animals:
+        if hasPalpitationProblems(animal):
+            potentialRejectedAnimals.append(animal)
+
+        animalReproduction = AnimalRepoduction.objects.filter(
+            animal=animal,
+            finished_date__isnull=False
+        ).first()
+
+        if animalReproduction:
+            if hasReproductionComplication(animalReproduction):
+                if not animal in potentialRejectedAnimals:
+                    potentialRejectedAnimals.append(animal)
+
+    return render(
+        request,
+        'animals/animal_rejected_new.html',
+        {
+            'breeding_cow': breedingCows,
+            'animals': potentialRejectedAnimals,
+            'diets': diets
+        }
+    )
+
+
 def isAceptable(string):
     return string == "Aceptable"
 
@@ -416,6 +461,22 @@ def isInsemination(string):
 
 def isNatural(string):
     return string == AcquisitionType.NATURAL.value
+
+
+def hasPalpitationProblems(animal):
+    if hasPalpitationValuesComplete(animal):
+        return not animal.sexual_maturity or not animal.body_development or animal.disease
+    else:
+        return False
+
+
+def hasPalpitationValuesComplete(animal):
+    return (animal.sexual_maturity is not None and animal.body_development is not None and animal.disease is not None)
+
+
+
+def hasReproductionComplication(animalReproduction):
+    return animalReproduction.reproduction.give_birth_date is None
 
 
 def getFemaleAnimals(breedingCows):

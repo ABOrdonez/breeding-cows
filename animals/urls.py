@@ -14,4 +14,9 @@ urlpatterns = [
     path('<int:breedingCowsPk>/animals/revision/new/', views.animal_reproduction_revision_new, name='animal_reproduction_revision_new'),
     path('<int:breedingCowsPk>/animals/reproductionseparation/new/', views.animal_reproduction_separation_new, name='animal_reproduction_separation_new'),
     path('<int:breedingCowsPk>/animals/reproductionsuccess/new/', views.animal_reproduction_success_new, name='animal_reproduction_success_new'),
+    path(
+        '<int:breedingCowsPk>/animals/rejected/new/',
+        views.animal_rejected_new,
+        name='animal_rejected_new'
+    ),
 ]
