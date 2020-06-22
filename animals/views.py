@@ -3,7 +3,8 @@ from .models import (
     AnimalRepoduction,
     AcquisitionType,
     AnimalType,
-    AnimalSanitary
+    AnimalSanitary,
+    AnimalDiet
 )
 from breedingcows.models import BreedingCows
 from reproduction.models import Reproduction
@@ -23,17 +24,23 @@ from .forms import (
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.dateparse import parse_date
-
-
-def animals_list(request):
-    animals = Animals.objects.order_by('flock_number')
-    return render(request, 'animals/animals_list.html', {'animals': animals})
+from django.core.paginator import Paginator
 
 
 @csrf_exempt
 def animal_detail(request, pk):
     animal = get_object_or_404(Animals, pk=pk)
-    return render(request, 'animals/animal_detail.html', {'animal': animal})
+    animalDiet, animalReproduction, animalSanitary = getAnimalInfo(animal)
+    return render(
+        request,
+        'animals/animal_detail.html',
+        {
+            'animal': animal,
+            'animalReproduction': animalReproduction,
+            'animalDiet': animalDiet,
+            'animalSanitary': animalSanitary
+        }
+    )
 
 
 def animal_edit(request, pk):
@@ -110,10 +117,8 @@ def animal_new(request, breedingCowsPk):
 @csrf_exempt
 def animal_diet_new(request, breedingCowsPk):
     if request.method == "POST":
-        print(request.POST['idDiet'])
         animal = get_object_or_404(Animals, id=request.POST['idAnimal'])
         diet = get_object_or_404(Diet, id=request.POST['idDiet'])
-        print(diet)
         animalDietForm = AnimalDietForm()
         animalDiet = animalDietForm.save(commit=False)
         animalDiet.animal = animal
@@ -122,8 +127,12 @@ def animal_diet_new(request, breedingCowsPk):
         animalDiet.save()
 
     breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
-    animals = Animals.objects.order_by('flock_number').filter(
-        breeding_cows=breedingCows)
+    animals = Animals.objects.order_by(
+        'flock_number'
+    ).filter(
+        breeding_cows=breedingCows,
+        leaving_date__isnull=True
+    )
     diets = Diet.objects.order_by('name')
     return render(
         request,
@@ -154,7 +163,8 @@ def animal_palpation_new(request, breedingCowsPk):
     breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
     form = AnimalPalpitationForm()
     animals = Animals.objects.order_by('flock_number').filter(
-        breeding_cows=breedingCows
+        breeding_cows=breedingCows,
+        leaving_date__isnull=True
     ).exclude(
         animal_type="Toro"
     ).exclude(
@@ -201,7 +211,8 @@ def animal_weaning_new(request, breedingCowsPk):
         'entry_date'
     ).filter(
         breeding_cows=breedingCows,
-        animal_type="Ternero"
+        animal_type="Ternero",
+        leaving_date__isnull=True
     ).first()
     if nextAnimalToWeaning:
         newForm = WearningAnimalForm(
@@ -404,7 +415,8 @@ def animal_rejected_new(request, breedingCowsPk):
         'entry_date'
     ).filter(
         breeding_cows=breedingCows,
-        rejection_date__isnull=True
+        rejection_date__isnull=True,
+        leaving_date__isnull=True
     )
     for animal in animals:
         if hasPalpitationProblems(animal):
@@ -431,12 +443,92 @@ def animal_rejected_new(request, breedingCowsPk):
     )
 
 
-def isAceptable(string):
-    return string == "Aceptable"
+@csrf_exempt
+def animal_delete(request, breedingCowsPk):
+    if request.method == "POST":
+        animal = get_object_or_404(Animals, id=request.POST['idAnimal'])
+        animal.leaving_date = parse_date(
+            request.POST['executionDate']
+        )
+        if animal.leaving_date is None:
+            animal.leaving_date = timezone.now()
+        animal.save()
+
+    breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
+    animals = Animals.objects.all().order_by(
+        'entry_date'
+    ).filter(
+        breeding_cows=breedingCows,
+        leaving_date__isnull=True,
+    )
+
+    return render(
+        request,
+        'animals/animal_delete.html',
+        {
+            'breeding_cow': breedingCows,
+            'animals': animals
+        }
+    )
 
 
-def isContiene(string):
-    return string == "Contiene"
+def animals_list(request, breedingCowsPk, animalType):
+    breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
+    animalInfo = []
+    animals = Animals.objects.all().order_by(
+        'flock_number'
+    ).filter(
+        breeding_cows=breedingCows,
+        leaving_date__isnull=True,
+        animal_type=animalType
+    )
+
+    for animal in animals:
+        animalDiet, animalReproduction, animalSanitary = getAnimalInfo(animal)
+        animalInfo.append([
+            animal,
+            animalDiet,
+            animalReproduction,
+            animalSanitary
+        ])
+
+    paginator = Paginator(animalInfo, 7)
+    page = request.GET.get('page')
+    animalsInfoPaginated = paginator.get_page(page)
+
+    return render(
+        request,
+        'animals/animals_list.html',
+        {
+            'breeding_cow': breedingCows,
+            'animals': animalsInfoPaginated,
+            'animal_type': animalType
+        }
+    )
+
+
+def getAnimalInfo(animal):
+    animalDiet = AnimalDiet.objects.all().order_by(
+        '-diagnosis_date'
+    ).filter(
+        animal=animal
+    ).first()
+    animalReproduction = AnimalRepoduction.objects.all().order_by(
+        '-started_date'
+    ).filter(
+        animal=animal
+    ).first()
+    animalSanitary = AnimalSanitary.objects.all().order_by(
+        '-done_date'
+    ).filter(
+        animal=animal
+    ).first()
+
+    return (
+        animalDiet,
+        animalReproduction,
+        animalSanitary
+    )
 
 
 def isFemale(string):
@@ -445,10 +537,6 @@ def isFemale(string):
 
 def isPositive(string):
     return string == "Positivo"
-
-
-def isSuccess(string):
-    return string == "Éxitoso"
 
 
 def isTrue(string):
@@ -471,8 +559,7 @@ def hasPalpitationProblems(animal):
 
 
 def hasPalpitationValuesComplete(animal):
-    return (animal.sexual_maturity is not None and animal.body_development is not None and animal.disease is not None)
-
+    return animal.sexual_maturity is not None and animal.body_development is not None and animal.disease is not None
 
 
 def hasReproductionComplication(animalReproduction):
@@ -480,7 +567,16 @@ def hasReproductionComplication(animalReproduction):
 
 
 def getFemaleAnimals(breedingCows):
-    return Animals.objects.order_by('flock_number').filter(breeding_cows=breedingCows).exclude(animal_type='Toro').exclude(animal_type='Ternero')
+    return Animals.objects.order_by(
+        'flock_number'
+    ).filter(
+        breeding_cows=breedingCows,
+        leaving_date__isnull=True
+    ).exclude(
+        animal_type='Toro'
+    ).exclude(
+        animal_type='Ternero'
+    )
 
 
 def getFemaleAnimalsWithoutReproductionInProcess(breedingcows):
@@ -503,7 +599,7 @@ def getFemaleAnimalsWithoutReproductionExecution(breedingcows):
         finished_date__isnull=True)
 
     for reproductionInProcess in reproductionsInProcess:
-        if not reproductionInProcess.reproduction.execution_date:
+        if not reproductionInProcess.reproduction.execution_date and not reproductionInProcess.animal.leaving_date:
             femaleAnimals.append(reproductionInProcess.animal)
 
     return femaleAnimals
@@ -516,7 +612,7 @@ def getFemaleAnimalsWithoutRevisionExecution(breedingcows):
         finished_date__isnull=True)
 
     for reproductionInProcess in reproductionsInProcess:
-        if not reproductionInProcess.reproduction.revision_date and reproductionInProcess.reproduction.execution_date:
+        if not reproductionInProcess.reproduction.revision_date and reproductionInProcess.reproduction.execution_date and not reproductionInProcess.animal.leaving_date:
             femaleAnimals.append(reproductionInProcess.animal)
 
     return femaleAnimals
@@ -529,7 +625,7 @@ def getFemaleAnimalsWithoutSeparationExecution(breedingcows):
         finished_date__isnull=True)
 
     for reproductionInProcess in reproductionsInProcess:
-        if not reproductionInProcess.reproduction.separation_date and reproductionInProcess.reproduction.revision_date:
+        if not reproductionInProcess.reproduction.separation_date and reproductionInProcess.reproduction.revision_date and not reproductionInProcess.animal.leaving_date:
             femaleAnimals.append(reproductionInProcess.animal)
 
     return femaleAnimals

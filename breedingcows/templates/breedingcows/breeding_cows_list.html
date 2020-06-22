@@ -74,23 +74,24 @@
                                     </table>
                                 </div>
                             </div>
-                            <ul class="pagination justify-content-center">
-                                {% if breeding_cows.has_previous %}
-                                    <li class="page-item">
-                                        <a class="page-link" href="?page={{ breeding_cows.previous_page_number }}">Previous</a>
-                                    </li>
-                                {% endif %}
-                                    <li class="page-item active">
-                                        <a class="page-link" href="#">{{ breeding_cows.number }}<span class="sr-only">(current)</span></a>
-                                    </li>
-                                {% if breeding_cows.has_next %}
-                                    <li class="page-item">
-                                        <a class="page-link" href="?page={{ breeding_cows.next_page_number }}">Next</a>
-                                    </li>
-                                {% endif %} 
-                            </ul>
                         </div>
                     </div>
+                        <br>
+                        <ul class="pagination justify-content-center">
+                            {% if breeding_cows.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ breeding_cows.previous_page_number }}">Previous</a>
+                                </li>
+                            {% endif %}
+                                <li class="page-item active">
+                                    <a class="page-link" href="#">{{ breeding_cows.number }}<span class="sr-only">(current)</span></a>
+                                </li>
+                            {% if breeding_cows.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ breeding_cows.next_page_number }}">Next</a>
+                                </li>
+                            {% endif %} 
+                        </ul>
                 </div>
             </div>
             <div class="col-md-4 mt-5">

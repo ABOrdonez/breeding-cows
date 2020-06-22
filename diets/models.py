@@ -21,7 +21,7 @@ class Diet(models.Model):
     description = models.CharField(max_length=100, default='')
     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     created_on = models.DateTimeField(auto_now_add=True)
-    animal_type = models.CharField(choices=AnimalType.choices(), default=AnimalType.TERNERO,  max_length=100)
+    animal_type = models.CharField(choices=AnimalType.choices(), default=AnimalType.TERNERO, max_length=100)
 
     def __unicode__(self):
         return u'%s' % self.name

@@ -117,8 +117,7 @@ class Animals(models.Model):
                 for potencial_mother in potencial_mothers:
                     if self in potencial_mother.brood.all():
                         mother = potencial_mother
-                return u'%s | Numero de rebaño de la madre:%s | Numero de rebaño del Padre:%s' % (
-                    AcquisitionType.NATURAL.value,
+                return u'Numero de rebaño de la madre: %s - Numero de rebaño del padre: %s' % (
                     mother.flock_number,
                     father.flock_number
                 )

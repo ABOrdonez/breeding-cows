@@ -20,7 +20,9 @@ def breeding_cows_list(request):
 
     for breeding_cow in breeding_cows_all:
         breeding_cows.append([breeding_cow, Animals.objects.filter(
-            breeding_cows=breeding_cow).count()])
+            breeding_cows=breeding_cow,
+            leaving_date__isnull=True
+        ).count()])
 
     paginator = Paginator(breeding_cows, 7)
     page = request.GET.get('page')
@@ -278,7 +280,9 @@ def count_weaning_on_time(breeding_cow):
     terneros = Animals.objects.filter(
         breeding_cows=breeding_cow,
         animal_type=AnimalType.TERNERO.value,
-        rejection_date__isnull=True)
+        rejection_date__isnull=True,
+        leaving_date__isnull=True
+    )
 
     for ternero in terneros:
         if has_born_before_specified_days(ternero, weaning_days):
@@ -294,7 +298,9 @@ def count_weaning_warning(breeding_cow):
     terneros = Animals.objects.filter(
         breeding_cows=breeding_cow,
         animal_type=AnimalType.TERNERO.value,
-        rejection_date__isnull=True)
+        rejection_date__isnull=True,
+        leaving_date__isnull=True
+    )
 
     for ternero in terneros:
         if has_born_in_same_specified_days(ternero, weaning_days):
@@ -310,7 +316,9 @@ def count_weaning_on_danger(breeding_cow):
     terneros = Animals.objects.filter(
         breeding_cows=breeding_cow,
         animal_type=AnimalType.TERNERO.value,
-        rejection_date__isnull=True)
+        rejection_date__isnull=True,
+        leaving_date__isnull=True
+    )
 
     for ternero in terneros:
         if has_born_after_specified_days(ternero, weaning_days):
@@ -466,16 +474,16 @@ class ChartData(APIView):
         toros_count = 0
 
         for breeding_cow in breeding_cows_all: 
-            breeding_cows_animal_count.append(Animals.objects.all().filter(breeding_cows=breeding_cow).count())
-            breeding_cows_vacas_count.append(Animals.objects.all().filter(breeding_cows=breeding_cow, animal_type="Vaca").count())
-            breeding_cows_ternero_count.append(Animals.objects.all().filter(breeding_cows=breeding_cow, animal_type="Ternero").count())
-            breeding_cows_vaquillonas_count.append(Animals.objects.all().filter(breeding_cows=breeding_cow, animal_type="Vaquillona").count())
-            breeding_cows_toros_count.append(Animals.objects.all().filter(breeding_cows=breeding_cow, animal_type="Toro").count())
+            breeding_cows_animal_count.append(Animals.objects.all().filter(breeding_cows=breeding_cow, leaving_date__isnull=True).count())
+            breeding_cows_vacas_count.append(Animals.objects.all().filter(breeding_cows=breeding_cow, animal_type="Vaca", leaving_date__isnull=True).count())
+            breeding_cows_ternero_count.append(Animals.objects.all().filter(breeding_cows=breeding_cow, animal_type="Ternero", leaving_date__isnull=True).count())
+            breeding_cows_vaquillonas_count.append(Animals.objects.all().filter(breeding_cows=breeding_cow, animal_type="Vaquillona", leaving_date__isnull=True).count())
+            breeding_cows_toros_count.append(Animals.objects.all().filter(breeding_cows=breeding_cow, animal_type="Toro", leaving_date__isnull=True).count())
 
-            vacas_count = vacas_count + Animals.objects.all().filter(breeding_cows=breeding_cow, animal_type="Vaca").count()
-            ternero_count = ternero_count + Animals.objects.all().filter(breeding_cows=breeding_cow, animal_type="Ternero").count()
-            vaquillonas_count = vaquillonas_count + Animals.objects.all().filter(breeding_cows=breeding_cow, animal_type="Vaquillona").count()
-            toros_count = toros_count + Animals.objects.all().filter(breeding_cows=breeding_cow, animal_type="Toro").count()
+            vacas_count = vacas_count + Animals.objects.all().filter(breeding_cows=breeding_cow, animal_type="Vaca", leaving_date__isnull=True).count()
+            ternero_count = ternero_count + Animals.objects.all().filter(breeding_cows=breeding_cow, animal_type="Ternero", leaving_date__isnull=True).count()
+            vaquillonas_count = vaquillonas_count + Animals.objects.all().filter(breeding_cows=breeding_cow, animal_type="Vaquillona", leaving_date__isnull=True).count()
+            toros_count = toros_count + Animals.objects.all().filter(breeding_cows=breeding_cow, animal_type="Toro", leaving_date__isnull=True).count()
 
         data = {
             "breeding_cows": breeding_cows_location,

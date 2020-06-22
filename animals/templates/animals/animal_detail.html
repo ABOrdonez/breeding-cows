@@ -1,12 +1,297 @@
 {% extends 'breedingcows/base.html' %}
 
+{% block header %}
+    <h4 class="page-title pull-left">Datos de animal</h4>
+    <ul class="breadcrumbs pull-left">
+        <li><a href="{% url 'animals_list' breedingCowsPk=animal.breeding_cows.pk animalType=animal.animal_type %}">Listado de {{ animal.animal_type }}s</a></li>
+        <li><span>Datos de animal</span></li>
+    </ul>
+{% endblock %}
+
 {% block content %}
-    <div class="col-12">
-        {% if user.is_authenticated %}
-            <a class="btn btn-default" href="{% url 'contact_edit' pk=animal.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
-        {% endif %}
-        <h2>{{ animal.flock_number }}</h2>
-        <p>{{ animal.birthday }}</p>
-        <p>{{ animal.animal_type }}</p>
+
+ {% if animalReproduction %}
+    <div class="col-lg-6 mt-5">
+{% else %}
+    <div class="col-lg-12 mt-5">
+{% endif %}
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title">Datos Asociados</h4>
+                <div id="accordion" class="according accordion-s3">
+                    <div class="card">
+                        <div class="card-header">
+                            <a class="collapsed card-link" data-toggle="collapse" href="#accordion1">Identificación</a>
+                        </div>
+                        <div id="accordion1" class="collapse" data-parent="#accordion">
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item">Numero de rebaño: {{ animal.flock_number }}</li>
+                                    <li class="list-group-item">Numero de Rodeo: {{ animal.breeding_cows }}</li>
+                                    <li class="list-group-item">Fecha de nacimiento: {{ animal.entry_date }}</li>
+                                    <li class="list-group-item">Fecha de adquisicion: {{ animal.entry_date }}</li>
+                                    <li class="list-group-item">Tipo de adquisicion: {{ animal.acquisition }}</li>
+                                    {% if animal.rejection_date %}
+                                        <li class="list-group-item">Fecha de rechazo: {{ animal.rejection_date }}</li>
+                                    {% else %}
+                                        <li class="list-group-item">Fecha de rechazo: No definida</li>
+                                    {% endif %}
+                                    {% if animal.leaving_date %}
+                                        <li class="list-group-item">Fecha de dado de baja: {{ animal.leaving_date }}</li>
+                                    {% else %}
+                                        <li class="list-group-item">Fecha de dado de baja: No definida</li>
+                                    {% endif %}                                
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <a class="collapsed card-link" data-toggle="collapse" href="#accordion2">Estado físico</a>
+                        </div>
+                        <div id="accordion2" class="collapse" data-parent="#accordion">
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item">Peso: {{ animal.weight }}</li>
+                                    {% if animal.sexual_maturity %}
+                                        <li class="list-group-item">Posee madurez sexual: Si</li>
+                                    {% else %}
+                                        <li class="list-group-item">Posee madurez sexual: No</li>
+                                    {% endif %}
+
+                                    {% if animal.body_development %}
+                                        <li class="list-group-item">Posee el suficiente desarrollo corporal: Si</li>
+                                    {% else %}
+                                        <li class="list-group-item">Posee el suficiente desarrollo corporal: No</li>
+                                    {% endif %}
+
+                                    {% if animal.disease %}
+                                        <li class="list-group-item">Posee una enfermedad: Si</li>
+                                    {% else %}
+                                        <li class="list-group-item">Posee una enfermedad: No</li>
+                                    {% endif %}
+
+                                    {% if animal.disease_description %}
+                                        <li class="list-group-item">Descripción de la enfermedad: {{ animal.disease_description}}</li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <a class="collapsed card-link" data-toggle="collapse" href="#accordion3">Dieta asiganda</a>
+                        </div>
+                        <div id="accordion3" class="collapse" data-parent="#accordion">
+                            <div class="card-body">
+                                {% if animalDiet %}
+                                    <a class="align-items-start">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h5 class="mb-1">{{ animalDiet }}</h5>
+
+                                            <small class="text-muted">{{ animalDiet.diagnosis_date }}</small>
+                                        </div>
+                                        <p class="mb-1">{{ animalDiet.diet.description }}</p>
+                                    </a>
+                                {% else %}
+                                    <p>No se le asoció dieta</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <a class="collapsed card-link" data-toggle="collapse" href="#accordion4">Libreta sanitaria asiganda</a>
+                        </div>
+                        <div id="accordion4" class="collapse" data-parent="#accordion">
+                            <div class="card-body">
+                                {% if animalSanitary %}
+                                    <a class="align-items-start">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h5 class="mb-1">{{ animalSanitary.sanitary.name }}</h5>
+
+                                            <small class="text-muted">{{ animalSanitary.done_date }}</small>
+                                        </div>
+                                        <p class="mb-1">{{ animalSanitary.sanitary.description }}</p>
+                                    </a>
+                                {% else %}
+                                    <p>No se le asoció una libreta sanitaria</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
+    {% if animalReproduction %}
+        <div class="card col-6 mt-5">
+            <div class="card-body">
+                <h4 class="header-title">Ultima reproduccion</h4>
+                <div>
+                    <div class="timeline-area">
+                        <div class="timeline-task">
+                            <div class="icon bg1">
+                                {% if animalReproduction.reproduction.preparation_date %}
+                                    <i class="fa fa-check-square-o"></i>
+                                {% else %}
+                                    <i class="fa fa-square-o"></i>
+                                {% endif %}
+                            </div>
+                            <div class="tm-title">
+                                <h4>Proceso pervio a ejecutar la reproduccion</h4>
+                                {% if animalReproduction.reproduction.preparation_date %}
+                                    <span class="time"><i class="ti-time"></i>{{animalReproduction.reproduction.preparation_date}}</span>
+                                {% else %}
+                                    <span class="time"><i class="ti-time"></i> - </span>
+                                {% endif %}
+                            </div>
+                            <p>El tipo de reproduccion a ejecutar es: {{animalReproduction.reproduction}}.</p>
+                            {% if animalReproduction.reproduction.has_prostaglandin_vaccine %}
+                                <p>Al animal se le colocó la vacuna con prostagladina.</p>
+                            {% else %}
+                                <p>Al animal no se le colocó la vacuna con prostagladina.</p>
+                            {% endif %}
+                            {% if animalReproduction.reproduction.has_vaginal_device %}
+                                <p>Al animal se le colocó el dispositivo vaginal.</p>
+                            {% else %}
+                                <p>Al animal no se le colocó el dispositivo vaginal.</p>
+                            {% endif %}
+                        </div>
+                        <div class="timeline-task">
+                            <div class="icon bg1">
+                                {% if animalReproduction.reproduction.execution_date %}
+                                    <i class="fa fa-check-square-o"></i>
+                                {% else %}
+                                    <i class="fa fa-square-o"></i>
+                                {% endif %}
+                            </div>
+                            <div class="tm-title">
+                                <h4>Ejecutación del servicio</h4>
+                                {% if animalReproduction.reproduction.execution_date %}
+                                    <span class="time"><i class="ti-time"></i>{{animalReproduction.reproduction.execution_date}}</span>
+                                {% else %}
+                                    <span class="time"><i class="ti-time"></i> - </span>
+                                {% endif %}                        
+                            </div>
+                            {% if animalReproduction.reproduction.execution_date %}
+                                <p>Se ejecutó la reproducción.</p>
+                            {% else %}
+                                <p>No se ejecutó la reproducción.</p>
+                            {% endif %}
+                        </div>
+                        <div class="timeline-task">
+                            <div class="icon bg1">
+                                {% if animalReproduction.reproduction.revision_date %}
+                                    <i class="fa fa-check-square-o"></i>
+                                {% else %}
+                                    <i class="fa fa-square-o"></i>
+                                {% endif %}                        
+                            </div>
+                            <div class="tm-title">
+                                <h4>Tacto con ecografía</h4>
+                                {% if animalReproduction.reproduction.revision_date %}
+                                    <span class="time"><i class="ti-time"></i>{{animalReproduction.reproduction.revision_date}}</span>
+                                {% else %}
+                                    <span class="time"><i class="ti-time"></i> - </span>
+                                {% endif %}                        
+                            </div>
+                            {% if animalReproduction.reproduction.revision_date %}
+                                {% if animalReproduction.reproduction.success_revision %}
+                                    <p>El resultado obtenido de la ecografía fue: Positivo.</p>
+                                {% else %}
+                                    <p>El resultado obtenido de la ecografía fue: Negativo.</p>
+                                {% endif %}
+                                <p>Potencial fecha de parto: {{animalReproduction.reproduction.revision_date}}</p>
+                            {% else %}
+                                <p>No se realizó la ecogragía.</p>
+                            {% endif %}
+                        </div>
+                        <div class="timeline-task">
+                            <div class="icon bg1">
+                                {% if animalReproduction.reproduction.separation_date %}
+                                    <i class="fa fa-check-square-o"></i>
+                                {% else %}
+                                    <i class="fa fa-square-o"></i>
+                                {% endif %}                        
+                            </div>
+                            <div class="tm-title">
+                                <h4>Separación</h4>
+                                {% if animalReproduction.reproduction.separation_date %}
+                                    <span class="time"><i class="ti-time"></i>{{animalReproduction.reproduction.separation_date}}</span>
+                                {% else %}
+                                    <span class="time"><i class="ti-time"></i> - </span>
+                                {% endif %}                         
+                            </div>
+                            {% if animalReproduction.reproduction.separation_date %}
+                                <p>Se lo separó al animal.</p>
+                            {% else %}
+                                <p>No se lo separó al animal.</p>
+                            {% endif %}     
+                        </div>
+                        <div class="timeline-task">
+                            <div class="icon bg1">
+                                {% if animalReproduction.reproduction.give_birth_date %}
+                                    <i class="fa fa-check-square-o"></i>
+                                {% else %}
+                                    <i class="fa fa-square-o"></i>
+                                {% endif %}                        
+                            </div>
+                            <div class="tm-title">
+                                <h4>Parto</h4>
+                                {% if animalReproduction.finished_date %}
+                                    <span class="time"><i class="ti-time"></i>{{animalReproduction.finished_date}}</span>
+                                {% else %}
+                                    <span class="time"><i class="ti-time"></i> - </span>
+                                {% endif %}                         
+                            </div>
+                            {% if animalReproduction.reproduction.give_birth_date %}
+                                <p>El animal finalizó su parto con éxito.</p>
+                            {% else %}
+                                {% if animalReproduction.finished_date %}
+                                    <p>El animal finalizó su parto sin éxito.</p>
+                                {% else %}
+                                    <p>El animal todavia se encuentra en espera.</p>
+                                {% endif %}  
+                            {% endif %}     
+                        </div>
+
+                        {% if animalReproduction.finished_date %}
+                            {% if animalReproduction.reproduction.give_birth_date %}
+                                <div class="timeline-task">
+                                    <div class="icon bg1">
+                                        <i class="fa fa-check-square-o"></i>
+                                    </div>
+                                    <div class="tm-title">
+                                        <h4>La reproducción finalizó con éxito</h4>
+                                        <span class="time"><i class="ti-time"></i>{{ animalReproduction.finished_date }}</span>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="timeline-task">
+                                    <div class="icon bg1">
+                                        <i class="fa fa-times"></i>
+                                    </div>
+                                    <div class="tm-title">
+                                        <h4>La reproducción finalizó sin éxito</h4>
+                                        <span class="time"><i class="ti-time"></i>{{ animalReproduction.finished_date }}</span>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            <div class="timeline-task">
+                                <div class="icon bg1">
+                                    <i class="fa fa-hourglass-2"></i>
+                                </div>
+                                <div class="tm-title">
+                                    <h4>La reproducción no ha finalizado</h4>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}

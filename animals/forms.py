@@ -80,7 +80,8 @@ class WearningAnimalForm(forms.Form):
                 'entry_date'
             ).filter(
                 breeding_cows=breeding_cow,
-                animal_type=animal_type
+                animal_type=animal_type,
+                leaving_date__isnull=True
             ),
             required=True,
             help_text="Terneros",
@@ -133,7 +134,8 @@ class PatherAnimalForm(forms.Form):
                 'flock_number'
             ).filter(
                 breeding_cows=breeding_cow,
-                animal_type=animal_type
+                animal_type=animal_type,
+                leaving_date__isnull=True
             ),
             required=False,
             help_text="Padre",
