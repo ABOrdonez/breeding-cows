@@ -147,7 +147,7 @@ class AnimalDisease(models.Model):
         return DiagnosisType(self.type).name.title()
 
     def __str__(self):
-        return self.location
+        return self.animal
 
 
 class AnimalDiet(models.Model):

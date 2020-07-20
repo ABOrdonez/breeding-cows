@@ -1,5 +1,16 @@
 from django.db import models
 from django.contrib.auth.models import User
+from enum import Enum
+
+
+class CivilStatus(Enum):
+    SOLTERO = "Soltero"
+    CASADO = "Casado"
+    DIVORCIADO = "Divorciado"
+
+    @classmethod
+    def choices(cls):
+        return [(key.value, key.name) for key in cls]
 
 
 class Contact(models.Model):
@@ -7,13 +18,20 @@ class Contact(models.Model):
     last_name = models.CharField(max_length=30, default='')
     phone = models.CharField(max_length=20, default='')
     email = models.EmailField(default='')
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
-    created_on = models.DateTimeField(auto_now_add=True)
+    owner = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
     entry_date = models.DateTimeField(blank=True, null=True)
     birthday = models.DateTimeField(blank=True, null=True, default='')
-
-    class Meta:
-        verbose_name_plural = 'contacts'
+    direction = models.CharField(max_length=30, default='')
+    province = models.CharField(max_length=30, default='')
+    civil_status = models.CharField(
+        choices=CivilStatus.choices(),
+        default=CivilStatus.SOLTERO,
+        max_length=100)
 
     @property
     def full_name(self):

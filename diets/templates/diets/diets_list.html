@@ -1,68 +1,169 @@
 {% extends 'breedingcows/base.html' %}
 
+{% block header %}
+    <h4 class="page-title pull-left">Dieta</h4>
+    <ul class="breadcrumbs pull-left">
+        <li><span>Dietas</span></li>
+    </ul>
+{% endblock %}
+
 {% block content %}
     <div class="content container">
         <div class="row">
-            <div class="col-md-8">
-                <!-- Progress Table start -->
-                <div class="col-12 mt-5">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <h4 class="header-title">Dietas</h4>
-                                </div>
-                                <div class="col-md-6">
-                                    <a class="btn btn-rounded btn-outline-secondary mb-3 pull-right"
-                                       href="{% url 'breeding_cow_new' %}" role="button">+</a>
-                                </div>
+            <div class="col-12 mt-2">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h4 class="header-title">Dietas</h4>
                             </div>
-                            <div class="single-table">
-                                <div class="table-responsive">
-                                    <table class="table table-hover progress-table text-center">
-                                        <thead class="text-uppercase">
+                        </div>
+                        <div class="single-table">
+                            <div class="table-responsive">
+                                <table class="table table-hover progress-table text-center">
+                                    <thead class="text-uppercase">
+                                    <tr>
+                                        <th scope="col">Nombre</th>
+                                        <th scope="col">Proteinas</th>
+                                        <th scope="col">Energia</th>
+                                        <th scope="col">Tipo de animales</th>
+                                        <th scope="col">Aplicado en</th>
+                                        <th scope="col">Acciones</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for diet, animal_count in diets %}
                                         <tr>
-                                            <th scope="col">Nombre</th>
-                                            <th scope="col">Proteinas</th>
-                                            <th scope="col">Energia</th>
-                                            <th scope="col">Tipo de animales</th>
-                                            <th scope="col">Aplicado en</th>
-                                            <th scope="col">Acciones</th>
+                                            <td>{{ diet.name }}</td>
+                                            <td>{{ diet.protein }}</td>
+                                            <td>{{ diet.energies }}</td>
+                                            <td>{{ diet.animal_type }}</td>
+                                            <td>{{ animal_count }}</td>
+                                            <td>
+                                                <ul class="d-flex justify-content-center">
+                                                    <li class="mr-3"><a href="{% url 'diet_detail' pk=diet.pk %}" class="text-secondary"><i class="fa fa-search"></i></a></li>
+                                                    <li class="mr-3"><a href="{% url 'diet_edit' pk=diet.pk %}" class="text-secondary"><i class="fa fa-pencil"></i></a></li>
+                                                </ul>
+                                            </td>
                                         </tr>
-                                        </thead>
-                                        <tbody>
-                                        {% for diet, animal_count in diets %}
-                                            <tr>
-                                                <td>
-                                                    <a style="color: #7801ff;"
-                                                       href="{% url 'diet_detail' pk=diet.pk %}">{{ diet.name }}
-                                                    </a>
-                                                </td>
-                                                <td>{{ diet.protein }}</td>
-                                                <td>{{ diet.energies }}</td>
-                                                <td>{{ diet.animal_type }}</td>
-                                                <td>{{ animal_count }}</td>
-                                                <td>
-                                                    <ul class="d-flex justify-content-center">
-                                                        <li class="mr-3"><a
-                                                                href="#"
-                                                                class="text-secondary"><i
-                                                                class="fa fa-edit"></i></a></li>
-                                                        <li><a href="#" class="text-danger"><i class="ti-trash"></i></a>
-                                                        </li>
-                                                    </ul>
-                                                </td>
-                                            </tr>
-                                        {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="mt-3">
+            <ul class="pagination justify-content-center">
+                {% if diets.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ diets.previous_page_number }}">Previous</a>
+                    </li>
+                {% endif %}
+                    <li class="page-item active">
+                        <a class="page-link" href="#">{{ diets.number }}<span class="sr-only">(current)</span></a>
+                    </li>
+                {% if diets.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ diets.next_page_number }}">Next</a>
+                    </li>
+                {% endif %} 
+            </ul>
+        </div>
     </div>
+
+    <div class="col-md-8  mt-3">
+        <div class="card">
+            <canvas id="dietsComponentChart" width="400" height="200"></canvas>
+        </div>
+    </div>
+    <div class="col-md-4 mt-3">
+        <div class="card">
+            <canvas id="dietsAnimalsChart" width="400" height="400"></canvas>
+        </div>
+    </div>
+
+    <script>
+
+    $.ajax({
+        type: 'GET',
+        url: 'api/chart/data/',
+        success: function (data) {
+            setDietsComponentChart(data.diets,data.diet_proteins, data.diet_energies)
+            setDietsAnimalsChart(data.diets, data.diets_animal_count)
+        },
+        error: function(data) {
+        },
+    });
+
+    function setDietsComponentChart(diets, diet_proteins, diet_energies){
+        var ctx = document.getElementById('dietsComponentChart').getContext('2d');
+        var dietsComponentChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: diets,
+                datasets: [{
+                    label: 'Poteinas',
+                    data: diet_proteins,
+                    backgroundColor: 'rgb(127, 0, 255)',
+                    }, {
+                    label: 'Enegrias',
+                    data: diet_energies,
+                    backgroundColor: 'rgb(255, 99, 132)',
+                    }]
+                },
+            options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+    }
+
+    function setDietsAnimalsChart(diets, diets_animal_count){
+        var ctx = document.getElementById('dietsAnimalsChart').getContext('2d');
+        var ict_unit = [];
+        var efficiency = [];
+        var coloR = [];
+
+        var dynamicColors = function() {
+            var hue = Math.floor(Math.random() * 360);
+            return 'hsl(' + hue + ', 100%, 80%)';
+        };
+
+        for (var i in diets) {
+            ict_unit.push("ICT Unit " + diets[i].ict_unit);
+            efficiency.push(diets[i].efficiency);
+            coloR.push(dynamicColors());
+        }
+        
+        var dietsAnimalsChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: diets,
+                datasets: [{
+                    data: diets_animal_count,
+                    backgroundColor: coloR,
+                    }]
+                },
+
+            options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+    }
+    </script>
 {% endblock %}
 

@@ -9,64 +9,161 @@
 
 {% block content %}
     <div class="content container">
-        <div class="row">
-            <div class="col-md-8">
-                <!-- Progress Table start -->
-                <div class="col-12 mt-5">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <h4 class="header-title">Libretas sanitarias</h4>
-                                </div>
-                            </div>
-                            <div class="single-table">
-                                <div class="table-responsive">
-                                    <table class="table table-hover progress-table text-center">
-                                        <thead class="text-uppercase">
-                                        <tr>
-                                            <th scope="col">Nombre</th>
-                                            <th scope="col">Antiparasitario</th>
-                                            <th scope="col">Cobre</th>
-                                            <th scope="col">Clostridiosis</th>
-                                            <th scope="col">Aplicado en</th>
-                                            <th scope="col">Acciones</th>
-
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {% for sanitary in sanitary_list %}
-                                            <tr>
-                                                <td>
-                                                    <a style="color: #7801ff;"
-                                                       href="{% url 'sanitary_book_detail' pk=sanitary.pk %}">{{ sanitary.name }}
-                                                    </a>
-                                                </td>
-                                                <td>{{ sanitary.antiparasitic }}</td>
-                                                <td>{{ sanitary.copper }}</td>
-                                                <td>{{ sanitary.clostridiosis }}</td>
-                                                <td>{{ sanitary.animal_type }}</td>
-
-                                                <td>
-                                                    <ul class="d-flex justify-content-center">
-                                                        <li class="mr-3"><a
-                                                                href="#"
-                                                                class="text-secondary"><i
-                                                                class="fa fa-edit"></i></a></li>
-                                                        <li><a href="#" class="text-danger"><i class="ti-trash"></i></a>
-                                                        </li>
-                                                    </ul>
-                                                </td>
-                                            </tr>
-                                        {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
+        <div class="col-12 mt-2">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4 class="header-title">Libretas sanitarias</h4>
+                        </div>
+                    </div>
+                    <div class="single-table">
+                        <div class="table-responsive">
+                            <table class="table table-hover progress-table text-center">
+                                <thead class="text-uppercase">
+                                <tr>
+                                    <th scope="col">Nombre</th>
+                                    <th scope="col">Antiparasitario</th>
+                                    <th scope="col">Cobre</th>
+                                    <th scope="col">Clostridiosis</th>
+                                    <th scope="col">Recomendado para</th>
+                                    <th scope="col">Aplicado en</th>
+                                    <th scope="col">Acciones</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for sanitary, animal_count in sanitary_list %}
+                                    <tr>
+                                        <td>{{ sanitary.name }}</td>
+                                        <td>{{ sanitary.antiparasitic }}</td>
+                                        <td>{{ sanitary.copper }}</td>
+                                        <td>{{ sanitary.clostridiosis }}</td>
+                                        <td>{{ sanitary.animal_type }}</td>
+                                        <td>{{ animal_count }}</td>
+                                        <td>
+                                            <ul class="d-flex justify-content-center">
+                                                <li class="mr-3"><a href="{% url 'sanitary_book_detail' pk=sanitary.pk %}" class="text-secondary"><i class="fa fa-search"></i></a></li>
+                                                <li class="mr-3"><a href="{% url 'sanitary_book_edit' pk=sanitary.pk %}" class="text-secondary"><i class="fa fa-pencil"></i></a></li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="mt-3">
+            <ul class="pagination justify-content-center">
+                {% if sanitary_list.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ sanitary_list.previous_page_number }}">Previous</a>
+                    </li>
+                {% endif %}
+                    <li class="page-item active">
+                        <a class="page-link" href="#">{{ sanitary_list.number }}<span class="sr-only">(current)</span></a>
+                    </li>
+                {% if sanitary_list.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ sanitary_list.next_page_number }}">Next</a>
+                    </li>
+                {% endif %} 
+            </ul>
+        </div>
     </div>
+
+    <div class="col-md-8  mt-3">
+        <div class="card">
+            <canvas id="sanitaryComponentChart" width="400" height="200"></canvas>
+        </div>
+    </div>
+    <div class="col-md-4 mt-3">
+        <div class="card">
+            <canvas id="sanitaryAnimalsChart" width="400" height="400"></canvas>
+        </div>
+    </div>
+
+    <script>
+
+    $.ajax({
+        type: 'GET',
+        url: 'api/chart/data/',
+        success: function (data) {
+            setSanitaryComponentChart(data.sanitary, data.sanitary_copper, data.sanitary_clostridiosis)
+            setSanitaryAnimalsChart(data.sanitary, data.sanitary_animal_count)
+        },
+        error: function(data) {
+        },
+    });
+
+    function setSanitaryComponentChart(sanitary, sanitary_copper, sanitary_clostridiosis){
+        var ctx = document.getElementById('sanitaryComponentChart').getContext('2d');
+        var sanitaryComponentChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: sanitary,
+                datasets: [{
+                    label: 'Cobre',
+                    data: sanitary_copper,
+                    backgroundColor: 'rgb(127, 0, 255)',
+                    }, {
+                    label: 'Clostridiosis',
+                    data: sanitary_clostridiosis,
+                    backgroundColor: 'rgb(255, 99, 132)',
+                    }]
+                },
+            options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+    }
+
+    function setSanitaryAnimalsChart(sanitary, sanitary_animal_count){
+        var ctx = document.getElementById('sanitaryAnimalsChart').getContext('2d');
+        var ict_unit = [];
+        var efficiency = [];
+        var coloR = [];
+
+        var dynamicColors = function() {
+            var hue = Math.floor(Math.random() * 360);
+            return 'hsl(' + hue + ', 100%, 80%)';
+        };
+
+        for (var i in sanitary) {
+            ict_unit.push("ICT Unit " + sanitary[i].ict_unit);
+            efficiency.push(sanitary[i].efficiency);
+            coloR.push(dynamicColors());
+        }
+        
+        var sanitaryAnimalsChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: sanitary,
+                datasets: [{
+                    data: sanitary_animal_count,
+                    backgroundColor: coloR,
+                    }]
+                },
+
+            options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+    }
+    </script>
 {% endblock %}
+

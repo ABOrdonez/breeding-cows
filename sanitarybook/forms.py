@@ -5,4 +5,15 @@ from .models import Sanitary
 class SanitaryForm(forms.ModelForm):
     class Meta:
         model = Sanitary
-        fields = ('name', 'antiparasitic', 'copper', 'clostridiosis', 'animal_type', 'description')
+        fields = (
+        	'name',
+        	'antiparasitic',
+        	'copper',
+        	'clostridiosis',
+        	'animal_type',
+        	'description'
+        )
+        
+        widgets = {
+            'description': forms.Textarea(attrs={'class': 'form-control'}),
+        }

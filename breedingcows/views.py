@@ -24,7 +24,7 @@ def breeding_cows_list(request):
             leaving_date__isnull=True
         ).count()])
 
-    paginator = Paginator(breeding_cows, 7)
+    paginator = Paginator(breeding_cows, 4)
     page = request.GET.get('page')
     breeding_cows_pagenated = paginator.get_page(page)
 
@@ -74,9 +74,7 @@ def breeding_cow_new(request):
         form = BreedingCowForm(request.POST)
         if form.is_valid():
             breeding_cow = form.save(commit=False)
-            breeding_cow.entry_date = timezone.now()
             breeding_cow.owner = request.user
-            breeding_cow.status = "ACTIVO"
             breeding_cow.save()
             return redirect('breeding_cow_detail', pk=breeding_cow.pk)
     else:
@@ -458,7 +456,7 @@ class ChartData(APIView):
     permission_classes = []
 
     def get(self, request, format=None):
-        breeding_cows_location = BreedingCows.objects.filter(leaving_date__isnull=True).order_by('entry_date').values_list('location', flat=True)
+        breeding_cows_address = BreedingCows.objects.filter(leaving_date__isnull=True).order_by('entry_date').values_list('address', flat=True)
 
         breeding_cows_all = BreedingCows.objects.filter(leaving_date__isnull=True).order_by('entry_date')
         breeding_cows_animal_count = []
@@ -466,14 +464,16 @@ class ChartData(APIView):
         breeding_cows_ternero_count = []
         breeding_cows_vaquillonas_count = []
         breeding_cows_toros_count = []
-        
+        breeding_cows_reproduction_in_process = []
+
         animals_types = ['Vaca', 'Ternero', 'Vaquillona', 'Toro']
         vacas_count = 0
         ternero_count = 0
         vaquillonas_count = 0
         toros_count = 0
 
-        for breeding_cow in breeding_cows_all: 
+        for breeding_cow in breeding_cows_all:
+            animals = Animals.objects.all().filter(breeding_cows=breeding_cow, leaving_date__isnull=True)
             breeding_cows_animal_count.append(Animals.objects.all().filter(breeding_cows=breeding_cow, leaving_date__isnull=True).count())
             breeding_cows_vacas_count.append(Animals.objects.all().filter(breeding_cows=breeding_cow, animal_type="Vaca", leaving_date__isnull=True).count())
             breeding_cows_ternero_count.append(Animals.objects.all().filter(breeding_cows=breeding_cow, animal_type="Ternero", leaving_date__isnull=True).count())
@@ -485,8 +485,18 @@ class ChartData(APIView):
             vaquillonas_count = vaquillonas_count + Animals.objects.all().filter(breeding_cows=breeding_cow, animal_type="Vaquillona", leaving_date__isnull=True).count()
             toros_count = toros_count + Animals.objects.all().filter(breeding_cows=breeding_cow, animal_type="Toro", leaving_date__isnull=True).count()
 
+            reproduction_in_process_count = 0
+            for animal in animals:
+                reproductionInProcess = AnimalRepoduction.objects.filter(
+                    animal=animal,
+                    finished_date__isnull=True).first()
+                if reproductionInProcess:
+                    reproduction_in_process_count += 1
+
+            breeding_cows_reproduction_in_process.append(reproduction_in_process_count)
+
         data = {
-            "breeding_cows": breeding_cows_location,
+            "breeding_cows": breeding_cows_address,
             "breeding_cows_animal_count": breeding_cows_animal_count,
             "breeding_cows_vacas_count": breeding_cows_vacas_count,
             "breeding_cows_vaquillonas_count": breeding_cows_vaquillonas_count,
@@ -497,5 +507,6 @@ class ChartData(APIView):
             "ternero_count": ternero_count,
             "vaquillonas_count": vaquillonas_count,
             "toros_count": toros_count,
+            "breeding_cows_reproduction_in_process": breeding_cows_reproduction_in_process,
         }
         return Response(data)

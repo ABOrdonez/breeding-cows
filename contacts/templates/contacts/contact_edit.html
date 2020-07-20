@@ -1,4 +1,13 @@
 {% extends 'breedingcows/base.html' %}
+{% load widget_tweaks %}
+
+
+{% block header %}
+    <h4 class="page-title pull-left">Editar Contacto</h4>
+    <ul class="breadcrumbs pull-left">
+        <li><span>Editar Contacto</span></li>
+    </ul>
+{% endblock %}
 
 {% block content %}
     <div class="col-12 mt-5">
@@ -7,23 +16,50 @@
                 <h4 class="header-title">Contacto</h4>
                 <form method="POST" class="post-form">
                     {% csrf_token %}
-                    <div class="form-group col-6">
-                        <label for="first_name">Nombre</label>
-                        <input name="first_name" class="form-control" id="id_first_name" placeholder="Ingrese el nombre del Contacto" type="text" value="{{form.first_name.value}}">
+                    <div class="form-group">
+                        <div class="modal-body">
+                             <div class="row"> 
+                                <div class="form-group col-6">
+                                    <b class="text-muted mb-3 d-block">Datos de identificacion del contacto</b>
 
-                        <label for="last_name">Apellido</label>
-                        <input name="last_name" class="form-control" id="id_last_name" placeholder="Ingrese el apellido del Contacto" type="text" value="{{form.last_name.value}}">
+                                    <label for="first_name">Nombre</label>
+                                    <input name="first_name" class="form-control" id="id_first_name" placeholder="Ingrese el nombre" type="text" value="{{form.first_name.value}}">
+                                    <br>
 
-                        <label for="phone">Telefono</label>
-                        <input name="phone" class="form-control" id="id_phone" placeholder="Ingrese el telefono del Contacto" type="text" value="{{form.phone.value}}">
+                                    <label for="last_name">Apellido</label>
+                                    <input name="last_name" class="form-control" id="id_last_name" placeholder="Ingrese el apellido" type="text" value="{{form.last_name.value}}">
+                                    <br>
 
-                        <label for="email">Mail</label>
-                        <input name="email" class="form-control" id="id_email" placeholder="Ingrese el mail del Contacto" type="text" value="{{form.email.value}}">
+                                    <label for="birthday">Fecha de nacimiento</label>
+                                    <input name="birthday" class="form-control" id="id_birthday" type="date" value="{{form.birthday.value}}">
+                                    <br>
 
-                        <label for="birthday">birthday</label>
-                        <input name="birthday" class="form-control" id="id_birthday" type="date" value="{{form.birthday.value}}">
+                                    <label for="civil_status">Estado civil</label>
+                                    {% render_field form.civil_status class="form-control" %}
 
-                        <button type="submit" class="btn btn-outline-success btn-lg btn-block mt-3">Guardar</button>
+                                </div>
+                                <div class="form-group col-6">
+                                    <b class="text-muted mb-3 d-block">Datos de contacto</b>
+
+                                    <label for="phone">Telefono</label>
+                                    <input name="phone" class="form-control" id="id_phone" placeholder="Ingrese el telefono" type="text" value="{{form.phone.value}}">
+                                    <br>
+
+                                    <label for="email">Mail</label>
+                                    <input name="email" class="form-control" id="id_email" placeholder="Ingrese el mail" type="text" value="{{form.email.value}}">
+                                    <br>
+
+                                    <label for="province">Provincia a la que pertenece</label>
+                                    <input name="province" class="form-control" id="id_provincel" placeholder="Ingrese la provincia de residencia" type="text" value="{{form.province.value}}">
+                                    <br>
+
+                                    <label for="direction">Direccion a la que pertenece</label>
+                                    <input name="direction" class="form-control" id="id_direction" placeholder="Ingrese la dirreccion de residencia" type="text" value="{{form.direction.value}}">
+                                </div>
+
+                                <button type="submit" class="btn btn-outline-success btn-lg btn-block mt-3">Guardar</button>
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>

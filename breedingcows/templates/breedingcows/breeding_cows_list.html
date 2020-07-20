@@ -8,140 +8,171 @@
 {% endblock %}
 
 {% block content %}
-    <div class="content container">
-        <div class="row">
-            <div class="col-md-8">
-                <!-- Progress Table start -->
-                <div class="mt-5">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <h4 class="header-title">Rodeos de Cria</h4>
-                                </div>
-                            </div>
-                            <div class="single-table">
-                                <div class="table-responsive">
-                                    <table class="table table-hover progress-table text-center">
-                                        <thead class="text-uppercase">
-                                        <tr>
-                                            <th scope="col">Localidad</th>
-                                            <th scope="col">Dueño</th>
-                                            <th scope="col">Numero de Animales</th>
-                                            <th scope="col">action</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                            <div id= "idDivGeneral">
-                                                {% for breeding_cow, amountAnimals in breeding_cows %}
-                                                    <tr>
-                                                        <td>{{ breeding_cow.location }}</td>
-                                                        <td>{{ breeding_cow.owner }}</td>
-                                                        <td>{{ amountAnimals }}</td>
-                                                        <td>
-                                                            <ul class="d-flex justify-content-center">
-                                                                <li class="mr-3"><a href="{% url 'breeding_cow_detail' pk=breeding_cow.pk %}" class="text-secondary"><i class="fa fa-search"></i></a></li>
-                                                                <li class="mr-3"><a href="{% url 'breeding_cow_edit' pk=breeding_cow.pk %}" class="text-secondary"><i class="fa fa-pencil"></i></a></li>
-                                                                <li><a onclick="open_confirm_action_modal({{breeding_cow.id}})" class="text-danger"><i class="ti-trash"></i></a></li>
-
-                                                            </ul>
-                                                        </td>
-                                                    </tr>
-
-                                                    <!-- Modal -->
-                                                    <div class="modal fade show" id="idConfirmActionModal{{breeding_cow.id}}" tabindex="-1" aria-hidden="true" >
-                                                        <div class="modal-dialog">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                    <h5 class="modal-title">¿Seguro que desea eliminar el Rodeo {{breeding_cow.location}}?</h5>
-                                                                    <button type="button" class="close" data-dismiss="modal"><span>×</span></button>
-                                                                </div>
-                                                                <div class="modal-body">
-                                                                    <p> Una vez aceptado, el rodeo de cria será eliminado. En caso de necesitar reestablecer el
-                                                                        rodeo, comunicarse con servicio tecnico. </p>
-                                                                </div>
-                                                                <div class="modal-footer">
-                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Volver atrás</button>
-                                                                    <a href="{% url 'breeding_cow_delete' pk=breeding_cow.pk %}"
-                                                                    role="button" class="btn btn-primary">Aceptar</a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                {% endfor %}
-                                            </div>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
+    <div class="col-xl-12">
+        <!-- Progress Table start -->
+        <div class="mt-2">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <h4 class="header-title">Rodeos de Cria</h4>
                         </div>
                     </div>
-                        <br>
-                        <ul class="pagination justify-content-center">
-                            {% if breeding_cows.has_previous %}
-                                <li class="page-item">
-                                    <a class="page-link" href="?page={{ breeding_cows.previous_page_number }}">Previous</a>
-                                </li>
-                            {% endif %}
-                                <li class="page-item active">
-                                    <a class="page-link" href="#">{{ breeding_cows.number }}<span class="sr-only">(current)</span></a>
-                                </li>
-                            {% if breeding_cows.has_next %}
-                                <li class="page-item">
-                                    <a class="page-link" href="?page={{ breeding_cows.next_page_number }}">Next</a>
-                                </li>
-                            {% endif %} 
-                        </ul>
+                    <div class="single-table">
+                        <div class="table-responsive">
+                            <table class="table table-hover progress-table text-center">
+                                <thead class="text-uppercase">
+                                <tr>
+                                    <th scope="col">Dirección</th>
+                                    <th scope="col">Dueño</th>
+                                    <th scope="col">Numero de Animales</th>
+                                    <th scope="col">action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                    <div id= "idDivGeneral">
+                                        {% for breeding_cow, amountAnimals in breeding_cows %}
+                                            <tr>
+                                                <td>{{ breeding_cow.address }}</td>
+                                                <td>{{ breeding_cow.contact }}</td>
+                                                <td>{{ amountAnimals }}</td>
+                                                <td>
+                                                    <ul class="d-flex justify-content-center">
+                                                        <li class="mr-3"><a href="{% url 'breeding_cow_detail' pk=breeding_cow.pk %}" class="text-secondary"><i class="fa fa-search"></i></a></li>
+                                                        <li class="mr-3"><a href="{% url 'breeding_cow_edit' pk=breeding_cow.pk %}" class="text-secondary"><i class="fa fa-pencil"></i></a></li>
+                                                        <li><a onclick="open_confirm_action_modal({{breeding_cow.id}})" class="text-danger"><i class="ti-trash"></i></a></li>
+
+                                                    </ul>
+                                                </td>
+                                            </tr>
+
+                                            <!-- Modal -->
+                                            <div class="modal fade show" id="idConfirmActionModal{{breeding_cow.id}}" tabindex="-1" aria-hidden="true" >
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">¿Seguro que desea eliminar el Rodeo {{breeding_cow.address}}?</h5>
+                                                            <button type="button" class="close" data-dismiss="modal"><span>×</span></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p> Una vez aceptado, el rodeo de cria será eliminado. En caso de necesitar reestablecer el
+                                                                rodeo, comunicarse con servicio tecnico. </p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Volver atrás</button>
+                                                            <a href="{% url 'breeding_cow_delete' pk=breeding_cow.pk %}"
+                                                            role="button" class="btn btn-primary">Aceptar</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-4 mt-5">
-                <div class="card">
-                    <canvas id="myChart" width="400" height="400"></canvas>
-                </div>
-                <div class="card">
-                    <canvas id="myChart1" width="400" height="400"></canvas>
-                </div>
-            </div>
-            <div class="col-md-4 mt-5">
-                <div class="card">
-                    <canvas id="myChart1" width="400" height="400"></canvas>
-                </div>
+            <div class="mt-3">
+                <ul class="pagination justify-content-center">
+                    {% if breeding_cows.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ breeding_cows.previous_page_number }}">Previous</a>
+                        </li>
+                    {% endif %}
+                        <li class="page-item active">
+                            <a class="page-link" href="#">{{ breeding_cows.number }}<span class="sr-only">(current)</span></a>
+                        </li>
+                    {% if breeding_cows.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ breeding_cows.next_page_number }}">Next</a>
+                        </li>
+                    {% endif %} 
+                </ul>
             </div>
         </div>
-        
     </div>
+    <div class="col-md-4 mt-3">
+        <div class="card">
+            <canvas id="totalAnimalsPerBreedingCowChart" width="400" height="400"></canvas>
+        </div>
+    </div>
+    <div class="col-md-4 mt-3">
+        <div class="card">
+            <canvas id="totalAnimalTypesPerBreedingCowChart" width="400" height="400"></canvas>
+        </div>
+    </div>
+    <div class="col-md-4 mt-3">
+        <div class="card">
+            <canvas id="totalReprocutinPerBreedingCowChart" width="400" height="400"></canvas>
+        </div>
+    </div>     
 
     <script>
     $.ajax({
-            type: 'GET',
-            url: 'api/breeding_cow/chart/data/',
-            success: function (data) {
-                setChart(data.breeding_cows,data.breeding_cows_animal_count)
-                setChart1(data.animals_types, data.vacas_count, data.ternero_count, data.vaquillonas_count, data.toros_count)
-            },
-            error: function(data) {
-            },
-        });
+        type: 'GET',
+        url: 'api/breeding_cow/chart/data/',
+        success: function (data) {
+            setTotalAnimalsPerBreedingCowChart(data.breeding_cows,data.breeding_cows_animal_count)
+            setTotalAnimalTypesPerBreedingCowChart(data.animals_types, data.vacas_count, data.ternero_count, data.vaquillonas_count, data.toros_count)
+            setTotalReproductionsPerBreedingCowChart(data.breeding_cows,data.breeding_cows_reproduction_in_process)
+        },
+        error: function(data) {
+        },
+    });
 
-    function setChart(breeding_cows_location, breeding_cows_animal_count){
-        var ctx = document.getElementById('myChart').getContext('2d');
-            var myChart = new Chart(ctx, {
+    function setTotalAnimalsPerBreedingCowChart(breeding_cows_address, breeding_cows_animal_count){
+        var ctx = document.getElementById('totalAnimalsPerBreedingCowChart').getContext('2d');
+            var totalAnimalsPerBreedingCowChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: breeding_cows_location,
+                    labels: breeding_cows_address,
                     datasets: [{
                         label: 'Animales en los Rodeos',
                         data: breeding_cows_animal_count,
                         backgroundColor: 'rgb(127, 0, 255)',
-                        borderColor: 'rgb(127, 0, 255)',
                         }]
                     },
+                options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
                 });
     }
 
-    function setChart1(animals_types, vacas_count, ternero_count, vaquillonas_count, toros_count){
-        var ctx = document.getElementById('myChart1').getContext('2d');
-            var myChart1 = new Chart(ctx, {
+    function setTotalReproductionsPerBreedingCowChart(breeding_cows_address, breeding_cows_reproduction_count){
+        var ctx = document.getElementById('totalReprocutinPerBreedingCowChart').getContext('2d');
+            var totalReprocutinPerBreedingCowChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: breeding_cows_address,
+                    datasets: [{
+                        label: 'Animales con procesos de reprodiccón iniciados',
+                        data: breeding_cows_reproduction_count,
+                        backgroundColor: 'rgb(255, 99, 132)',
+                        }]
+                    },
+                options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+    }
+
+    function setTotalAnimalTypesPerBreedingCowChart(animals_types, vacas_count, ternero_count, vaquillonas_count, toros_count){
+        var ctx = document.getElementById('totalAnimalTypesPerBreedingCowChart').getContext('2d');
+            var totalAnimalTypesPerBreedingCowChart = new Chart(ctx, {
                 type: 'polarArea',
                 data: {
                     labels: animals_types,

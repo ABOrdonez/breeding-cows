@@ -5,4 +5,3 @@ from .models import WorkPosition
 
 admin.site.register(BreedingCows)
 admin.site.register(WorkPosition)
-

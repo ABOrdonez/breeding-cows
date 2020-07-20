@@ -60,7 +60,7 @@ urlpatterns = [
         views.animal_delete,
         name='animal_delete'
     ),
-        path(
+    path(
         '<int:breedingCowsPk>/animals/list/<str:animalType>/',
         views.animals_list,
         name='animals_list'

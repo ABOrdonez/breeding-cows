@@ -27,37 +27,51 @@ class StatusType(Enum):
 
 
 class BreedingCows(models.Model):
-    location = models.CharField(max_length=50, null=False, blank=False, default='')
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
-    contact = models.ForeignKey(Contact, on_delete=models.CASCADE, null=True, blank=True)
+    address = models.CharField(
+        max_length=1000,
+        null=False,
+        blank=False,
+        default=''
+    )
+    province = models.CharField(
+        max_length=1000,
+        null=False,
+        blank=False,
+        default=''
+    )
+    owner = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
+    contact = models.ForeignKey(
+        Contact,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
     entry_date = models.DateTimeField(blank=True, null=True)
     leaving_date = models.DateTimeField(blank=True, null=True)
-    status = models.CharField(max_length=50, choices=StatusType.choices(), default=StatusType.ACTIVO)
-
-    def get_status_type_label(self):
-        return StatusType(self.type).name.title()
+    description = models.CharField(default='', max_length=1000)
 
     def add_leaving_date(self):
         self.leaving_date = timezone.now()
         self.save()
-        return self.location
+        return self.address
 
     def __str__(self):
-        return self.location
+        return self.address
 
 
 class WorkPosition(models.Model):
     breeding_cows = models.ForeignKey(BreedingCows, on_delete=models.CASCADE)
     person = models.ForeignKey(contactsmodels.Contact, on_delete=models.CASCADE, null=True, blank=True)
     entry_date = models.DateTimeField(blank=True, null=True)
-    status = models.CharField(choices=StatusType.choices(), default=StatusType.ACTIVO, max_length=50)
     position = models.CharField(choices=PositionType.choices(), default=PositionType.DUEÑO, max_length=50)
 
     def get_position_type_label(self):
         return PositionType(self.type).name.title()
-
-    def get_status_type_label(self):
-        return StatusType(self.type).name.title()
 
     def __str__(self):
         return self.person.username

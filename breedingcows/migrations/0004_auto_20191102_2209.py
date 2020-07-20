@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='workposition',
             name='status',
-            field=models.IntegerField(choices=[('Activo', 'ACTIVO'), ('Eliminado', 'ELIMINADO'), ('Suspendido', 'SUSPENDIDIO')], default=breedingcows.models.StatusType('Activo')),
+            field=models.IntegerField(choices=[('Activo', 'ACTIVO'), ('Eliminado', 'ELIMINADO'), ('Suspendido', 'SUSPENDIDIO')], default='a'),
         ),
     ]
