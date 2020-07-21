@@ -2,10 +2,11 @@ from .models import Sanitary
 from .forms import SanitaryForm
 from django.utils import timezone
 from django.shortcuts import render, get_object_or_404, redirect
-from animals.models import AnimalSanitary
+from animals.models import AnimalSanitary, Animals
 from django.core.paginator import Paginator
 from rest_framework.views import APIView
 from rest_framework.response import Response
+
 
 
 def sanitary_book_list(request):
@@ -44,20 +45,38 @@ def sanitary_book_edit(request, pk):
 
 def sanitary_book_detail(request, pk):
     sanitary = get_object_or_404(Sanitary, pk=pk)
-    return render(request, 'sanitarybook/sanitary_book_detail.html', {'sanitary': sanitary})
+    animals = AnimalSanitary.objects.values_list(
+        'animal',
+        flat=True
+    ).filter(
+        sanitary=sanitary
+    )
+    breeding_cows_list = []
+
+    for animal in animals:
+        animalposta = get_object_or_404(Animals, pk=animal)
+        breeding_cows_list.append(animalposta.breeding_cows)
+
+    return render(
+        request,
+        'sanitarybook/sanitary_book_detail.html',
+        {
+            'sanitary': sanitary,
+            'animal_count': len(animals),
+            'breeding_cows_count': len(set(breeding_cows_list))
+        }
+    )
 
 
 def sanitary_book_new(request):
     if request.method == "POST":
         form = SanitaryForm(request.POST)
         if form.is_valid():
-            print("ES VALIDO BITCHES")
             sanitary = form.save(commit=False)
             sanitary.created_date = timezone.now()
             sanitary.owner = request.user
             sanitary.save()
             return redirect('sanitary_book_detail', pk=sanitary.pk)
-
     else:
         form = SanitaryForm()
         return render(request, 'sanitarybook/sanitary_book_edit.html', {'form': form})

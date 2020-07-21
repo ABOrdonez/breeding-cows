@@ -8,66 +8,63 @@
 {% endblock %}
 
 {% block content %}
-    <div class="content container">
-        <div class="row">
-            <div class="col-12 mt-5">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="col-md-6">
+    <div class="col-xl-12">
+        <div class="mt-2">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-5">
                             <h4 class="header-title">Contactos</h4>
                         </div>
-                        <div class="single-table">
-                            <div class="table-responsive">
-                                <table class="table table-hover progress-table text-center">
-                                    <thead class="text-uppercase">
+                    </div>
+                    <div class="single-table">
+                        <div class="table-responsive">
+                            <table class="table table-hover progress-table text-center">
+                                <thead class="text-uppercase">
+                                <tr>
+                                    <th scope="col">Apellido</th>
+                                    <th scope="col">Nombre</th>
+                                    <th scope="col">Numero de Telefono</th>
+                                    <th scope="col">Acciones</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for contact in contacts %}
                                     <tr>
-                                        <th scope="col">Apellido</th>
-                                        <th scope="col">Nombre</th>
-                                        <th scope="col">Numero de Telefono</th>
-                                        <th scope="col">Acciones</th>
+                                        <td>{{ contact.last_name }}</td>
+                                        <td>{{ contact.first_name }}</td>
+                                        <td>{{ contact.phone }}</td>
+                                        <td>
+                                            <ul class="d-flex justify-content-center">
+                                                <li class="mr-3"><a href="{% url 'contact_detail' pk=contact.pk %}" class="text-secondary"><i class="fa fa-search"></i></a></li>
+                                                <li class="mr-3"><a href="{% url 'contact_edit' pk=contact.pk %}" class="text-secondary"><i class="fa fa-pencil"></i></a></li>
+                                            </ul>
+                                        </td>
                                     </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for contact in contacts %}
-                                        <tr>
-                                            <td>{{ contact.last_name }}</td>
-                                            <td>{{ contact.first_name }}</td>
-                                            <td>{{ contact.phone }}</td>
-                                            <td>
-                                                <ul class="d-flex justify-content-center">
-                                                    <li class="mr-3"><a href="{% url 'contact_detail' pk=contact.pk %}" class="text-secondary"><i class="fa fa-search"></i></a></li>
-                                                    <li class="mr-3"><a href="{% url 'contact_edit' pk=contact.pk %}" class="text-secondary"><i class="fa fa-pencil"></i></a></li>
-                                                </ul>
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
+                                {% endfor %}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="mt-3">
+                <ul class="pagination justify-content-center">
+                    {% if contacts.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ contacts.previous_page_number }}">Previous</a>
+                        </li>
+                    {% endif %}
+                        <li class="page-item active">
+                            <a class="page-link" href="#">{{ contacts.number }}<span class="sr-only">(current)</span></a>
+                        </li>
+                    {% if contacts.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ contacts.next_page_number }}">Next</a>
+                        </li>
+                    {% endif %} 
+                </ul>
+            </div>
         </div>
-
-        <div class="mt-3">
-            <ul class="pagination justify-content-center">
-                {% if contacts.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ contacts.previous_page_number }}">Previous</a>
-                    </li>
-                {% endif %}
-                    <li class="page-item active">
-                        <a class="page-link" href="#">{{ contacts.number }}<span class="sr-only">(current)</span></a>
-                    </li>
-                {% if contacts.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ contacts.next_page_number }}">Next</a>
-                    </li>
-                {% endif %} 
-            </ul>
-        </div>
-
     </div>
 {% endblock %}
-

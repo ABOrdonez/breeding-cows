@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Diet
 from .forms import DietForm
-from animals.models import AnimalDiet
+from animals.models import AnimalDiet, Animals
 from django.utils import timezone
 from django.shortcuts import redirect
 from rest_framework.views import APIView
@@ -28,8 +28,27 @@ def diets_list(request):
 
 def diet_detail(request, pk):
     diet = get_object_or_404(Diet, pk=pk)
+    animals = AnimalDiet.objects.values_list(
+        'animal',
+        flat=True
+    ).filter(
+        diet=diet
+    )
+    breeding_cows_list = []
 
-    return render(request, 'diets/diet_detail.html', {'diet': diet})
+    for animal in animals:
+        animalposta = get_object_or_404(Animals, pk=animal)
+        breeding_cows_list.append(animalposta.breeding_cows)
+
+    return render(
+        request,
+        'diets/diet_detail.html',
+        {
+            'diet': diet,
+            'animal_count': len(animals),
+            'breeding_cows_count': len(set(breeding_cows_list))
+        }
+    )
 
 
 def diet_edit(request, pk):
