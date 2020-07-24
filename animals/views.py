@@ -8,6 +8,10 @@ from .models import (
 )
 from breedingcows.models import BreedingCows
 from reproduction.models import Reproduction
+from breedingcows.views import (
+    get_reproductions_process_on_time,
+    get_weaning_on_time
+)
 from diets.models import Diet
 from reproduction.forms import ReproductionForm
 from sanitarybook.models import Sanitary
@@ -503,6 +507,60 @@ def animals_list(request, breedingCowsPk, animalType):
             'breeding_cow': breedingCows,
             'animals': animalsInfoPaginated,
             'animal_type': animalType
+        }
+    )
+
+
+@csrf_exempt
+def animal_sanitary_new(request, breedingCowsPk):
+    if request.method == "POST":
+        animal = get_object_or_404(Animals, id=request.POST['idAnimal'])
+        sanitary = get_object_or_404(Sanitary, id=request.POST['idSanitary'])
+
+        animalSanitaryForm = AnimalSanitaryForm()
+        animalSanitary = animalSanitaryForm.save(commit=False)
+        animalSanitary.animal = animal
+        animalSanitary.sanitary = sanitary
+        animalSanitary.done_date = timezone.now()
+        animalSanitary.save()
+
+    breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
+    animals = Animals.objects.order_by(
+        'flock_number'
+    ).filter(
+        breeding_cows=breedingCows,
+        leaving_date__isnull=True
+    )
+    sanitaries = Sanitary.objects.order_by('name')
+    return render(
+        request,
+        'animals/animal_sanitary_new.html',
+        {
+            'animals': animals,
+            'breeding_cow': breedingCows,
+            'sanitaries': sanitaries
+        }
+    )
+
+
+def animal_on_time_process(request, breedingCowsPk):
+    breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
+    animals = Animals.objects.order_by(
+        'flock_number'
+    ).filter(
+        breeding_cows=breedingCows,
+        leaving_date__isnull=True
+    )
+    reproduction_in_process = get_reproductions_process_on_time(animals)
+    calfs = get_weaning_on_time(breedingCowsPk)
+
+    return render(
+        request,
+        'animals/animals_on_time_list.html',
+        {
+            'breeding_cow': breedingCows,
+            'reproduction_in_process': reproduction_in_process,
+            'calfs': calfs,
         }
     )
 

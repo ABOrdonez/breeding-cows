@@ -65,4 +65,14 @@ urlpatterns = [
         views.animals_list,
         name='animals_list'
     ),
+    path(
+        '<int:breedingCowsPk>/animals/sanitary/new/',
+        views.animal_sanitary_new,
+        name='animal_sanitary_new'
+    ),
+    path(
+        '<int:breedingCowsPk>/animals/ontime/',
+        views.animal_on_time_process,
+        name='animal_on_time_process'
+    ),
 ]

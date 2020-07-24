@@ -43,13 +43,13 @@
                     <h4 class="header-title">Notificaciones</h4>
                     <div class="row">
                         <div class="col-lg-4 col-md-4 col-sm-6">
-                            <a href="{% url 'breeding_cow_notification' pk=breeding_cow.pk notification_type='on_time' %}" role="button" class="btn btn-success btn-lg btn-block"> A tiempo <span class="badge badge-light">{{on_time_amount}}</span></a>
+                            <a href="{% url 'animal_on_time_process' breedingCowsPk=breeding_cow.pk %}" role="button" class="btn btn-success btn-lg btn-block"> A tiempo <span class="badge badge-light">{{on_time_amount}}</span></a>
                         </div>
                         <div class="col-lg-4 col-md-4 col-sm-6">
-                            <a href="{% url 'breeding_cow_notification' pk=breeding_cow.pk notification_type='on_time' %}" role="button" class="btn btn-warning btn-lg btn-block"> Advertencia <span class="badge badge-light">{{warning_amount}}</span></a>
+                            <a href="{% url 'animal_on_time_process' breedingCowsPk=breeding_cow.pk %}" role="button" class="btn btn-warning btn-lg btn-block"> Advertencia <span class="badge badge-light">{{warning_amount}}</span></a>
                         </div>
                         <div class="col-lg-4 col-md-4 col-sm-6">
-                             <a href="{% url 'breeding_cow_notification' pk=breeding_cow.pk notification_type='on_time' %}" role="button" class="btn btn-danger btn-lg btn-block"> Atrazado <span class="badge badge-light">{{danger_amount}}</span></a>
+                             <a href="{% url 'animal_on_time_process' breedingCowsPk=breeding_cow.pk %}" role="button" class="btn btn-danger btn-lg btn-block"> Atrazado <span class="badge badge-light">{{danger_amount}}</span></a>
                         </div>
                     </div>
                 </div>
@@ -116,6 +116,7 @@
                 <h4 class="header-title">Posibles acciones</h4>
                 <a href="{% url 'animal_new' breedingCowsPk=breeding_cow.pk %}" role="button" class="btn btn-outline-secondary btn-lg btn-block">Agregar animal</a>
                 <a href="{% url 'animal_diet_new' breedingCowsPk=breeding_cow.pk%}" role="button" class="btn btn-outline-secondary btn-lg btn-block">Asociar dieta alimenticia</a>
+                <a href="{% url 'animal_sanitary_new' breedingCowsPk=breeding_cow.pk%}" role="button" class="btn btn-outline-secondary btn-lg btn-block">Asociar libreta Sanitaria</a>
                 <a href="{% url 'animal_weaning_new' breedingCowsPk=breeding_cow.pk%}" role="button" class="btn btn-outline-secondary btn-lg btn-block">Aplicar destete</a>  
                 <a href="{% url 'animal_palpation_new' breedingCowsPk=breeding_cow.pk%}" role="button" class="btn btn-outline-secondary btn-lg btn-block">Asociar palpitacion rectal</a>
                 <a href="{% url 'animal_reproduction_type_new' breedingCowsPk=breeding_cow.pk%}" role="button" class="btn btn-outline-secondary btn-lg btn-block">Iniciar proceso previo al servicio</a>

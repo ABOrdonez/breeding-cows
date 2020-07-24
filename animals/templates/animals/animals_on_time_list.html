@@ -1,0 +1,69 @@
+{% extends 'breedingcows/base.html' %}
+
+{% block header %}
+    <h4 class="page-title pull-left">Notificaciones</h4>
+    <ul class="breadcrumbs pull-left">
+        <li><a href="{% url 'breeding_cow_detail' pk=breeding_cow.pk %}">Detalle del Rodeo de Cría</a></li>
+        <li><span>A tiempo</span></li>
+    </ul>
+{% endblock %} 
+
+{% block content %}
+
+    <div class="col-lg-12 mt-5">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title">Reproducciones en proceso</h4>
+                <div class="single-table">
+                    <div class="table-responsive">
+                        <table class="table text-center">
+                            <thead class="text-uppercase bg-success">
+                                <tr class="text-white">
+                                    <th scope="col">N° de rebaño</th>
+                                    <th scope="col">Tipo de reproduccion</th>
+                                    <th scope="col">Preparacion previa</th>
+                                    <th scope="col">Ejecución</th>
+                                    <th scope="col">Revicin</th>
+                                    <th scope="col">Separación</th>
+                                    <th scope="col">Potencial parto</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for reproduccion in reproduction_in_process%}
+                                    {% if not reproduccion.finished_date %}
+                                        <tr>
+                                            <th scope="row">{{reproduccion.animal.flock_number}}</th>
+                                            <td>{{reproduccion.reproduction.reproduction_type}}</td>
+                                            <td>{{reproduccion.reproduction.preparation_date}}</td>
+                                            {% if reproduccion.reproduction.execution_date %}
+                                                <td>{{reproduccion.reproduction.execution_date}}</td>
+                                            {% else %}
+                                                <td>-</td>
+                                            {% endif %}
+                                            {% if reproduccion.reproduction.revision_date %}
+                                                <td>{{reproduccion.reproduction.revision_date}}</td>
+                                            {% else %}
+                                                <td>-</td>
+                                            {% endif %}
+                                            {% if reproduccion.reproduction.separation_date %}
+                                                <td>{{reproduccion.reproduction.separation_date}}</td>
+                                            {% else %}
+                                                <td>-</td>
+                                            {% endif %}
+                                            {% if eproduccion.reproduction.potential_give_birth_date %}
+                                                <td>{{reproduccion.reproduction.potential_give_birth_date}}</td>
+                                            {% else %}
+                                                <td>-</td>
+                                            {% endif %}
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
