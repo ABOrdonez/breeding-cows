@@ -649,7 +649,6 @@ def animal_warning_process(request, breedingCowsPk):
 
     animals_without_reproduction = get_animals_without_reproduction_in_process_warning(animals)
     animals_without_reproduction_info = get_animals_info_warning(animals_without_reproduction)
-    print(animals_without_reproduction_info)
 
     paginator = Paginator(animals_without_reproduction_info, 5)
     page = request.GET.get('page')
