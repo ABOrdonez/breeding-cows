@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime
 from reproduction.models import ReproductionProcessDays
+from operator import attrgetter
 
 
 def breeding_cows_list(request):
@@ -56,10 +57,13 @@ def breeding_cow_detail(request, pk):
 
     on_time_amount = len(get_reproductions_process_on_time(animals))
     on_time_amount += len(get_weaning_on_time(pk))
-    warning_amount = count_reproductions_process_warning(animals)
-    warning_amount += count_weaning_warning(pk)
-    danger_amount = count_reproductions_process_on_danger(animals)
-    danger_amount += count_weaning_on_danger(pk)
+    on_time_amount += len(get_animals_without_reproduction_in_process_on_time(animals))
+    warning_amount = len(get_reproductions_process_warning(animals))
+    warning_amount += len(get_weaning_warning(pk))
+    warning_amount += len(get_animals_without_reproduction_in_process_warning(animals))
+    danger_amount = len(get_reproductions_process_on_danger(animals))
+    danger_amount += len(get_weaning_on_danger(pk))
+    danger_amount += len(get_animals_without_reproduction(animals))
 
     return render(request, 'breedingcows/breeding_cow_detail.html', {
         'breeding_cow': breeding_cow,
@@ -119,6 +123,35 @@ def breeding_cow_notification(request, pk, notification_type):
 
 def get_reproductions_process_on_time(animals):
     on_time_list = []
+    for animal in animals:
+        reproductionInProcess = AnimalRepoduction.objects.filter(
+            animal=animal,
+            finished_date__isnull=True).first()
+        if reproductionInProcess:
+            if has_reproduction_in_process_on_time(reproductionInProcess):
+                on_time_list.append(reproductionInProcess)
+
+    on_time_list = sorted(
+        on_time_list,
+        key=attrgetter('reproduction.next_date')
+    )
+    return on_time_list
+
+
+def has_reproduction_in_process_on_time(reproductionInProcess):
+    return (has_execution_type_before_next_date(
+        reproductionInProcess.reproduction
+    ) or has_execution_before_next_date(
+        reproductionInProcess.reproduction
+    ) or has_revision_before_next_date(
+        reproductionInProcess.reproduction
+    ) or has_separation_before_next_date(
+        reproductionInProcess.reproduction
+    ))
+
+
+def get_animals_without_reproduction_in_process_on_time(animals):
+    on_time_list = []
 
     for animal in animals:
         reproductionInProcess = AnimalRepoduction.objects.filter(
@@ -127,43 +160,27 @@ def get_reproductions_process_on_time(animals):
         lastReproductionProcessed = AnimalRepoduction.objects.filter(
             animal=animal,
             finished_date__isnull=False).order_by('-finished_date').first()
-        if reproductionInProcess:
-            if has_reproduction_in_process_on_time(reproductionInProcess):
-                on_time_list.append(reproductionInProcess)
-        else:
-            if has_not_reproduction_in_process_on_time(
-                lastReproductionProcessed,
-                animal
-            ):
-                on_time_list.append(lastReproductionProcessed)
+        if has_not_reproduction_in_process_on_time(
+            reproductionInProcess,
+            lastReproductionProcessed,
+            animal
+        ):
+            on_time_list.append(animal)
+
+    on_time_list = sorted(
+        on_time_list,
+        key=attrgetter('birthday')
+    )
 
     return on_time_list
 
 
-def has_reproduction_in_process_on_time(reproductionInProcess):
-    execution_days = ReproductionProcessDays.EXECUTION.value
-    revision_days = ReproductionProcessDays.REVISION.value
-    separation_days = ReproductionProcessDays.SEPARATION.value
-    give_birth_days = ReproductionProcessDays.GIVE_BIRTH.value
-
-    return (has_execution_type_before_specified_days(
-        reproductionInProcess,
-        execution_days
-    ) or has_execution_before_specified_days(
-        reproductionInProcess,
-        revision_days
-    ) or has_revision_before_specified_days(
-        reproductionInProcess,
-        separation_days
-    ) or has_separation_before_specified_days(
-        reproductionInProcess,
-        give_birth_days
-    ))
-
-
-def has_not_reproduction_in_process_on_time(lastReproductionProcessed, animal):
+def has_not_reproduction_in_process_on_time(reproductionInProcess, lastReproductionProcessed, animal):
     finished_reproduction_days = ReproductionProcessDays.REPEAT_PROCESS.value
     became_vaquillona_days = 720
+
+    if reproductionInProcess:
+        return False
 
     if lastReproductionProcessed:
         return has_finished_redroduction_before_specified_days(
@@ -179,8 +196,82 @@ def has_not_reproduction_in_process_on_time(lastReproductionProcessed, animal):
     return False
 
 
-def count_reproductions_process_warning(animals):
-    warning_count = 0
+def get_reproductions_process_warning(animals):
+    warning_list = []
+
+    for animal in animals:
+        reproductionInProcess = AnimalRepoduction.objects.filter(
+            animal=animal,
+            finished_date__isnull=True).first()
+        if reproductionInProcess:
+            if has_reproduction_in_process_warning(reproductionInProcess):
+                warning_list.append(reproductionInProcess)
+
+    return warning_list
+
+
+def get_animals_without_reproduction_in_process_warning(animals):
+    warning_list = []
+
+    for animal in animals:
+        reproductionInProcess = AnimalRepoduction.objects.filter(
+            animal=animal,
+            finished_date__isnull=True).first()
+        lastReproductionProcessed = AnimalRepoduction.objects.filter(
+            animal=animal,
+            finished_date__isnull=False).order_by('-finished_date').first()
+        if has_no_reproduction_in_process_warning(
+            reproductionInProcess,
+            lastReproductionProcessed,
+            animal
+        ):
+            warning_list.append(animal)
+
+    warning_list = sorted(
+        warning_list,
+        key=attrgetter('birthday')
+    )
+
+    return warning_list
+
+
+def has_reproduction_in_process_warning(reproductionInProcess):
+    return (
+        has_execution_type_in_same_specified_days(
+            reproductionInProcess.reproduction
+        ) or has_execution_in_same_specified_days(
+            reproductionInProcess.reproduction
+        ) or has_revision_in_same_specified_days(
+            reproductionInProcess.reproduction
+        ) or has_separation_in_same_specified_days(
+            reproductionInProcess.reproduction
+        )
+    )
+
+
+def has_no_reproduction_in_process_warning(reproductionInProcess, lastReproductionProcessed, animal):
+    finished_reproduction_days = ReproductionProcessDays.REPEAT_PROCESS.value
+    became_vaquillona_days = 730
+
+    if reproductionInProcess:
+        return False
+
+    if lastReproductionProcessed:
+        return has_finished_redroduction_in_same_specified_days(
+            lastReproductionProcessed,
+            finished_reproduction_days
+        )
+    if animal.animal_type == AnimalType.VAQUILLONA.value:
+        return has_become_vaquillona_in_same_specified_days(
+            animal,
+            became_vaquillona_days
+        )
+
+    return False
+
+
+def get_reproductions_process_on_danger(animals):
+    danger_list = []
 
     for animal in animals:
         reproductionInProcess = AnimalRepoduction.objects.filter(
@@ -190,48 +281,47 @@ def count_reproductions_process_warning(animals):
             animal=animal,
             finished_date__isnull=False).order_by('-finished_date').first()
         if reproductionInProcess:
-            warning_count += get_count_reproduction_in_process_warning(reproductionInProcess)
+            if has_reproduction_in_process_on_danger(reproductionInProcess.reproduction):
+                danger_list.append(reproductionInProcess)
         else:
-            warning_count += get_count_no_reproduction_in_process_warning(lastReproductionProcessed, animal)
+            if has_no_reproduction_in_process_on_danger(
+                lastReproductionProcessed,
+                animal
+            ):
+                danger_list.append(lastReproductionProcessed)
 
-    return warning_count
+    return danger_list
 
 
-def get_count_reproduction_in_process_warning(reproductionInProcess):
-    warning_count = 0
-    execution_days = ReproductionProcessDays.EXECUTION.value
-    revision_days = ReproductionProcessDays.REVISION.value
-    separation_days = ReproductionProcessDays.SEPARATION.value
-    give_birth_days = ReproductionProcessDays.GIVE_BIRTH.value
+def has_reproduction_in_process_on_danger(reproductionInProcess):
+    return(
+        has_execution_type_after_specified_days(
+            reproductionInProcess
+        ) or has_execution_after_specified_days(
+            reproductionInProcess
+        ) or has_revision_after_specified_days(
+            reproductionInProcess
+        ) or has_separation_after_specified_days(
+            reproductionInProcess
+        )
+    )
 
-    if has_execution_type_in_same_specified_days(reproductionInProcess, execution_days):
-        warning_count += 1
-    if has_execution_in_same_specified_days(reproductionInProcess, revision_days):
-        warning_count += 1
-    if has_revision_in_same_specified_days(reproductionInProcess, separation_days):
-        warning_count += 1
-    if has_separation_in_same_specified_days(reproductionInProcess, give_birth_days):
-        warning_count += 1
 
-    return warning_count
-
-def get_count_no_reproduction_in_process_warning(lastReproductionProcessed, animal):
-    warning_count = 0
+def has_no_reproduction_in_process_on_danger(lastReproductionProcessed, animal):
     finished_reproduction_days = ReproductionProcessDays.REPEAT_PROCESS.value
-    became_vaquillona_days = 730
 
     if lastReproductionProcessed:
-        if has_finished_redroduction_in_same_specified_days(lastReproductionProcessed, finished_reproduction_days):
-            warning_count += 1
-    if animal.animal_type == AnimalType.VAQUILLONA.value:
-        if has_become_vaquillona_in_same_specified_days(animal, became_vaquillona_days):
-            warning_count += 1
+        return has_finished_redroduction_after_specified_days(
+            lastReproductionProcessed,
+            finished_reproduction_days
+        )
 
-    return warning_count
+    return False
 
 
-def count_reproductions_process_on_danger(animals):
-    danger_amount = 0
+def get_animals_without_reproduction(animals):
+    danger_list = []
+    became_vaquillona_days = 730
 
     for animal in animals:
         reproductionInProcess = AnimalRepoduction.objects.filter(
@@ -240,49 +330,17 @@ def count_reproductions_process_on_danger(animals):
         lastReproductionProcessed = AnimalRepoduction.objects.filter(
             animal=animal,
             finished_date__isnull=False).order_by('-finished_date').first()
-        if reproductionInProcess:
-            danger_amount += get_count_reproduction_in_process_on_danger(reproductionInProcess)
-        else:
-            danger_amount += get_count_no_reproduction_in_process_on_danger(lastReproductionProcessed, animal)
-    
-    return danger_amount
+        if not reproductionInProcess and not lastReproductionProcessed:
+            if animal.animal_type == AnimalType.VACA.value:
+                danger_list.append(animal)
+            if animal.animal_type == AnimalType.VAQUILLONA.value:
+                if has_become_vaquillona_after_specified_days(
+                    animal,
+                    became_vaquillona_days
+                ):
+                    danger_list.append(animal)
 
-
-def get_count_reproduction_in_process_on_danger(reproductionInProcess):
-    danger_amount = 0
-    execution_days = ReproductionProcessDays.EXECUTION.value
-    revision_days = ReproductionProcessDays.REVISION.value
-    separation_days = ReproductionProcessDays.SEPARATION.value
-    give_birth_days = ReproductionProcessDays.GIVE_BIRTH.value
-
-    if has_execution_type_after_specified_days(reproductionInProcess, execution_days):
-        danger_amount += 1
-    if has_execution_after_specified_days(reproductionInProcess, revision_days):
-        danger_amount += 1
-    if has_revision_after_specified_days(reproductionInProcess, separation_days):
-        danger_amount += 1
-    if has_separation_after_specified_days(reproductionInProcess, give_birth_days):
-        danger_amount += 1
-
-    return danger_amount
-
-
-def get_count_no_reproduction_in_process_on_danger(lastReproductionProcessed, animal):
-    danger_amount = 0
-    finished_reproduction_days = ReproductionProcessDays.REPEAT_PROCESS.value
-    became_vaquillona_days = 730
-
-    if lastReproductionProcessed:
-        if has_finished_redroduction_after_specified_days(lastReproductionProcessed, finished_reproduction_days):
-            danger_amount += 1
-    else:
-        if animal.animal_type == AnimalType.VACA.value:
-            danger_amount += 1
-    if animal.animal_type == AnimalType.VAQUILLONA.value:
-        if has_become_vaquillona_after_specified_days(animal, became_vaquillona_days):
-            danger_amount += 1
-
-    return danger_amount
+    return danger_list
 
 
 def get_weaning_on_time(breeding_cow):
@@ -300,11 +358,16 @@ def get_weaning_on_time(breeding_cow):
         if has_born_before_specified_days(ternero, weaning_days):
             on_time_list.append(ternero)
 
+    on_time_list = sorted(
+        on_time_list,
+        key=attrgetter('birthday')
+    )
+
     return on_time_list
 
 
-def count_weaning_warning(breeding_cow):
-    weaning_count = 0
+def get_weaning_warning(breeding_cow):
+    weaning_list = []
     weaning_days = 120
 
     terneros = Animals.objects.filter(
@@ -316,13 +379,13 @@ def count_weaning_warning(breeding_cow):
 
     for ternero in terneros:
         if has_born_in_same_specified_days(ternero, weaning_days):
-            weaning_count += 1
+            weaning_list.append(ternero)
 
-    return weaning_count
+    return weaning_list
 
 
-def count_weaning_on_danger(breeding_cow):
-    weaning_on_danger_count = 0
+def get_weaning_on_danger(breeding_cow):
+    weaning_on_danger_list = []
     weaning_days = 120
 
     terneros = Animals.objects.filter(
@@ -334,93 +397,105 @@ def count_weaning_on_danger(breeding_cow):
 
     for ternero in terneros:
         if has_born_after_specified_days(ternero, weaning_days):
-            weaning_on_danger_count += 1
+            weaning_on_danger_list.append(ternero)
 
-    return weaning_on_danger_count
+    return weaning_on_danger_list
 
 
-def has_execution_type_before_specified_days(reproductionInProcess, days):
+def has_execution_type_before_next_date(reproductionInProcess):
     if (
-        reproductionInProcess.reproduction.preparation_date and not
-        reproductionInProcess.reproduction.execution_date
+        reproductionInProcess.preparation_date and not
+        reproductionInProcess.execution_date
     ):
-        diff = datetime.now().date() - reproductionInProcess.reproduction.preparation_date
-        return diff.days < days
+        return datetime.now().date() < reproductionInProcess.next_date
 
 
-def has_execution_before_specified_days(reproductionInProcess, days):
+def has_execution_before_next_date(reproductionInProcess):
     if (
-        reproductionInProcess.reproduction.execution_date and not
-        reproductionInProcess.reproduction.revision_date
+        reproductionInProcess.execution_date and not
+        reproductionInProcess.revision_date
     ):
-        diff = datetime.now().date() - reproductionInProcess.reproduction.execution_date
-        return diff.days < days
+        return datetime.now().date() < reproductionInProcess.next_date
 
 
-def has_revision_before_specified_days(reproductionInProcess, days):
+def has_revision_before_next_date(reproductionInProcess):
     if (
-        reproductionInProcess.reproduction.revision_date and not
-        reproductionInProcess.reproduction.separation_date
+        reproductionInProcess.revision_date and not
+        reproductionInProcess.separation_date
     ):
-        diff = datetime.now().date() - reproductionInProcess.reproduction.revision_date
-        return diff.days < days
+        return datetime.now().date() < reproductionInProcess.next_date
 
 
-def has_separation_before_specified_days(reproductionInProcess, days):
+def has_separation_before_next_date(reproductionInProcess):
     if (
-        reproductionInProcess.reproduction.separation_date and not
-        reproductionInProcess.reproduction.give_birth_date
+        reproductionInProcess.separation_date and not
+        reproductionInProcess.give_birth_date
     ):
-        diff = datetime.now().date() - reproductionInProcess.reproduction.separation_date
-        return diff.days < days
+        return datetime.now().date() < reproductionInProcess.next_date
 
 
-def has_execution_type_in_same_specified_days(reproductionInProcess, days):
-    if reproductionInProcess.reproduction.preparation_date and not reproductionInProcess.reproduction.execution_date:
-        diff = datetime.now().date() - reproductionInProcess.reproduction.preparation_date
-        return diff.days == days
+def has_execution_type_in_same_specified_days(reproductionInProcess):
+    if (
+        reproductionInProcess.preparation_date and not
+        reproductionInProcess.execution_date
+    ):
+        return datetime.now().date() == reproductionInProcess.next_date
 
 
-def has_execution_in_same_specified_days(reproductionInProcess, days):
-    if reproductionInProcess.reproduction.execution_date and not reproductionInProcess.reproduction.revision_date:
-        diff = datetime.now().date() - reproductionInProcess.reproduction.execution_date
-        return diff.days == days
+def has_execution_in_same_specified_days(reproductionInProcess):
+    if (
+        reproductionInProcess.execution_date and not
+        reproductionInProcess.revision_date
+    ):
+        return datetime.now().date() == reproductionInProcess.next_date
 
 
-def has_revision_in_same_specified_days(reproductionInProcess, days):
-    if reproductionInProcess.reproduction.revision_date and not reproductionInProcess.reproduction.separation_date:
-        diff = datetime.now().date() - reproductionInProcess.reproduction.revision_date
-        return diff.days == days
+def has_revision_in_same_specified_days(reproductionInProcess):
+    if (
+        reproductionInProcess.revision_date and not
+        reproductionInProcess.separation_date
+    ):
+        return datetime.now().date() == reproductionInProcess.next_date
 
 
-def has_separation_in_same_specified_days(reproductionInProcess, days):
-    if reproductionInProcess.reproduction.separation_date and not reproductionInProcess.reproduction.give_birth_date:
-        diff = datetime.now().date() - reproductionInProcess.reproduction.separation_date
-        return diff.days == days
+def has_separation_in_same_specified_days(reproductionInProcess):
+    if (
+        reproductionInProcess.separation_date and not
+        reproductionInProcess.give_birth_date
+    ):
+        return datetime.now().date() == reproductionInProcess.next_date
 
 
-def has_execution_type_after_specified_days(reproductionInProcess, days):
-    if reproductionInProcess.reproduction.preparation_date and not reproductionInProcess.reproduction.execution_date:
-        diff = datetime.now().date() - reproductionInProcess.reproduction.preparation_date
-        return diff.days > days
+def has_execution_type_after_specified_days(reproductionInProcess):
+    if (
+        reproductionInProcess.preparation_date and not
+        reproductionInProcess.execution_date
+    ):
+        return datetime.now().date() > reproductionInProcess.next_date
 
 
-def has_execution_after_specified_days(reproductionInProcess, days):
-    if reproductionInProcess.reproduction.execution_date and not reproductionInProcess.reproduction.revision_date:
-        diff = datetime.now().date() - reproductionInProcess.reproduction.execution_date
-        return diff.days > days
+def has_execution_after_specified_days(reproductionInProcess):
+    if (
+        reproductionInProcess.execution_date and not
+        reproductionInProcess.revision_date
+    ):
+        return datetime.now().date() > reproductionInProcess.next_date
 
 
-def has_revision_after_specified_days(reproductionInProcess, days):
-    if reproductionInProcess.reproduction.revision_date and not reproductionInProcess.reproduction.separation_date:
-        diff = datetime.now().date() - reproductionInProcess.reproduction.revision_date
-        return diff.days > days
+def has_revision_after_specified_days(reproductionInProcess):
+    if (
+        reproductionInProcess.revision_date and not
+        reproductionInProcess.separation_date
+    ):
+        return datetime.now().date() > reproductionInProcess.next_date
 
 
-def has_separation_after_specified_days(reproductionInProcess, days):
-    if reproductionInProcess.reproduction.separation_date and not reproductionInProcess.reproduction.give_birth_date:
-        diff = datetime.now().date() - reproductionInProcess.reproduction.separation_date
-        return diff.days > days
+def has_separation_after_specified_days(reproductionInProcess):
+    if (
+        reproductionInProcess.separation_date and not
+        reproductionInProcess.give_birth_date
+    ):
+        return datetime.now().date() > reproductionInProcess.next_date
 
 
 def has_born_before_specified_days(animals, days):

@@ -39,6 +39,7 @@ class Reproduction(models.Model):
     success_revision = models.BooleanField(blank=True, null=True)
     separation_date = models.DateField(blank=True, null=True)
     give_birth_date = models.DateField(blank=True, null=True)
+    next_date = models.DateField(blank=True, null=True)
 
     def __str__(self):
         return self.reproduction_type

@@ -17,7 +17,7 @@
                 <div class="single-table">
                     <div class="table-responsive">
                         <table class="table text-center">
-                            <thead class="text-uppercase bg-success">
+                            <thead class="text-uppercase bg-danger">
                                 <tr class="text-white">
                                     <th scope="col">N° de rebaño</th>
                                     <th scope="col">Preparacion</th>
@@ -29,7 +29,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for reproduccion in reproduction_in_process%}
+                                {% for reproduccion in reproduction_on_danger%}
                                     {% if not reproduccion.finished_date %}
                                         <tr>
                                             <th scope="row">{{reproduccion.animal.flock_number}}</th>
@@ -62,7 +62,7 @@
                                             {% endif %}
                                             {% if reproduccion.reproduction.next_date %}
                                                 <td>
-                                                    <p class="text-success"><i class="fa fa-calendar-check-o"></i>
+                                                    <p class="text-danger"><i class="fa fa-calendar-times-o"></i>
                                                         {{reproduccion.reproduction.next_date|date:"Y-m-d"}}
                                                     </p>
                                                 </td>
@@ -80,17 +80,17 @@
         </div>
         <br>
         <ul class="pagination justify-content-center">
-            {% if reproduction_in_process.has_previous %}
+            {% if reproduction_on_danger.has_previous %}
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ reproduction_in_process.previous_page_number }}">Previous</a>
+                    <a class="page-link" href="?page={{ reproduction_on_danger.previous_page_number }}">Previous</a>
                 </li>
             {% endif %}
                 <li class="page-item active">
-                    <a class="page-link" href="#">{{ reproduction_in_process.number }}<span class="sr-only">(current)</span></a>
+                    <a class="page-link" href="#">{{ reproduction_on_danger.number }}<span class="sr-only">(current)</span></a>
                 </li>
-            {% if reproduction_in_process.has_next %}
+            {% if reproduction_on_danger.has_next %}
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ reproduction_in_process.next_page_number }}">Next</a>
+                    <a class="page-link" href="?page={{ reproduction_on_danger.next_page_number }}">Next</a>
                 </li>
             {% endif %} 
         </ul>  
@@ -103,7 +103,7 @@
                 <div class="single-table">
                     <div class="table-responsive">
                         <table class="table text-center">
-                            <thead class="text-uppercase bg-success">
+                            <thead class="text-uppercase bg-danger">
                                 <tr class="text-white">
                                     <th scope="col">Adquisicion</th>
                                     <th scope="col">Madre</th>
@@ -130,7 +130,7 @@
                                             {{calf.birthday|date:"Y-m-d"}}
                                         </td>
                                         <td>
-                                            <p class="text-success"><i class="fa fa-calendar-check-o"></i>
+                                            <p class="text-danger"><i class="fa fa-calendar-times-o"></i>
                                                 {{next_date|date:"Y-m-d"}}
                                             </p>                                        
                                         </td>
@@ -167,7 +167,7 @@
                 <div class="single-table">
                     <div class="table-responsive">
                         <table class="table text-center">
-                            <thead class="text-uppercase bg-success">
+                            <thead class="text-uppercase bg-danger">
                                 <tr class="text-white">
                                     <th scope="col">N° de rebaño</th>
                                     <th scope="col">Tipo de Animal</th>
@@ -184,12 +184,12 @@
                                         <td>
                                             {{animal.animal_type}}
                                         </td>
-                                        {% if animal.disease %}
+    									{% if animal.disease %}
                                             <td>Contiene</td>
                                         {% else %}
                                             <td>No contiene</td>
                                         {% endif %}
-                                        {% if animal.body_development %}
+ 										{% if animal.body_development %}
                                             <td>Contiene</td>
                                         {% else %}
                                             <td>No contiene</td>
@@ -200,7 +200,7 @@
                                             <td>No contiene</td>
                                         {% endif %}
                                         <td>
-                                            <p class="text-success"><i class="fa fa-calendar-check-o"></i>
+                                            <p class="text-danger"><i class="fa fa-calendar-times-o"></i>
                                                 {{next_date|date:"Y-m-d"}}
                                             </p>                                        
                                         </td>
@@ -214,17 +214,17 @@
         </div>
         <br>
         <ul class="pagination justify-content-center">
-            {% if finished_reproduction_info.has_previous %}
+            {% if animals_without_reproduction_info.has_previous %}
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ finished_reproduction_info.previous_page_number }}">Previous</a>
+                    <a class="page-link" href="?page={{ animals_without_reproduction_info.previous_page_number }}">Previous</a>
                 </li>
             {% endif %}
                 <li class="page-item active">
-                    <a class="page-link" href="#">{{ finished_reproduction_info.number }}<span class="sr-only">(current)</span></a>
+                    <a class="page-link" href="#">{{ animals_without_reproduction_info.number }}<span class="sr-only">(current)</span></a>
                 </li>
-            {% if finished_reproduction_info.has_next %}
+            {% if animals_without_reproduction_info.has_next %}
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ finished_reproduction_info.next_page_number }}">Next</a>
+                    <a class="page-link" href="?page={{ animals_without_reproduction_info.next_page_number }}">Next</a>
                 </li>
             {% endif %} 
         </ul>

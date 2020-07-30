@@ -91,6 +91,36 @@ class Animals(models.Model):
     def get_animal_type_label(self):
         return AnimalType(self.type).name.title()
 
+    def get_mother(self):
+        acquisition = self.acquisition
+        if acquisition == AcquisitionType.NATURAL.value or acquisition == AcquisitionType.INSEMINACION.value:
+            potencial_mothers = Animals.objects.filter(
+                breeding_cows=self.breeding_cows,
+                animal_type=AnimalType.VACA.value
+            )
+            for potencial_mother in potencial_mothers:
+                if self in potencial_mother.brood.all():
+                    mother = potencial_mother
+            return u'N° de rebaño: %s' % (
+                mother.flock_number
+            )
+        return None
+
+    def get_father(self):
+        acquisition = self.acquisition
+        if acquisition == AcquisitionType.NATURAL.value:
+            potencial_fathers = Animals.objects.filter(
+                breeding_cows=self.breeding_cows,
+                animal_type=AnimalType.TORO.value
+            )
+            for potencial_father in potencial_fathers:
+                if self in potencial_father.brood.all():
+                    father = potencial_father
+            return u'N° de rebaño: %s' % (
+                father.flock_number
+            )
+        return None
+
     def __str__(self):
         if self.flock_number is None:
             acquisition = self.acquisition

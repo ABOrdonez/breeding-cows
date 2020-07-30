@@ -46,10 +46,10 @@
                             <a href="{% url 'animal_on_time_process' breedingCowsPk=breeding_cow.pk %}" role="button" class="btn btn-success btn-lg btn-block"> A tiempo <span class="badge badge-light">{{on_time_amount}}</span></a>
                         </div>
                         <div class="col-lg-4 col-md-4 col-sm-6">
-                            <a href="{% url 'animal_on_time_process' breedingCowsPk=breeding_cow.pk %}" role="button" class="btn btn-warning btn-lg btn-block"> Advertencia <span class="badge badge-light">{{warning_amount}}</span></a>
+                            <a href="{% url 'animal_warning_process' breedingCowsPk=breeding_cow.pk %}" role="button" class="btn btn-warning btn-lg btn-block"> Advertencia <span class="badge badge-light">{{warning_amount}}</span></a>
                         </div>
                         <div class="col-lg-4 col-md-4 col-sm-6">
-                             <a href="{% url 'animal_on_time_process' breedingCowsPk=breeding_cow.pk %}" role="button" class="btn btn-danger btn-lg btn-block"> Atrazado <span class="badge badge-light">{{danger_amount}}</span></a>
+                             <a href="{% url 'animal_on_danger_process' breedingCowsPk=breeding_cow.pk %}" role="button" class="btn btn-danger btn-lg btn-block"> Atrazado <span class="badge badge-light">{{danger_amount}}</span></a>
                         </div>
                     </div>
                 </div>

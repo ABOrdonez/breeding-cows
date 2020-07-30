@@ -10,7 +10,15 @@ from breedingcows.models import BreedingCows
 from reproduction.models import Reproduction
 from breedingcows.views import (
     get_reproductions_process_on_time,
-    get_weaning_on_time
+    get_weaning_on_time,
+    get_animals_without_reproduction_in_process_on_time,
+    get_reproductions_process_warning,
+    get_weaning_warning,
+    get_animals_without_reproduction_in_process_warning,
+    get_reproductions_process_on_danger,
+    get_weaning_on_danger,
+    get_animals_without_reproduction,
+    ReproductionProcessDays
 )
 from diets.models import Diet
 from reproduction.forms import ReproductionForm
@@ -29,6 +37,7 @@ from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.dateparse import parse_date
 from django.core.paginator import Paginator
+from datetime import timedelta
 
 
 @csrf_exempt
@@ -257,6 +266,8 @@ def animal_reproduction_type_new(request, breedingCowsPk):
         )
         if reproduction.preparation_date is None:
             reproduction.preparation_date = timezone.now()
+        days = timedelta(days=ReproductionProcessDays.EXECUTION.value)
+        reproduction.next_date = reproduction.preparation_date + days
         reproduction.save()
 
         animalRepoduction.reproduction = reproduction
@@ -289,6 +300,8 @@ def animal_reproduction_execution_new(request, breedingCowsPk):
         )
         if reproduction.execution_date is None:
             reproduction.execution_date = timezone.now()
+        days = timedelta(days=ReproductionProcessDays.REVISION.value)
+        reproduction.next_date = reproduction.execution_date + days
         reproduction.save()
 
     breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
@@ -328,6 +341,8 @@ def animal_reproduction_revision_new(request, breedingCowsPk):
             reproduction.revision_date = timezone.now()
         if reproduction.potential_give_birth_date is None:
             reproduction.potential_give_birth_date = timezone.now()
+        days = timedelta(days=ReproductionProcessDays.SEPARATION.value)
+        reproduction.next_date = reproduction.revision_date + days
         reproduction.save()
 
     breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
@@ -354,6 +369,8 @@ def animal_reproduction_separation_new(request, breedingCowsPk):
         )
         if reproduction.separation_date is None:
             reproduction.separation_date = timezone.now()
+        days = timedelta(days=ReproductionProcessDays.GIVE_BIRTH.value)
+        reproduction.next_date = reproduction.separation_date + days
         reproduction.save()
 
     breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
@@ -552,15 +569,169 @@ def animal_on_time_process(request, breedingCowsPk):
         leaving_date__isnull=True
     )
     reproduction_in_process = get_reproductions_process_on_time(animals)
+
+    paginator = Paginator(reproduction_in_process, 5)
+    page = request.GET.get('page')
+    ReproductionInProcessPaginated = paginator.get_page(page)
+
+    calfs_info = []
     calfs = get_weaning_on_time(breedingCowsPk)
+    for calf in calfs:
+        days = calf.birthday + timedelta(days=120)
+        calfs_info.append([calf, days])
+
+    paginator = Paginator(calfs_info, 5)
+    page = request.GET.get('page')
+    calfsInfoPaginated = paginator.get_page(page)
+
+    animals_without_reproduction = get_animals_without_reproduction_in_process_on_time(animals)
+    animals_without_reproduction_info = get_animals_info_on_time(animals_without_reproduction)
+
+    paginator = Paginator(animals_without_reproduction_info, 5)
+    page = request.GET.get('page')
+    reproductionInfoPaginated = paginator.get_page(page)
 
     return render(
         request,
         'animals/animals_on_time_list.html',
         {
             'breeding_cow': breedingCows,
-            'reproduction_in_process': reproduction_in_process,
-            'calfs': calfs,
+            'reproduction_in_process': ReproductionInProcessPaginated,
+            'calfs_info': calfsInfoPaginated,
+            'animals_without_reproduction_info': reproductionInfoPaginated
+        }
+    )
+
+
+def get_animals_info_on_time(animals_without_reproduction):
+    animals_without_reproduction_info = []
+    for animal in animals_without_reproduction:
+        if animal.animal_type == AnimalType.VAQUILLONA.value:
+            days = animal.birthday + timedelta(days=730)
+            animals_without_reproduction_info.append([animal, days])
+
+        reproduction_finished = AnimalRepoduction.objects.filter(
+            animal=animal,
+            finished_date__isnull=False).order_by('-finished_date').first()
+
+        if not reproduction_finished is None:
+            days = reproduction_finished.finished_date + timedelta(
+                days=ReproductionProcessDays.REPEAT_PROCESS.value
+            )
+            animals_without_reproduction_info.append([animal, days])
+
+    return animals_without_reproduction_info
+
+
+def animal_warning_process(request, breedingCowsPk):
+    breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
+    animals = Animals.objects.order_by(
+        'flock_number'
+    ).filter(
+        breeding_cows=breedingCows,
+        leaving_date__isnull=True
+    )
+    reproduction_warning = get_reproductions_process_warning(animals)
+
+    paginator = Paginator(reproduction_warning, 5)
+    page = request.GET.get('page')
+    ReproductionWarningPaginated = paginator.get_page(page)
+
+    calfs_info = []
+    calfs = get_weaning_warning(breedingCowsPk)
+    for calf in calfs:
+        days = calf.birthday + timedelta(days=120)
+        calfs_info.append([calf, days])
+
+    paginator = Paginator(calfs_info, 5)
+    page = request.GET.get('page')
+    calfsInfoPaginated = paginator.get_page(page)
+
+    animals_without_reproduction = get_animals_without_reproduction_in_process_warning(animals)
+    animals_without_reproduction_info = get_animals_info_warning(animals_without_reproduction)
+    print(animals_without_reproduction_info)
+
+    paginator = Paginator(animals_without_reproduction_info, 5)
+    page = request.GET.get('page')
+    reproductionInfoPaginated = paginator.get_page(page)
+
+    return render(
+        request,
+        'animals/animals_warning_list.html',
+        {
+            'breeding_cow': breedingCows,
+            'reproduction_warning': ReproductionWarningPaginated,
+            'calfs_info': calfsInfoPaginated,
+            'animals_without_reproduction': reproductionInfoPaginated
+        }
+    )
+
+
+def get_animals_info_warning(animals_without_reproduction):
+    animals_without_reproduction_info = []
+    for animal in animals_without_reproduction:
+        if animal.animal_type == AnimalType.VAQUILLONA.value:
+            days = animal.birthday + timedelta(days=730)
+            animals_without_reproduction_info.append([animal, days])
+
+        reproduction_finished = AnimalRepoduction.objects.filter(
+            animal=animal,
+            finished_date__isnull=False).order_by('-finished_date').first()
+
+        if not reproduction_finished is None:
+            days = reproduction_finished.finished_date + timedelta(
+                days=ReproductionProcessDays.REPEAT_PROCESS.value
+            )
+            animals_without_reproduction_info.append([animal, days])
+
+    return animals_without_reproduction_info
+
+
+def animal_on_danger_process(request, breedingCowsPk):
+    breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
+    animals = Animals.objects.order_by(
+        'flock_number'
+    ).filter(
+        breeding_cows=breedingCows,
+        leaving_date__isnull=True
+    )
+    reproduction_on_danger = get_reproductions_process_on_danger(animals)
+
+    paginator = Paginator(reproduction_on_danger, 5)
+    page = request.GET.get('page')
+    ReproductionOnDangerPaginated = paginator.get_page(page)
+
+    calfs_info = []
+    calfs = get_weaning_on_danger(breedingCowsPk)
+    for calf in calfs:
+        days = calf.birthday + timedelta(days=120)
+        calfs_info.append([calf, days])
+
+    paginator = Paginator(calfs_info, 5)
+    page = request.GET.get('page')
+    calfsInfoPaginated = paginator.get_page(page)
+
+    animals_without_reproduction = get_animals_without_reproduction(animals)
+    animals_without_reproduction_info = []
+    for animal in animals_without_reproduction:
+        if animal.animal_type == AnimalType.VACA.value:
+            animals_without_reproduction_info.append([animal, animal.birthday])
+        else:
+            days = animal.birthday + timedelta(days=730)
+            animals_without_reproduction_info.append([animal, days])
+
+    paginator = Paginator(animals_without_reproduction_info, 5)
+    page = request.GET.get('page')
+    reproductionInfoPaginated = paginator.get_page(page)
+
+    return render(
+        request,
+        'animals/animals_on_danger_list.html',
+        {
+            'breeding_cow': breedingCows,
+            'reproduction_on_danger': ReproductionOnDangerPaginated,
+            'calfs_info': calfsInfoPaginated,
+            'animals_without_reproduction_info': reproductionInfoPaginated
         }
     )
 
