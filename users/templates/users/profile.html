@@ -28,54 +28,22 @@
 </head>
 
 <body>
-    <!--[if lt IE 8]>
-            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-        <![endif]-->
-    <!-- preloader area start -->
     <div id="preloader">
         <div class="loader"></div>
     </div>
-    <!-- preloader area end -->
-    <!-- login area start -->
     <div class="login-area login-s2">
         <div class="container">
             <div class="login-box ptb--100">
                 <form method="POST">
                     {% csrf_token %}
                     <div class="login-form-head">
-                        <h4>Ingresar</h4>
-                        <p>Inicia sesión aquí para administar tu Rodeo de Cría</p>
-                        {% if form.errors %}
-                            <br>
-                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                <strong>Error al intentar iniciar sesion!</strong> Por favor, vuelva a intentar.
-                            </div>
-                      {% endif %}
-                    </div>
-                    <div class="login-form-body">
-                        <div class="form-gp">
-                            <label for="username">Nombre de Usuario</label>
-                            <input name="username" id="id_username" type="text">
-                            <i class="ti-user"></i>
-                            <div class="text-danger"></div>
-                        </div>
-                        <div class="form-gp">
-                            <label for="password">Contraseña</label>
-                            <input name="password" id="id_password" type="password">
-                            <i class="ti-lock"></i>
-                            <div class="text-danger"></div>
-                        </div>
-                        <div class="submit-btn-area">
-                            <button id="form_submit" type="submit">Ingresar <i class="ti-arrow-right"></i></button>
-                        </div>
+                        <h4>{{user.username}}</h4>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-    <!-- login area end -->
-
-    <!-- jquery latest version -->
+    
     <script src= "{% static 'assets/js/vendor/jquery-2.2.4.min.js'%}"></script>
     <!-- bootstrap 4 js -->
     <script src="{% static 'assets/js/popper.min.js'%}"></script>

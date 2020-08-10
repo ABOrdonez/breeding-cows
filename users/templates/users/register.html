@@ -1,22 +1,101 @@
-{% extends 'breedingcows/base.html' %}
-{% load crispy_forms_tags %}
+{% load static %}
+{% load widget_tweaks %}
+<!DOCTYPE html>
 
-{% block content %}
-    <div class="content-section">
-        <form method="POST">
-            {% csrf_token %}
-            <fieldset class="form-group">
-                <legend class="border-bottom mb-4">join today</legend>
-               {{ form|crispy }}
-            </fieldset>
-            <div class="form-group">
-                <button class="btn btn-outline-info" type="submit">Sign Up</button>
+<html class="no-js" lang="en">
+
+<head>
+   <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Iniciar Sesion - BreedingCows</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/png" href="{% static 'assets/images/icon/favicon.ico' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css'%}">
+    <link rel="stylesheet" href="{% static 'assets/css/font-awesome.min.css'%}">
+    <link rel="stylesheet" href="{% static 'assets/css/themify-icons.css'%}">
+    <link rel="stylesheet" href="{% static 'assets/css/metisMenu.css'%}">
+    <link rel="stylesheet" href="{% static 'assets/css/owl.carousel.min.css'%}">
+    <link rel="stylesheet" href="{% static 'assets/css/slicknav.min.css'%}">
+    <!-- amchart css -->
+    <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all"/>
+    <!-- others css -->
+    <link rel="stylesheet" href="{% static 'assets/css/typography.css'%}">
+    <link rel="stylesheet" href="{% static 'assets/css/default-css.css'%}">
+    <link rel="stylesheet" href="{% static 'assets/css/styles.css'%}">
+    <link rel="stylesheet" href="{% static 'assets/css/responsive.css'%}">
+    <!-- modernizr css -->
+    <script src="{% static 'assets/js/vendor/modernizr-2.8.3.min.js'%}"></script>
+</head>
+
+<body>
+    <div id="preloader">
+        <div class="loader"></div>
+    </div>
+    <div class="login-area login-s2">
+        <div class="container">
+            <div class="login-box ptb--100">
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="login-form-head">
+                        <h4>Registrate</h4>
+                        <p>Registrate y comenza a administrar tu rodeo</p>
+                    </div>
+                    {% if error == True %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>Ocurrió un error al intentar registrarse.</strong> 
+                            Por favor, vuelva a intentar!
+                        </div>
+                    {% endif %}
+                    <div class="login-form-body">
+                        <div class="form-gp">
+                            <i class="ti-user"></i>
+                            <div class="text-danger"></div>
+                            <label for="username">Nombre de usuario</label>
+                            <input type="text" name="username" maxlength="150" autofocus="" class="textinput textInput form-control" required="" id="id_username">
+                        </div>
+                        <div class="form-gp mt-4">
+                            <i class="ti-email"></i>
+                            <div class="text-danger"></div>
+                            <label for="id_email">Correo electrónico</label>
+                            <input type="email" name="email" class="emailinput form-control" required="" id="id_email"> 
+                        </div>
+                        <div class="form-gp mt-4">
+                            <i class="ti-lock"></i>
+                            <div class="text-danger"></div>                           
+                            <label for="id_password1" class="col-form-label requiredField" >Contaseña</label>
+                            <input type="password" name="password1" class="textinput textInput form-control" required="" id="id_password1">
+                        </div>
+                        <div class="form-gp mt-4">
+                            <i class="ti-lock"></i>
+                            <div class="text-danger"></div>
+                            <label for="id_password2" class="col-form-label  requiredField">Confirmar contraseña</label>
+                            <input type="password" name="password2" class="textinput textInput form-control" required="" id="id_password2">
+                        </div>
+                        <div class="submit-btn-area">
+                            <button id="form_submit" type="submit">Crear usuario <i class="ti-arrow-right"></i></button>
+                        </div>
+                        <div class="form-footer text-center mt-5">
+                            <p class="text-muted">¿Ya tiene una cuenta? <a href="{% url 'login' %}">Ingrese acá</a></p>
+                        </div>
+                    </div>
+                </form>
             </div>
-        </form>
-        <div class="border-top pt-3">
-            <small class="text-muted">
-                Already has an account? <a class="ml-2" hhref="{% url 'login' %}">Sing in</a>
-            </small>
         </div>
     </div>
-{% endblock %}
+    <!-- login area end -->
+
+    <!-- jquery latest version -->
+    <script src= "{% static 'assets/js/vendor/jquery-2.2.4.min.js'%}"></script>
+    <!-- bootstrap 4 js -->
+    <script src="{% static 'assets/js/popper.min.js'%}"></script>
+    <script src="{% static 'assets/js/bootstrap.min.js'%}"></script>
+    <script src="{% static 'assets/js/owl.carousel.min.js'%}"></script>
+    <script src="{% static 'assets/js/metisMenu.min.js'%}"></script>
+    <script src="{% static 'assets/js/jquery.slimscroll.min.js'%}"></script>
+    <script src="{% static 'assets/js/jquery.slicknav.min.js'%}"></script>
+    <!-- others plugins -->
+    <script src="{% static 'assets/js/plugins.js'%}"></script>
+    <script src="{% static 'assets/js/scripts.js'%}"></script>
+</body>
+
+</html>

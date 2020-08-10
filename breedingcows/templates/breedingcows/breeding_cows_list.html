@@ -107,9 +107,9 @@
         type: 'GET',
         url: 'api/breeding_cow/chart/data/',
         success: function (data) {
-            setTotalAnimalsPerBreedingCowChart(data.breeding_cows,data.breeding_cows_animal_count)
-            setTotalAnimalTypesPerBreedingCowChart(data.animals_types, data.vacas_count, data.ternero_count, data.vaquillonas_count, data.toros_count)
-            setTotalReproductionsPerBreedingCowChart(data.breeding_cows,data.breeding_cows_reproduction_in_process)
+            setTotalAnimalsPerBreedingCowChart(data.breeding_cows,data.breeding_cows_animal_count);
+            setTotalAnimalTypesPerBreedingCowChart(data.animals_types, data.vacas_count, data.ternero_count, data.vaquillonas_count, data.toros_count);
+            setTotalReproductionsPerBreedingCowChart(data.breeding_cows,data.breeding_cows_reproduction_in_process);
         },
         error: function(data) {
         },

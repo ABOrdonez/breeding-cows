@@ -11,12 +11,16 @@ from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime
 from reproduction.models import ReproductionProcessDays
 from operator import attrgetter
+from django.contrib.auth.decorators import login_required
 
 
+@login_required
 def breeding_cows_list(request):
     breeding_cows_all = BreedingCows.objects.filter(
-        leaving_date__isnull=True).order_by(
-        'entry_date')
+        leaving_date__isnull=True,
+    ).order_by(
+        'entry_date'
+    )
     breeding_cows = []
 
     for breeding_cow in breeding_cows_all:
@@ -557,7 +561,14 @@ class ChartData(APIView):
     permission_classes = []
 
     def get(self, request, format=None):
-        breeding_cows_address = BreedingCows.objects.filter(leaving_date__isnull=True).order_by('entry_date').values_list('address', flat=True)
+        breeding_cows_address = BreedingCows.objects.filter(
+            leaving_date__isnull=True
+        ).order_by(
+            'entry_date'
+        ).values_list(
+            'address',
+            flat=True
+        )
 
         breeding_cows_all = BreedingCows.objects.filter(leaving_date__isnull=True).order_by('entry_date')
         breeding_cows_animal_count = []

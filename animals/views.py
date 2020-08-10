@@ -44,6 +44,7 @@ from datetime import timedelta
 def animal_detail(request, pk):
     animal = get_object_or_404(Animals, pk=pk)
     animalDiet, animalReproduction, animalSanitary = getAnimalInfo(animal)
+    successful, unsuccessful = getReproductionInfo(animal)
     return render(
         request,
         'animals/animal_detail.html',
@@ -51,7 +52,9 @@ def animal_detail(request, pk):
             'animal': animal,
             'animalReproduction': animalReproduction,
             'animalDiet': animalDiet,
-            'animalSanitary': animalSanitary
+            'animalSanitary': animalSanitary,
+            'successful': successful,
+            'unsuccessful': unsuccessful
         }
     )
 
@@ -370,7 +373,7 @@ def animal_reproduction_separation_new(request, breedingCowsPk):
         if reproduction.separation_date is None:
             reproduction.separation_date = timezone.now()
         days = timedelta(days=ReproductionProcessDays.GIVE_BIRTH.value)
-        reproduction.next_date = reproduction.separation_date + days
+        reproduction.next_date = reproduction.potential_give_birth_date
         reproduction.save()
 
     breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
@@ -756,6 +759,28 @@ def getAnimalInfo(animal):
         animalDiet,
         animalReproduction,
         animalSanitary
+    )
+
+
+def getReproductionInfo(animal):
+    animalReproductions = AnimalRepoduction.objects.all().order_by(
+        '-started_date'
+    ).filter(
+        animal=animal
+    )
+    successfulReproductions = 0
+    unsuccessfulReproductions = 0
+
+    for reproduction in animalReproductions:
+        if reproduction.finished_date:
+            if reproduction.reproduction.give_birth_date:
+                successfulReproductions += 1
+            else:
+                unsuccessfulReproductions += 1
+
+    return (
+        successfulReproductions,
+        unsuccessfulReproductions,
     )
 
 

@@ -88,11 +88,15 @@
             }
             if (selected_acquisition_type == "Compra"){
                 $('#selected_mother_id').find(':input').prop('disabled', true);
+                $('#id_motherAnimalForm-animal').val('');
                 $('#selected_father_id').find(':input').prop('disabled', true);
+                $('#id_fatherAnimalForm-animal').val('');
+
             }
             if (selected_acquisition_type == "Inseminacio Artificial a tiempo fijo") {
                 $('#selected_mother_id').find(':input').prop('disabled', false);
                 $('#selected_father_id').find(':input').prop('disabled', true);
+                $('#id_fatherAnimalForm-animal').val('');
             }
         };
     </script>

@@ -214,17 +214,17 @@
         </div>
         <br>
         <ul class="pagination justify-content-center">
-            {% if finished_reproduction_info.has_previous %}
+            {% if animals_without_reproduction.has_previous %}
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ finished_reproduction_info.previous_page_number }}">Previous</a>
+                    <a class="page-link" href="?page={{ animals_without_reproduction.previous_page_number }}">Previous</a>
                 </li>
             {% endif %}
                 <li class="page-item active">
-                    <a class="page-link" href="#">{{ finished_reproduction_info.number }}<span class="sr-only">(current)</span></a>
+                    <a class="page-link" href="#">{{ animals_without_reproduction.number }}<span class="sr-only">(current)</span></a>
                 </li>
-            {% if finished_reproduction_info.has_next %}
+            {% if animals_without_reproduction.has_next %}
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ finished_reproduction_info.next_page_number }}">Next</a>
+                    <a class="page-link" href="?page={{ animals_without_reproduction.next_page_number }}">Next</a>
                 </li>
             {% endif %} 
         </ul>
