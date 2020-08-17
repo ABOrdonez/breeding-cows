@@ -44,8 +44,7 @@ from datetime import timedelta
 def animal_detail(request, pk):
     animal = get_object_or_404(Animals, pk=pk)
     animalDiet, animalReproduction, animalSanitary = getAnimalInfo(animal)
-    if animalReproduction:
-        successful, unsuccessful = getReproductionInfo(animal)
+    successful, unsuccessful = getReproductionInfo(animal)
 
     return render(
         request,

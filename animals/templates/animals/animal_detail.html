@@ -10,7 +10,7 @@
 
 {% block content %}
 
- {% if animalReproduction %}
+{% if animalReproduction %}
     <div class="col-xl-6 mt-3">
 {% else %}
     <div class="col-xl-12 mt-3">
@@ -315,7 +315,12 @@
             </div>
         </div>
     {% endif %}
-    <div class="col-xl-6">
+
+    {% if animalReproduction %}
+        <div class="col-xl-6 mt-3">
+    {% else %}
+        <div class="col-xl-12 mt-3">
+    {% endif %}
         <div class="card">
             <div class="card-body">
                 <h4 class="header-title">Inseminaciones Artificiales</h4>
