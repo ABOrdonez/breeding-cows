@@ -17,21 +17,27 @@
                         <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Ubicacion</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Dueño</a>
+                        <a class="nav-link" id="owner-tab" data-toggle="tab" href="#owner" role="tab" aria-controls="owner" aria-selected="false">Dueño</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Fecha de ingreso</a>
+                        <a class="nav-link" id="entry_date-tab" data-toggle="tab" href="#entry_date" role="tab" aria-controls="entry_date" aria-selected="false">Fecha de ingreso</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="description-tab" data-toggle="tab" href="#description" role="tab" aria-controls="description" aria-selected="false">Descripcion</a>
                     </li>
                 </ul>
                 <div class="tab-content mt-3" id="myTabContent">
                     <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                         <p>{{ breeding_cow.address }}</p>
                     </div>
-                    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                    <div class="tab-pane fade" id="owner" role="tabpanel" aria-labelledby="owner-tab">
                         <p>{{ breeding_cow.contact }}</p>
                     </div>
-                    <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
-                        <p>{{ breeding_cow.entry_date }}</p>
+                    <div class="tab-pane fade" id="entry_date" role="tabpanel" aria-labelledby="entry_date-tab">
+                        <p>{{ breeding_cow.entry_date|date:"Y-m-d" }}</p>
+                    </div>
+                    <div class="tab-pane fade" id="description" role="tabpanel" aria-labelledby="description-tab">
+                        <p>{{ breeding_cow.description }}</p>
                     </div>
                 </div>
             </div>

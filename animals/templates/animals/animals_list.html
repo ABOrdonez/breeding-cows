@@ -37,12 +37,12 @@
                                     {% for animal, animalDiet, animalReproduction, animalSanitary in animals %}
                                         <tr>
                                             <td>{{ animal }}</td>
-                                            <td>{{ animal.entry_date }}</td>
+                                            <td>{{ animal.entry_date|date:"Y-m-d" }}</td>
                                             <td>{{ animal.acquisition }}</td>
                                             {% if animalDiet %}
                                                 <td>{{ animalDiet.diet }}</td>
                                             {% else %}
-                                                <td>No tiene dieta asociada</td>
+                                                <td>-</td>
                                             {% endif %}
 
                                             {% if animalSanitary %}

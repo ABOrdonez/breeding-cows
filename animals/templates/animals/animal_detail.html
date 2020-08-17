@@ -28,8 +28,8 @@
                                 <ul class="list-group list-group-flush">
                                     <li class="list-group-item">Numero de rebaño: {{ animal.flock_number }}</li>
                                     <li class="list-group-item">Numero de Rodeo: {{ animal.breeding_cows }}</li>
-                                    <li class="list-group-item">Fecha de nacimiento: {{ animal.entry_date }}</li>
-                                    <li class="list-group-item">Fecha de adquisicion: {{ animal.entry_date }}</li>
+                                    <li class="list-group-item">Fecha de nacimiento: {{ animal.entry_date|date:"Y-m-d" }}</li>
+                                    <li class="list-group-item">Fecha de adquisicion: {{ animal.entry_date|date:"Y-m-d" }}</li>
                                     <li class="list-group-item">Tipo de adquisicion: {{ animal.acquisition }}</li>
                                     {% if animal.rejection_date %}
                                         <li class="list-group-item">Fecha de rechazo: {{ animal.rejection_date }}</li>
@@ -123,27 +123,27 @@
                 </div>
             </div>
         </div>
-
-        <div class="row">
-            <div class="col-lg-12 mt-2">
-                <div class="seo-fact sbg2">
-                    <div class="p-4 d-flex justify-content-between align-items-center">
-                        <div class="seofct-icon"><i class="fa fa-thumbs-o-up"></i> Reproducciones concretadas con exito</div>
-                        <h2>{{successful}}</h2>
+        <div class="card mt-3">
+            <div class="card-body">
+                <h4 class="header-title">Monta Natural</h4>
+                <div class="row">
+                    <div class="col-lg-5 seo-fact sbg2">
+                        <div class="p-4 d-flex justify-content-between align-items-center">
+                            <div class="seofct-icon"><i class="fa fa-thumbs-o-up"></i></div>
+                            <h2>{{successfulNatural}}</h2>
+                        </div>
+                    </div>
+                    <div class="col-lg-2">
+                    </div>
+                    <div class="col-lg-5 seo-fact sbg3">
+                        <div class="p-4 d-flex justify-content-between align-items-center">
+                            <div class="seofct-icon"><i class="fa fa-thumbs-o-down"></i></div>
+                            <h2>{{unsuccessfulNatural}}</h2>
+                        </div>
                     </div>
                 </div>
-                    
             </div>
-            <div class="col-lg-12 mt-2">
-                <div class="seo-fact sbg3">
-                    <div class="p-4 d-flex justify-content-between align-items-center">
-                        <div class="seofct-icon"><i class="fa fa-thumbs-o-down"></i> Reproducciones concretadas sin exito</div>
-                        <h2>{{unsuccessful}}</h2>
-                    </div>
-                </div>
-                    
-            </div>
-        </div>
+        </div>    
     </div>
 
     {% if animalReproduction %}
@@ -163,7 +163,7 @@
                             <div class="tm-title">
                                 <h4>Proceso pervio a ejecutar la reproduccion</h4>
                                 {% if animalReproduction.reproduction.preparation_date %}
-                                    <span class="time"><i class="ti-time"></i>{{animalReproduction.reproduction.preparation_date}}</span>
+                                    <span class="time"><i class="ti-time"></i>{{animalReproduction.reproduction.preparation_date|date:"Y-m-d"}}</span>
                                 {% else %}
                                     <span class="time"><i class="ti-time"></i> - </span>
                                 {% endif %}
@@ -191,7 +191,7 @@
                             <div class="tm-title">
                                 <h4>Ejecutación del servicio</h4>
                                 {% if animalReproduction.reproduction.execution_date %}
-                                    <span class="time"><i class="ti-time"></i>{{animalReproduction.reproduction.execution_date}}</span>
+                                    <span class="time"><i class="ti-time"></i>{{animalReproduction.reproduction.execution_date|date:"Y-m-d"}}</span>
                                 {% else %}
                                     <span class="time"><i class="ti-time"></i> - </span>
                                 {% endif %}                        
@@ -213,7 +213,7 @@
                             <div class="tm-title">
                                 <h4>Tacto con ecografía</h4>
                                 {% if animalReproduction.reproduction.revision_date %}
-                                    <span class="time"><i class="ti-time"></i>{{animalReproduction.reproduction.revision_date}}</span>
+                                    <span class="time"><i class="ti-time"></i>{{animalReproduction.reproduction.revision_date|date:"Y-m-d"}}</span>
                                 {% else %}
                                     <span class="time"><i class="ti-time"></i> - </span>
                                 {% endif %}                        
@@ -240,7 +240,7 @@
                             <div class="tm-title">
                                 <h4>Separación</h4>
                                 {% if animalReproduction.reproduction.separation_date %}
-                                    <span class="time"><i class="ti-time"></i>{{animalReproduction.reproduction.separation_date}}</span>
+                                    <span class="time"><i class="ti-time"></i>{{animalReproduction.reproduction.separation_date|date:"Y-m-d"}}</span>
                                 {% else %}
                                     <span class="time"><i class="ti-time"></i> - </span>
                                 {% endif %}                         
@@ -262,7 +262,7 @@
                             <div class="tm-title">
                                 <h4>Parto</h4>
                                 {% if animalReproduction.finished_date %}
-                                    <span class="time"><i class="ti-time"></i>{{animalReproduction.finished_date}}</span>
+                                    <span class="time"><i class="ti-time"></i>{{animalReproduction.finished_date|date:"Y-m-d"}}</span>
                                 {% else %}
                                     <span class="time"><i class="ti-time"></i> - </span>
                                 {% endif %}                         
@@ -286,7 +286,7 @@
                                     </div>
                                     <div class="tm-title">
                                         <h4>La reproducción finalizó con éxito</h4>
-                                        <span class="time"><i class="ti-time"></i>{{ animalReproduction.finished_date }}</span>
+                                        <span class="time"><i class="ti-time"></i>{{ animalReproduction.finished_date|date:"Y-m-d" }}</span>
                                     </div>
                                 </div>
                             {% else %}
@@ -296,7 +296,7 @@
                                     </div>
                                     <div class="tm-title">
                                         <h4>La reproducción finalizó sin éxito</h4>
-                                        <span class="time"><i class="ti-time"></i>{{ animalReproduction.finished_date }}</span>
+                                        <span class="time"><i class="ti-time"></i>{{ animalReproduction.finished_date|date:"Y-m-d" }}</span>
                                     </div>
                                 </div>
                             {% endif %}
@@ -315,4 +315,27 @@
             </div>
         </div>
     {% endif %}
+    <div class="col-xl-6">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title">Inseminaciones Artificiales</h4>
+                <div class="row">
+                    <div class="col-lg-5 seo-fact sbg2">
+                        <div class="p-4 d-flex justify-content-between align-items-center">
+                            <div class="seofct-icon"><i class="fa fa-thumbs-o-up"></i></div>
+                            <h2>{{successfulInsemination}}</h2>
+                        </div>
+                    </div>
+                    <div class="col-lg-2">
+                    </div>
+                    <div class="col-lg-5 seo-fact sbg3">
+                        <div class="p-4 d-flex justify-content-between align-items-center">
+                            <div class="seofct-icon"><i class="fa fa-thumbs-o-down"></i></div>
+                            <h2>{{unsuccessfulInsemination}}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

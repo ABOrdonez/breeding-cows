@@ -44,7 +44,9 @@ from datetime import timedelta
 def animal_detail(request, pk):
     animal = get_object_or_404(Animals, pk=pk)
     animalDiet, animalReproduction, animalSanitary = getAnimalInfo(animal)
-    successful, unsuccessful = getReproductionInfo(animal)
+    if animalReproduction:
+        successful, unsuccessful = getReproductionInfo(animal)
+
     return render(
         request,
         'animals/animal_detail.html',
@@ -53,8 +55,10 @@ def animal_detail(request, pk):
             'animalReproduction': animalReproduction,
             'animalDiet': animalDiet,
             'animalSanitary': animalSanitary,
-            'successful': successful,
-            'unsuccessful': unsuccessful
+            'successfulInsemination': successful[0],
+            'unsuccessfulInsemination': unsuccessful[0],
+            'successfulNatural': successful[1],
+            'unsuccessfulNatural': unsuccessful[1]
         }
     )
 
@@ -768,16 +772,21 @@ def getReproductionInfo(animal):
     ).filter(
         animal=animal
     )
-    successfulReproductions = 0
-    unsuccessfulReproductions = 0
+    successfulReproductions = [0, 0]
+    unsuccessfulReproductions = [0, 0]
 
     for reproduction in animalReproductions:
         if reproduction.finished_date:
             if reproduction.reproduction.give_birth_date:
-                successfulReproductions += 1
+                if reproduction.reproduction.reproduction_type == "Inseminacion Artificial":
+                    successfulReproductions[0] += 1
+                else:
+                    successfulReproductions[1] += 1
             else:
-                unsuccessfulReproductions += 1
-
+                if reproduction.reproduction.reproduction_type == "Inseminacion Artificial":
+                    unsuccessfulReproductions[0] += 1
+                else:
+                    unsuccessfulReproductions[1] += 1
     return (
         successfulReproductions,
         unsuccessfulReproductions,
