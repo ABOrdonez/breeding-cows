@@ -51,9 +51,9 @@ def animal_detail(request, pk):
         'animals/animal_detail.html',
         {
             'animal': animal,
-            'animalReproduction': animalReproduction,
-            'animalDiet': animalDiet,
-            'animalSanitary': animalSanitary,
+            'animalReproduction': animalReproduction.first(),
+            'animalDiets': animalDiet,
+            'animalSanitaries': animalSanitary,
             'successfulInsemination': successful[0],
             'unsuccessfulInsemination': unsuccessful[0],
             'successfulNatural': successful[1],
@@ -514,9 +514,9 @@ def animals_list(request, breedingCowsPk, animalType):
         animalDiet, animalReproduction, animalSanitary = getAnimalInfo(animal)
         animalInfo.append([
             animal,
-            animalDiet,
-            animalReproduction,
-            animalSanitary
+            animalDiet.last(),
+            animalReproduction.first(),
+            animalSanitary.last()
         ])
 
     paginator = Paginator(animalInfo, 7)
@@ -743,20 +743,20 @@ def animal_on_danger_process(request, breedingCowsPk):
 
 def getAnimalInfo(animal):
     animalDiet = AnimalDiet.objects.all().order_by(
-        '-diagnosis_date'
+        'diagnosis_date'
     ).filter(
         animal=animal
-    ).first()
+    )
     animalReproduction = AnimalRepoduction.objects.all().order_by(
         '-started_date'
     ).filter(
         animal=animal
-    ).first()
+    )
     animalSanitary = AnimalSanitary.objects.all().order_by(
-        '-done_date'
+        'done_date'
     ).filter(
         animal=animal
-    ).first()
+    )
 
     return (
         animalDiet,

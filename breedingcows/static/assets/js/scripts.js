@@ -55,6 +55,9 @@
     $('.settings-list').slimScroll({
         height: 'calc(100vh - 158px)'
     });
+    $('.line-area').slimScroll({
+        height: '200px'
+    });
 
     /*================================
     stickey Header

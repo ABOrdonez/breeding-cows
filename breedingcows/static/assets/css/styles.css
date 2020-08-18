@@ -1369,6 +1369,49 @@ table.dbkit-table tr td {
     height: 500px;
 }
 
+/* line */
+
+.line-area {
+    padding-left: 52px;
+    padding-top: 6px;
+}
+
+.line-task {
+    position: relative;
+    margin-bottom: 35px;
+}
+
+.line-task:before {
+    content: '';
+    position: absolute;
+    left: -35px;
+    top: 0;
+    height: calc(100% + 33px);
+    width: 1px;
+    background: #e6cdff;
+}
+
+.line-task:last-child:before {
+    height: 100%;
+}
+
+.line-task:last-child {
+    margin-bottom: 0;
+}
+
+.line-task .icon {
+    position: absolute;
+    left: -52px;
+    top: -6px;
+    height: 35px;
+    width: 35px;
+    line-height: 35px;
+    border-radius: 50%;
+    text-align: center;
+    font-size: 12px;
+    color: #fff;
+}
+
 /* timeline */
 
 .timeline-area {
