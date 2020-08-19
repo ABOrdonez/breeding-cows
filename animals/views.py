@@ -832,7 +832,10 @@ def getFemaleAnimals(breedingCows):
         'flock_number'
     ).filter(
         breeding_cows=breedingCows,
-        leaving_date__isnull=True
+        leaving_date__isnull=True,
+        sexual_maturity=True,
+        body_development=True,
+        disease=False
     ).exclude(
         animal_type='Toro'
     ).exclude(
