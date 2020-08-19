@@ -19,59 +19,61 @@
                         <div class="table-responsive">
                             <table class="table table-hover progress-table text-center">
                                 <thead class="text-uppercase">
-                                    <tr>
-                                        {% if animal_type == 'Ternero' %}
-                                            <th scope="col">Padres</th>
-                                        {% else %}
-                                            <th scope="col">N° rebaño</th>
-                                        {% endif %}
-                                        <th scope="col">Fecha de adquisicion</th>
-                                        <th scope="col">Tipo de adquisicion</th>
-                                        <th scope="col">Dieta</th>
-                                        <th scope="col">Sanidad</th>
-                                        <th scope="col">Reproducicon en curso</th>
-                                        <th scope="col">Accion</th>
-                                    </tr>
+                                <tr>
+                                    {% if animal_type == 'Ternero' %}
+                                        <th scope="col">Padres</th>
+                                    {% else %}
+                                        <th scope="col">N° rebaño</th>
+                                    {% endif %}
+                                    <th scope="col">Fecha de adquisicion</th>
+                                    <th scope="col">Tipo de adquisicion</th>
+                                    <th scope="col">Dieta</th>
+                                    <th scope="col">Sanidad</th>
+                                    <th scope="col">Reproducicon en curso</th>
+                                    <th scope="col">Accion</th>
+                                </tr>
                                 </thead>
                                 <tbody>
-                                    {% for animal, animalDiet, animalReproduction, animalSanitary in animals %}
-                                        <tr>
-                                            <td>{{ animal }}</td>
-                                            <td>{{ animal.entry_date|date:"Y-m-d" }}</td>
-                                            <td>{{ animal.acquisition }}</td>
-                                            {% if animalDiet %}
-                                                <td>{{ animalDiet.diet }}</td>
-                                            {% else %}
-                                                <td>-</td>
-                                            {% endif %}
+                                {% for animal, animalDiet, animalReproduction, animalSanitary in animals %}
+                                    <tr>
+                                        <td>{{ animal }}</td>
+                                        <td>{{ animal.entry_date|date:"Y-m-d" }}</td>
+                                        <td>{{ animal.acquisition }}</td>
+                                        {% if animalDiet %}
+                                            <td>{{ animalDiet.diet }}</td>
+                                        {% else %}
+                                            <td>-</td>
+                                        {% endif %}
 
-                                            {% if animalSanitary %}
-                                                <td>{{ animalSanitary.sanitary }}</td>
-                                            {% else %}
-                                                <td>-</td>
-                                            {% endif %}
+                                        {% if animalSanitary %}
+                                            <td>{{ animalSanitary.sanitary }}</td>
+                                        {% else %}
+                                            <td>-</td>
+                                        {% endif %}
 
-                                            {% if animalReproduction %}
-                                                {% if animalReproduction.finished_date %}
-                                                    <td>No tiene repoduccion en proceso</td>
-                                                {% else %}
-                                                    <td>{{ animalReproduction}}</td>
-                                                {% endif %}                                            
+                                        {% if animalReproduction %}
+                                            {% if animalReproduction.finished_date %}
+                                                <td>No tiene repoduccion en proceso</td>
                                             {% else %}
-                                                <td>-</td>
+                                                <td>{{ animalReproduction }}</td>
                                             {% endif %}
-                                        
-                                            <td>
-                                                <ul class="d-flex justify-content-center">
-                                                    <li class="mr-3"><a href="{% url 'animal_detail' pk=animal.pk %}" class="text-secondary"><i class="fa fa-search"></i></a></li>
-                                                </ul>
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
+                                        {% else %}
+                                            <td>-</td>
+                                        {% endif %}
+
+                                        <td>
+                                            <ul class="d-flex justify-content-center">
+                                                <li class="mr-3"><a href="{% url 'animal_detail' pk=animal.pk %}"
+                                                                    class="text-secondary"><i class="fa fa-search"></i></a>
+                                                </li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
                                 </tbody>
                             </table>
                         </div>
-                    </div>              
+                    </div>
                 </div>
             </div>
             <br>
@@ -81,15 +83,15 @@
                         <a class="page-link" href="?page={{ animals.previous_page_number }}">Previous</a>
                     </li>
                 {% endif %}
-                    <li class="page-item active">
-                        <a class="page-link" href="#">{{ animals.number }}<span class="sr-only">(current)</span></a>
-                    </li>
+                <li class="page-item active">
+                    <a class="page-link" href="#">{{ animals.number }}<span class="sr-only">(current)</span></a>
+                </li>
                 {% if animals.has_next %}
                     <li class="page-item">
                         <a class="page-link" href="?page={{ animals.next_page_number }}">Next</a>
                     </li>
-                {% endif %} 
-            </ul>  
-        </div>       
+                {% endif %}
+            </ul>
+        </div>
     </div>
 {% endblock %}

@@ -58,7 +58,7 @@ def diet_edit(request, pk):
         if form.is_valid():
             diet = form.save(commit=False)
             diet.save()
-            return redirect('diet_detail', pk=diet.pk)     
+            return redirect('diet_detail', pk=diet.pk)
     else:
         form = DietForm(instance=diet)
     return render(request, 'diets/diet_edit.html', {'form': form})

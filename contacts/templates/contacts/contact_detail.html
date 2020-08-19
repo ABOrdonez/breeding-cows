@@ -19,19 +19,20 @@
                             <a class="collapsed card-link" data-toggle="collapse" href="#accordion1">Identificación</a>
                         </div>
                         <div id="accordion1" class="collapse" data-parent="#accordion">
-							<div class="card-body">
+                            <div class="card-body">
                                 <ul class="list-group list-group-flush">
                                     <li class="list-group-item">Nombre: {{ contact.first_name }}</li>
                                     <li class="list-group-item">Apellido: {{ contact.last_name }}</li>
                                     <li class="list-group-item">Estado civil: {{ contact.civil_status }}</li>
                                     <li class="list-group-item">Fecha de nacimiento: {{ contact.birthday }}</li>
                                 </ul>
-                            </div>                            
+                            </div>
                         </div>
                     </div>
                     <div class="card">
                         <div class="card-header">
-                            <a class="collapsed card-link" data-toggle="collapse" href="#accordion2">Medios de contacto</a>
+                            <a class="collapsed card-link" data-toggle="collapse" href="#accordion2">Medios de
+                                contacto</a>
                         </div>
                         <div id="accordion2" class="collapse" data-parent="#accordion">
                             <div class="card-body">
@@ -48,5 +49,5 @@
             </div>
         </div>
     </div>
-</div>
+    </div>
 {% endblock %}

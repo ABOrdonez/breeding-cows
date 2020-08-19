@@ -9,153 +9,160 @@
 {% endblock %}
 
 {% block content %}
-	<div class="col-12 mt-3">
-		{% if request.GET.message == 'success' %}
-			<div class="alert alert-success" role="alert">
-			    <strong>La proceso previo a ejecutar el servicio se inicio con éxio.</strong> 
-			    Podés seguir iniciando procesos o 
-			    <a href="{% url 'breeding_cow_detail' pk=breeding_cow.pk %}" class="alert-link">hacer click aquí</a> 
-			    para volver al Rodeo de Cría.
-			</div>
-		{% endif %}
-		<div class="card">
-			<div class="invoice-head" style="margin-bottom: 5px;">
-		        <div class="iv-left col-6 mt-3">
-		            <span>Selección de Animales</span>
-		        </div>
-			</div>
-			<div class="modal-body">
-			    <div class="row"> 
-			      <div class="col-sm-5">
-			      	<h4 class="header-title">Animales del Rodeo</h4>
-			        <div class="selector-available"> 
-			          <select name="all_animals" class="filtered form-control" id="id_all_animals_from" multiple="" data-is-stacked="0" data-field-name="selected_animals">
-			            {% for animal in animals %}
-					       <option id="{{animal.id}}" value="{{animal.id}}" title="{{animal.flock_number}}">{{animal.flock_number}}</option>
-					    {% endfor %}
-			          </select>
-			        </div>
-			      </div>
-			      <div class="col-sm-2 text-center">
-			      	<br><br><br>
-					<button onclick="moves_out()" type="button" class="btn btn-rounded btn-light mb-3">
-						<i class="fa fa-arrow-left"></i></button>
+    <div class="col-12 mt-3">
+        {% if request.GET.message == 'success' %}
+            <div class="alert alert-success" role="alert">
+                <strong>La proceso previo a ejecutar el servicio se inicio con éxio.</strong>
+                Podés seguir iniciando procesos o
+                <a href="{% url 'breeding_cow_detail' pk=breeding_cow.pk %}" class="alert-link">hacer click aquí</a>
+                para volver al Rodeo de Cría.
+            </div>
+        {% endif %}
+        <div class="card">
+            <div class="invoice-head" style="margin-bottom: 5px;">
+                <div class="iv-left col-6 mt-3">
+                    <span>Selección de Animales</span>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-5">
+                        <h4 class="header-title">Animales del Rodeo</h4>
+                        <div class="selector-available">
+                            <select name="all_animals" class="filtered form-control" id="id_all_animals_from"
+                                    multiple="" data-is-stacked="0" data-field-name="selected_animals">
+                                {% for animal in animals %}
+                                    <option id="{{ animal.id }}" value="{{ animal.id }}"
+                                            title="{{ animal.flock_number }}">{{ animal.flock_number }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-2 text-center">
+                        <br><br><br>
+                        <button onclick="moves_out()" type="button" class="btn btn-rounded btn-light mb-3">
+                            <i class="fa fa-arrow-left"></i></button>
 
-					<button onclick="moves_in()" type="button" class="btn btn-rounded btn-light mb-3">
-						<i class="fa fa-arrow-right"></i></button>
-			      </div>
-			      <div class="col-sm-5">
-			      	<h4 class="header-title">Aplicado en</h4>
-			         <div class="selector-chosen">
-			            <select id="id_selected_animals_to" multiple="multiple" size="0" name="selected_animals" class="filtered form-control" >
-			            </select>
-			          </div>
-			      </div>
-			    </div>
-			 </div>
-		</div>
-	</div>
+                        <button onclick="moves_in()" type="button" class="btn btn-rounded btn-light mb-3">
+                            <i class="fa fa-arrow-right"></i></button>
+                    </div>
+                    <div class="col-sm-5">
+                        <h4 class="header-title">Aplicado en</h4>
+                        <div class="selector-chosen">
+                            <select id="id_selected_animals_to" multiple="multiple" size="0" name="selected_animals"
+                                    class="filtered form-control">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-	<div class="col-12 mt-3">
-		<div class="card">
-			<div class="invoice-head" style="margin-bottom: 5px;">
-				<div class="iv-left col-12 mt-3">
-					<span>Datos necesarios para preparar al animal previo al servicio:</span>
-				</div>
-			</div>
-			<div class="modal-body">
-				<div class="row"> 
-					<div class="col-sm-6">
-						<label for="reproduction_type">Tipo de servivio</label>
-						<select id="all_reproduction_type" class="form-control">
+    <div class="col-12 mt-3">
+        <div class="card">
+            <div class="invoice-head" style="margin-bottom: 5px;">
+                <div class="iv-left col-12 mt-3">
+                    <span>Datos necesarios para preparar al animal previo al servicio:</span>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <label for="reproduction_type">Tipo de servivio</label>
+                        <select id="all_reproduction_type" class="form-control">
                             <option>Inseminacion Artificial A Tiempos Fijos</option>
                             <option>Monta Natural</option>
-                        </select>	
+                        </select>
                         <label for="execution_date">Fecha en la que se ejecutó la acción</label>
-						<input class="form-control" type="date" id="execution_date_id">
-                        
-					</div>
-					<div class="col-sm-6 mt-5">
-						<div class="custom-control custom-checkbox mt-2">
-							<input type="checkbox" class="custom-control-input" id="has_vaginal_device">
-						    <label class="custom-control-label" for="has_vaginal_device">Se coloca vacuna con prostaglandina</label>
-						</div>
-						<br>
-						<div class="custom-control custom-checkbox">
-						    <input type="checkbox" class="custom-control-input" id="has_prostaglandin_vaccine">
-						    <label class="custom-control-label" for="has_prostaglandin_vaccine">Se coloca dispositivo vagina</label>
-						</div>
-					</div>
-				</div>
-				<br>
-				<button type="submit" name="action" class="btn btn-outline-success btn-lg btn-block mt-3" data-dismiss="modal" onclick="submit({{ breeding_cow.pk }})">Guardar</button>
-			</div>
-		</div>
-	</div>
+                        <input class="form-control" type="date" id="execution_date_id">
 
-	<script>
-      function moves_in(){
-        var selected_animlas = $("#id_all_animals_from option:selected");
-        var unselected_animlas = $("#id_all_animals_from option:not(:selected)");
+                    </div>
+                    <div class="col-sm-6 mt-5">
+                        <div class="custom-control custom-checkbox mt-2">
+                            <input type="checkbox" class="custom-control-input" id="has_vaginal_device">
+                            <label class="custom-control-label" for="has_vaginal_device">Se coloca vacuna con
+                                prostaglandina</label>
+                        </div>
+                        <br>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="has_prostaglandin_vaccine">
+                            <label class="custom-control-label" for="has_prostaglandin_vaccine">Se coloca dispositivo
+                                vagina</label>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <button type="submit" name="action" class="btn btn-outline-success btn-lg btn-block mt-3"
+                        data-dismiss="modal" onclick="submit({{ breeding_cow.pk }})">Guardar
+                </button>
+            </div>
+        </div>
+    </div>
 
-        $.each(selected_animlas, function(id, option, title) {
-          $("#id_selected_animals_to").append('<option id='+option.id+' value='+option.id+' title='+option.title+'>'+option.title+'</option>');
-        });
-        $("#id_all_animals_from").empty();
-        $.each(unselected_animlas, function(id, option, title) {
-          $("#id_all_animals_from").append('<option id='+option.id+' value='+option.id+' title='+option.title+'>'+option.title+'</option>');
-        });
-      };
+    <script>
+        function moves_in() {
+            var selected_animlas = $("#id_all_animals_from option:selected");
+            var unselected_animlas = $("#id_all_animals_from option:not(:selected)");
+
+            $.each(selected_animlas, function (id, option, title) {
+                $("#id_selected_animals_to").append('<option id=' + option.id + ' value=' + option.id + ' title=' + option.title + '>' + option.title + '</option>');
+            });
+            $("#id_all_animals_from").empty();
+            $.each(unselected_animlas, function (id, option, title) {
+                $("#id_all_animals_from").append('<option id=' + option.id + ' value=' + option.id + ' title=' + option.title + '>' + option.title + '</option>');
+            });
+        };
     </script>
 
     <script>
-      function moves_out(){
-        var selected_animlas = $("#id_selected_animals_to option:selected");
-        var unselected_animlas = $("#id_selected_animals_to option:not(:selected)");
+        function moves_out() {
+            var selected_animlas = $("#id_selected_animals_to option:selected");
+            var unselected_animlas = $("#id_selected_animals_to option:not(:selected)");
 
-        $.each(selected_animlas, function(id, option, title) {
-          $("#id_all_animals_from").append('<option id='+option.id+' value='+option.id+' title='+option.title+'>'+option.title+'</option>');
-        });
-        $("#id_selected_animals_to").empty();
-        $.each(unselected_animlas, function(id, option, title) {
-          $("#id_selected_animals_to").append('<option id='+option.id+' value='+option.id+' title='+option.title+'>'+option.title+'</option>');
-        });
-      };
+            $.each(selected_animlas, function (id, option, title) {
+                $("#id_all_animals_from").append('<option id=' + option.id + ' value=' + option.id + ' title=' + option.title + '>' + option.title + '</option>');
+            });
+            $("#id_selected_animals_to").empty();
+            $.each(unselected_animlas, function (id, option, title) {
+                $("#id_selected_animals_to").append('<option id=' + option.id + ' value=' + option.id + ' title=' + option.title + '>' + option.title + '</option>');
+            });
+        };
     </script>
 
     <script>
-      function submit(breedingCowPk){
-        var selected_animlas = $("#id_selected_animals_to option");
-        var reproduction_type = $("#all_reproduction_type").val();
-        var has_prostaglandin_vaccine = $('#has_prostaglandin_vaccine').is(":checked");
-        var has_vaginal_device = $('#has_vaginal_device').is(":checked");
-        var execution_date_id = $("#execution_date_id").val();
+        function submit(breedingCowPk) {
+            var selected_animlas = $("#id_selected_animals_to option");
+            var reproduction_type = $("#all_reproduction_type").val();
+            var has_prostaglandin_vaccine = $('#has_prostaglandin_vaccine').is(":checked");
+            var has_vaginal_device = $('#has_vaginal_device').is(":checked");
+            var execution_date_id = $("#execution_date_id").val();
 
-        $.each(selected_animlas, function(id, option) {
-	        add_animal_reproduction_type(breedingCowPk, option.id, reproduction_type, has_prostaglandin_vaccine, has_vaginal_device, execution_date_id);
-        });
-    }
+            $.each(selected_animlas, function (id, option) {
+                add_animal_reproduction_type(breedingCowPk, option.id, reproduction_type, has_prostaglandin_vaccine, has_vaginal_device, execution_date_id);
+            });
+        }
     </script>
 
     <script>
-      function add_animal_reproduction_type(breedingCowPk, idAnimal, idReproduction, has_prostaglandin_vaccine, has_vaginal_device, execution_date){
-          $.ajax({
-            type: 'POST',
-            url: '/'+breedingCowPk+'/animals/reproductiontype/new/',
-            data: {
-            	idAnimal: idAnimal,
-            	idReproduction: idReproduction,
-            	has_prostaglandin_vaccine: has_prostaglandin_vaccine,
-            	has_vaginal_device: has_vaginal_device,
-            	execution_date: execution_date
-            },
-            success: function (data) {
-				window.location = "?message=success";
-			},
-			error: function(data) {
-				window.location = "?message=error";
-			}
-          });
+        function add_animal_reproduction_type(breedingCowPk, idAnimal, idReproduction, has_prostaglandin_vaccine, has_vaginal_device, execution_date) {
+            $.ajax({
+                type: 'POST',
+                url: '/' + breedingCowPk + '/animals/reproductiontype/new/',
+                data: {
+                    idAnimal: idAnimal,
+                    idReproduction: idReproduction,
+                    has_prostaglandin_vaccine: has_prostaglandin_vaccine,
+                    has_vaginal_device: has_vaginal_device,
+                    execution_date: execution_date
+                },
+                success: function (data) {
+                    window.location = "?message=success";
+                },
+                error: function (data) {
+                    window.location = "?message=error";
+                }
+            });
         };
     </script>
 {% endblock %}

@@ -40,8 +40,12 @@
                                         <td>{{ animal_count }}</td>
                                         <td>
                                             <ul class="d-flex justify-content-center">
-                                                <li class="mr-3"><a href="{% url 'diet_detail' pk=diet.pk %}" class="text-secondary"><i class="fa fa-search"></i></a></li>
-                                                <li class="mr-3"><a href="{% url 'diet_edit' pk=diet.pk %}" class="text-secondary"><i class="fa fa-pencil"></i></a></li>
+                                                <li class="mr-3"><a href="{% url 'diet_detail' pk=diet.pk %}"
+                                                                    class="text-secondary"><i class="fa fa-search"></i></a>
+                                                </li>
+                                                <li class="mr-3"><a href="{% url 'diet_edit' pk=diet.pk %}"
+                                                                    class="text-secondary"><i class="fa fa-pencil"></i></a>
+                                                </li>
                                             </ul>
                                         </td>
                                     </tr>
@@ -59,14 +63,14 @@
                             <a class="page-link" href="?page={{ diets.previous_page_number }}">Previous</a>
                         </li>
                     {% endif %}
-                        <li class="page-item active">
-                            <a class="page-link" href="#">{{ diets.number }}<span class="sr-only">(current)</span></a>
-                        </li>
+                    <li class="page-item active">
+                        <a class="page-link" href="#">{{ diets.number }}<span class="sr-only">(current)</span></a>
+                    </li>
                     {% if diets.has_next %}
                         <li class="page-item">
                             <a class="page-link" href="?page={{ diets.next_page_number }}">Next</a>
                         </li>
-                    {% endif %} 
+                    {% endif %}
                 </ul>
             </div>
         </div>
@@ -77,37 +81,37 @@
     <div class="col-md-4 mt-3">
         <canvas id="dietsAnimalsChart" width="400" height="400"></canvas>
     </div>
-    
+
     <script>
 
-    $.ajax({
-        type: 'GET',
-        url: 'api/chart/data/',
-        success: function (data) {
-            setDietsComponentChart(data.diets,data.diet_proteins, data.diet_energies)
-            setDietsAnimalsChart(data.diets, data.diets_animal_count)
-        },
-        error: function(data) {
-        },
-    });
+        $.ajax({
+            type: 'GET',
+            url: 'api/chart/data/',
+            success: function (data) {
+                setDietsComponentChart(data.diets, data.diet_proteins, data.diet_energies)
+                setDietsAnimalsChart(data.diets, data.diets_animal_count)
+            },
+            error: function (data) {
+            },
+        });
 
-    function setDietsComponentChart(diets, diet_proteins, diet_energies){
-        var ctx = document.getElementById('dietsComponentChart').getContext('2d');
-        var dietsComponentChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: diets,
-                datasets: [{
-                    label: 'Poteinas',
-                    data: diet_proteins,
-                    backgroundColor: 'rgb(127, 0, 255)',
+        function setDietsComponentChart(diets, diet_proteins, diet_energies) {
+            var ctx = document.getElementById('dietsComponentChart').getContext('2d');
+            var dietsComponentChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: diets,
+                    datasets: [{
+                        label: 'Poteinas',
+                        data: diet_proteins,
+                        backgroundColor: 'rgb(127, 0, 255)',
                     }, {
-                    label: 'Enegrias',
-                    data: diet_energies,
-                    backgroundColor: 'rgb(255, 99, 132)',
+                        label: 'Enegrias',
+                        data: diet_energies,
+                        backgroundColor: 'rgb(255, 99, 132)',
                     }]
                 },
-            options: {
+                options: {
                     scales: {
                         yAxes: [{
                             ticks: {
@@ -117,36 +121,36 @@
                     }
                 }
             });
-    }
-
-    function setDietsAnimalsChart(diets, diets_animal_count){
-        var ctx = document.getElementById('dietsAnimalsChart').getContext('2d');
-        var ict_unit = [];
-        var efficiency = [];
-        var coloR = [];
-
-        var dynamicColors = function() {
-            var hue = Math.floor(Math.random() * 360);
-            return 'hsl(' + hue + ', 100%, 80%)';
-        };
-
-        for (var i in diets) {
-            ict_unit.push("ICT Unit " + diets[i].ict_unit);
-            efficiency.push(diets[i].efficiency);
-            coloR.push(dynamicColors());
         }
-        
-        var dietsAnimalsChart = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: diets,
-                datasets: [{
-                    data: diets_animal_count,
-                    backgroundColor: coloR,
+
+        function setDietsAnimalsChart(diets, diets_animal_count) {
+            var ctx = document.getElementById('dietsAnimalsChart').getContext('2d');
+            var ict_unit = [];
+            var efficiency = [];
+            var coloR = [];
+
+            var dynamicColors = function () {
+                var hue = Math.floor(Math.random() * 360);
+                return 'hsl(' + hue + ', 100%, 80%)';
+            };
+
+            for (var i in diets) {
+                ict_unit.push("ICT Unit " + diets[i].ict_unit);
+                efficiency.push(diets[i].efficiency);
+                coloR.push(dynamicColors());
+            }
+
+            var dietsAnimalsChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: diets,
+                    datasets: [{
+                        data: diets_animal_count,
+                        backgroundColor: coloR,
                     }]
                 },
 
-            options: {
+                options: {
                     scales: {
                         yAxes: [{
                             ticks: {
@@ -156,7 +160,7 @@
                     }
                 }
             });
-    }
+        }
     </script>
 {% endblock %}
 

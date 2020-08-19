@@ -29,44 +29,55 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                    <div id= "idDivGeneral">
-                                        {% for breeding_cow, amountAnimals in breeding_cows %}
-                                            <tr>
-                                                <td>{{ breeding_cow.address }}</td>
-                                                <td>{{ breeding_cow.contact }}</td>
-                                                <td>{{ amountAnimals }}</td>
-                                                <td>
-                                                    <ul class="d-flex justify-content-center">
-                                                        <li class="mr-3"><a href="{% url 'breeding_cow_detail' pk=breeding_cow.pk %}" class="text-secondary"><i class="fa fa-search"></i></a></li>
-                                                        <li class="mr-3"><a href="{% url 'breeding_cow_edit' pk=breeding_cow.pk %}" class="text-secondary"><i class="fa fa-pencil"></i></a></li>
-                                                        <li><a onclick="open_confirm_action_modal({{breeding_cow.id}})" class="text-danger"><i class="ti-trash"></i></a></li>
+                                <div id="idDivGeneral">
+                                    {% for breeding_cow, amountAnimals in breeding_cows %}
+                                        <tr>
+                                            <td>{{ breeding_cow.address }}</td>
+                                            <td>{{ breeding_cow.contact }}</td>
+                                            <td>{{ amountAnimals }}</td>
+                                            <td>
+                                                <ul class="d-flex justify-content-center">
+                                                    <li class="mr-3"><a
+                                                            href="{% url 'breeding_cow_detail' pk=breeding_cow.pk %}"
+                                                            class="text-secondary"><i class="fa fa-search"></i></a></li>
+                                                    <li class="mr-3"><a
+                                                            href="{% url 'breeding_cow_edit' pk=breeding_cow.pk %}"
+                                                            class="text-secondary"><i class="fa fa-pencil"></i></a></li>
+                                                    <li><a onclick="open_confirm_action_modal({{ breeding_cow.id }})"
+                                                           class="text-danger"><i class="ti-trash"></i></a></li>
 
-                                                    </ul>
-                                                </td>
-                                            </tr>
+                                                </ul>
+                                            </td>
+                                        </tr>
 
-                                            <!-- Modal -->
-                                            <div class="modal fade show" id="idConfirmActionModal{{breeding_cow.id}}" tabindex="-1" aria-hidden="true" >
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title">¿Seguro que desea eliminar el Rodeo {{breeding_cow.address}}?</h5>
-                                                            <button type="button" class="close" data-dismiss="modal"><span>×</span></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <p> Una vez aceptado, el rodeo de cria será eliminado. En caso de necesitar reestablecer el
-                                                                rodeo, comunicarse con servicio tecnico. </p>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Volver atrás</button>
-                                                            <a href="{% url 'breeding_cow_delete' pk=breeding_cow.pk %}"
-                                                            role="button" class="btn btn-primary">Aceptar</a>
-                                                        </div>
+                                        <!-- Modal -->
+                                        <div class="modal fade show" id="idConfirmActionModal{{ breeding_cow.id }}"
+                                             tabindex="-1" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">¿Seguro que desea eliminar el
+                                                            Rodeo {{ breeding_cow.address }}?</h5>
+                                                        <button type="button" class="close" data-dismiss="modal">
+                                                            <span>×</span></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p> Una vez aceptado, el rodeo de cria será eliminado. En caso
+                                                            de necesitar reestablecer el
+                                                            rodeo, comunicarse con servicio tecnico. </p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                                data-dismiss="modal">Volver atrás
+                                                        </button>
+                                                        <a href="{% url 'breeding_cow_delete' pk=breeding_cow.pk %}"
+                                                           role="button" class="btn btn-primary">Aceptar</a>
                                                     </div>
                                                 </div>
                                             </div>
-                                        {% endfor %}
-                                    </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
                                 </tbody>
                             </table>
                         </div>
@@ -80,14 +91,15 @@
                             <a class="page-link" href="?page={{ breeding_cows.previous_page_number }}">Previous</a>
                         </li>
                     {% endif %}
-                        <li class="page-item active">
-                            <a class="page-link" href="#">{{ breeding_cows.number }}<span class="sr-only">(current)</span></a>
-                        </li>
+                    <li class="page-item active">
+                        <a class="page-link" href="#">{{ breeding_cows.number }}<span
+                                class="sr-only">(current)</span></a>
+                    </li>
                     {% if breeding_cows.has_next %}
                         <li class="page-item">
                             <a class="page-link" href="?page={{ breeding_cows.next_page_number }}">Next</a>
                         </li>
-                    {% endif %} 
+                    {% endif %}
                 </ul>
             </div>
         </div>
@@ -100,23 +112,23 @@
     </div>
     <div class="col-md-4 mt-3">
         <canvas id="totalReprocutinPerBreedingCowChart" width="400" height="400"></canvas>
-    </div>     
+    </div>
 
     <script>
-    $.ajax({
-        type: 'GET',
-        url: 'api/breeding_cow/chart/data/',
-        success: function (data) {
-            setTotalAnimalsPerBreedingCowChart(data.breeding_cows,data.breeding_cows_animal_count);
-            setTotalAnimalTypesPerBreedingCowChart(data.animals_types, data.vacas_count, data.ternero_count, data.vaquillonas_count, data.toros_count);
-            setTotalReproductionsPerBreedingCowChart(data.breeding_cows,data.breeding_cows_reproduction_in_process);
-        },
-        error: function(data) {
-        },
-    });
+        $.ajax({
+            type: 'GET',
+            url: 'api/breeding_cow/chart/data/',
+            success: function (data) {
+                setTotalAnimalsPerBreedingCowChart(data.breeding_cows, data.breeding_cows_animal_count);
+                setTotalAnimalTypesPerBreedingCowChart(data.animals_types, data.vacas_count, data.ternero_count, data.vaquillonas_count, data.toros_count);
+                setTotalReproductionsPerBreedingCowChart(data.breeding_cows, data.breeding_cows_reproduction_in_process);
+            },
+            error: function (data) {
+            },
+        });
 
-    function setTotalAnimalsPerBreedingCowChart(breeding_cows_address, breeding_cows_animal_count){
-        var ctx = document.getElementById('totalAnimalsPerBreedingCowChart').getContext('2d');
+        function setTotalAnimalsPerBreedingCowChart(breeding_cows_address, breeding_cows_animal_count) {
+            var ctx = document.getElementById('totalAnimalsPerBreedingCowChart').getContext('2d');
             var totalAnimalsPerBreedingCowChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -125,22 +137,22 @@
                         label: 'Animales en los Rodeos',
                         data: breeding_cows_animal_count,
                         backgroundColor: 'rgb(127, 0, 255)',
-                        }]
-                    },
+                    }]
+                },
                 options: {
-                        scales: {
-                            yAxes: [{
-                                ticks: {
-                                    beginAtZero: true
-                                }
-                            }]
-                        }
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
                     }
-                });
-    }
+                }
+            });
+        }
 
-    function setTotalReproductionsPerBreedingCowChart(breeding_cows_address, breeding_cows_reproduction_count){
-        var ctx = document.getElementById('totalReprocutinPerBreedingCowChart').getContext('2d');
+        function setTotalReproductionsPerBreedingCowChart(breeding_cows_address, breeding_cows_reproduction_count) {
+            var ctx = document.getElementById('totalReprocutinPerBreedingCowChart').getContext('2d');
             var totalReprocutinPerBreedingCowChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -149,22 +161,22 @@
                         label: 'Animales con procesos de reprodiccón iniciados',
                         data: breeding_cows_reproduction_count,
                         backgroundColor: 'rgb(255, 99, 132)',
-                        }]
-                    },
+                    }]
+                },
                 options: {
-                        scales: {
-                            yAxes: [{
-                                ticks: {
-                                    beginAtZero: true
-                                }
-                            }]
-                        }
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
                     }
-                });
-    }
+                }
+            });
+        }
 
-    function setTotalAnimalTypesPerBreedingCowChart(animals_types, vacas_count, ternero_count, vaquillonas_count, toros_count){
-        var ctx = document.getElementById('totalAnimalTypesPerBreedingCowChart').getContext('2d');
+        function setTotalAnimalTypesPerBreedingCowChart(animals_types, vacas_count, ternero_count, vaquillonas_count, toros_count) {
+            var ctx = document.getElementById('totalAnimalTypesPerBreedingCowChart').getContext('2d');
             var totalAnimalTypesPerBreedingCowChart = new Chart(ctx, {
                 type: 'polarArea',
                 data: {
@@ -172,7 +184,7 @@
                     datasets: [{
                         label: 'Animales en los Rodeos',
                         data: [vacas_count, ternero_count, vaquillonas_count, toros_count],
-                         backgroundColor: [
+                        backgroundColor: [
                             'rgba(255, 99, 132, 0.2)',
                             'rgba(54, 162, 235, 0.2)',
                             'rgba(255, 206, 86, 0.2)',
@@ -189,31 +201,31 @@
                             'rgba(255, 159, 64, 1)'
                         ],
                     }]
-                    },
-                    
-                });
-    }
+                },
+
+            });
+        }
     </script>
 
     <script>
-      function open_confirm_action_modal(idBreedingCows){
-        $("#idConfirmActionModal"+idBreedingCows).modal('show');      
-    };
+        function open_confirm_action_modal(idBreedingCows) {
+            $("#idConfirmActionModal" + idBreedingCows).modal('show');
+        };
     </script>
 
     <script>
-      function delete_breedig_cow(idBreedingCows){
-        $.ajax({
-            type: 'POST',
-            url: 'breeding_cow/'+idBreedingCows+'/delete/',
-            data: {},
-            success: function (data) {
-                $("#idDivGeneral").load(" #idDivGeneral");
-            },
-            error: function(data) {
-            },
-        });    
-    };
+        function delete_breedig_cow(idBreedingCows) {
+            $.ajax({
+                type: 'POST',
+                url: 'breeding_cow/' + idBreedingCows + '/delete/',
+                data: {},
+                success: function (data) {
+                    $("#idDivGeneral").load(" #idDivGeneral");
+                },
+                error: function (data) {
+                },
+            });
+        };
     </script>
 {% endblock %}
 

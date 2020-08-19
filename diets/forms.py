@@ -7,11 +7,11 @@ class DietForm(forms.ModelForm):
     class Meta:
         model = Diet
         fields = (
-        	'name',
-        	'protein',
-        	'energies',
-        	'description',
-        	'animal_type'
+            'name',
+            'protein',
+            'energies',
+            'description',
+            'animal_type'
         )
 
         widgets = {

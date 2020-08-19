@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="col-xl-12">
+    <div class="col-xl-12">
         <div class="mt-2">
             <div class="card">
                 <div class="card-body">
@@ -42,8 +42,12 @@
                                         <td>{{ animal_count }}</td>
                                         <td>
                                             <ul class="d-flex justify-content-center">
-                                                <li class="mr-3"><a href="{% url 'sanitary_book_detail' pk=sanitary.pk %}" class="text-secondary"><i class="fa fa-search"></i></a></li>
-                                                <li class="mr-3"><a href="{% url 'sanitary_book_edit' pk=sanitary.pk %}" class="text-secondary"><i class="fa fa-pencil"></i></a></li>
+                                                <li class="mr-3"><a
+                                                        href="{% url 'sanitary_book_detail' pk=sanitary.pk %}"
+                                                        class="text-secondary"><i class="fa fa-search"></i></a></li>
+                                                <li class="mr-3"><a href="{% url 'sanitary_book_edit' pk=sanitary.pk %}"
+                                                                    class="text-secondary"><i class="fa fa-pencil"></i></a>
+                                                </li>
                                             </ul>
                                         </td>
                                     </tr>
@@ -62,14 +66,14 @@
                         <a class="page-link" href="?page={{ sanitary_list.previous_page_number }}">Previous</a>
                     </li>
                 {% endif %}
-                    <li class="page-item active">
-                        <a class="page-link" href="#">{{ sanitary_list.number }}<span class="sr-only">(current)</span></a>
-                    </li>
+                <li class="page-item active">
+                    <a class="page-link" href="#">{{ sanitary_list.number }}<span class="sr-only">(current)</span></a>
+                </li>
                 {% if sanitary_list.has_next %}
                     <li class="page-item">
                         <a class="page-link" href="?page={{ sanitary_list.next_page_number }}">Next</a>
                     </li>
-                {% endif %} 
+                {% endif %}
             </ul>
         </div>
     </div>
@@ -83,34 +87,34 @@
 
     <script>
 
-    $.ajax({
-        type: 'GET',
-        url: 'api/chart/data/',
-        success: function (data) {
-            setSanitaryComponentChart(data.sanitary, data.sanitary_copper, data.sanitary_clostridiosis)
-            setSanitaryAnimalsChart(data.sanitary, data.sanitary_animal_count)
-        },
-        error: function(data) {
-        },
-    });
+        $.ajax({
+            type: 'GET',
+            url: 'api/chart/data/',
+            success: function (data) {
+                setSanitaryComponentChart(data.sanitary, data.sanitary_copper, data.sanitary_clostridiosis)
+                setSanitaryAnimalsChart(data.sanitary, data.sanitary_animal_count)
+            },
+            error: function (data) {
+            },
+        });
 
-    function setSanitaryComponentChart(sanitary, sanitary_copper, sanitary_clostridiosis){
-        var ctx = document.getElementById('sanitaryComponentChart').getContext('2d');
-        var sanitaryComponentChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: sanitary,
-                datasets: [{
-                    label: 'Cobre',
-                    data: sanitary_copper,
-                    backgroundColor: 'rgb(127, 0, 255)',
+        function setSanitaryComponentChart(sanitary, sanitary_copper, sanitary_clostridiosis) {
+            var ctx = document.getElementById('sanitaryComponentChart').getContext('2d');
+            var sanitaryComponentChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: sanitary,
+                    datasets: [{
+                        label: 'Cobre',
+                        data: sanitary_copper,
+                        backgroundColor: 'rgb(127, 0, 255)',
                     }, {
-                    label: 'Clostridiosis',
-                    data: sanitary_clostridiosis,
-                    backgroundColor: 'rgb(255, 99, 132)',
+                        label: 'Clostridiosis',
+                        data: sanitary_clostridiosis,
+                        backgroundColor: 'rgb(255, 99, 132)',
                     }]
                 },
-            options: {
+                options: {
                     scales: {
                         yAxes: [{
                             ticks: {
@@ -120,36 +124,36 @@
                     }
                 }
             });
-    }
-
-    function setSanitaryAnimalsChart(sanitary, sanitary_animal_count){
-        var ctx = document.getElementById('sanitaryAnimalsChart').getContext('2d');
-        var ict_unit = [];
-        var efficiency = [];
-        var coloR = [];
-
-        var dynamicColors = function() {
-            var hue = Math.floor(Math.random() * 360);
-            return 'hsl(' + hue + ', 100%, 80%)';
-        };
-
-        for (var i in sanitary) {
-            ict_unit.push("ICT Unit " + sanitary[i].ict_unit);
-            efficiency.push(sanitary[i].efficiency);
-            coloR.push(dynamicColors());
         }
-        
-        var sanitaryAnimalsChart = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: sanitary,
-                datasets: [{
-                    data: sanitary_animal_count,
-                    backgroundColor: coloR,
+
+        function setSanitaryAnimalsChart(sanitary, sanitary_animal_count) {
+            var ctx = document.getElementById('sanitaryAnimalsChart').getContext('2d');
+            var ict_unit = [];
+            var efficiency = [];
+            var coloR = [];
+
+            var dynamicColors = function () {
+                var hue = Math.floor(Math.random() * 360);
+                return 'hsl(' + hue + ', 100%, 80%)';
+            };
+
+            for (var i in sanitary) {
+                ict_unit.push("ICT Unit " + sanitary[i].ict_unit);
+                efficiency.push(sanitary[i].efficiency);
+                coloR.push(dynamicColors());
+            }
+
+            var sanitaryAnimalsChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: sanitary,
+                    datasets: [{
+                        data: sanitary_animal_count,
+                        backgroundColor: coloR,
                     }]
                 },
 
-            options: {
+                options: {
                     scales: {
                         yAxes: [{
                             ticks: {
@@ -159,7 +163,7 @@
                     }
                 }
             });
-    }
+        }
     </script>
 {% endblock %}
 

@@ -8,7 +8,6 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 
-
 def sanitary_book_list(request):
     sanitary_list = Sanitary.objects.order_by('name')
     sanitaries = []

@@ -9,130 +9,136 @@
 {% endblock %}
 
 {% block content %}
-	<div class="col-12 mt-5">
-		{% if request.GET.message == 'success' %}
-			<div class="alert alert-success" role="alert">
-			    <strong>La dieta se concreto con éxio.</strong> 
-			    Podés seguir asociando dietas o 
-			    <a href="{% url 'breeding_cow_detail' pk=breeding_cow.pk %}" class="alert-link">hacer click aquí</a> 
-			    para volver al Rodeo de Cría.
-			</div>
-		{% endif %}
-		<div class="card">
-			<div class="invoice-head">
-		        <div class="iv-left col-6 mt-3">
-		            <span>Selección de Animales</span>
-		        </div>
-			</div>
-			<div class="modal-body">
-			    <div class="row"> 
-			      <div class="col-sm-5">
-			      	<h4 class="header-title">Animales del Rodeo</h4>
-			        <div class="selector-available"> 
-			          <select name="all_animals" class="filtered form-control" id="id_all_animals_from" multiple="" data-is-stacked="0" data-field-name="selected_animals">
-			            {% for animal in animals %}
-					       <option id="{{animal.id}}" value="{{animal.id}}" title="{{animal}}">{{animal}}</option>
-					    {% endfor %}
-			          </select>
-			        </div>
-			      </div>
-			      <div class="col-sm-2 text-center">
-			      	<br><br><br>
-					<button onclick="moves_out()" type="button" class="btn btn-rounded btn-light mb-3">
-						<i class="fa fa-arrow-left"></i></button>
+    <div class="col-12 mt-5">
+        {% if request.GET.message == 'success' %}
+            <div class="alert alert-success" role="alert">
+                <strong>La dieta se concreto con éxio.</strong>
+                Podés seguir asociando dietas o
+                <a href="{% url 'breeding_cow_detail' pk=breeding_cow.pk %}" class="alert-link">hacer click aquí</a>
+                para volver al Rodeo de Cría.
+            </div>
+        {% endif %}
+        <div class="card">
+            <div class="invoice-head">
+                <div class="iv-left col-6 mt-3">
+                    <span>Selección de Animales</span>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-5">
+                        <h4 class="header-title">Animales del Rodeo</h4>
+                        <div class="selector-available">
+                            <select name="all_animals" class="filtered form-control" id="id_all_animals_from"
+                                    multiple="" data-is-stacked="0" data-field-name="selected_animals">
+                                {% for animal in animals %}
+                                    <option id="{{ animal.id }}" value="{{ animal.id }}"
+                                            title="{{ animal }}">{{ animal }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-2 text-center">
+                        <br><br><br>
+                        <button onclick="moves_out()" type="button" class="btn btn-rounded btn-light mb-3">
+                            <i class="fa fa-arrow-left"></i></button>
 
-					<button onclick="moves_in()" type="button" class="btn btn-rounded btn-light mb-3">
-						<i class="fa fa-arrow-right"></i></button>
-			      </div>
-			      <div class="col-sm-5">
-			      	<h4 class="header-title">Aplicado en</h4>
-			         <div class="selector-chosen">
-			            <select id="id_selected_animals_to" multiple="multiple" size="0" name="selected_animals" class="filtered form-control" >
-			            </select>
-			          </div>
-			      </div>
-			    </div>
-			 </div>
-		</div>
-	</div>
+                        <button onclick="moves_in()" type="button" class="btn btn-rounded btn-light mb-3">
+                            <i class="fa fa-arrow-right"></i></button>
+                    </div>
+                    <div class="col-sm-5">
+                        <h4 class="header-title">Aplicado en</h4>
+                        <div class="selector-chosen">
+                            <select id="id_selected_animals_to" multiple="multiple" size="0" name="selected_animals"
+                                    class="filtered form-control">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-	<div class="col-12 mt-3">
-		<div class="card">
-			<div class="invoice-head">
-		        <div class="iv-left col-6 mt-3">
-		            <span>Selección de Dieta: </span>
-		            <span class="text-info" id="id_diet_name"><a href=""></a></span>
-		            <span style="visibility:hidden" id="id_diet_id"></span>
-		        </div>
-			</div>
-			<div class="modal-body col-sm-12">
+    <div class="col-12 mt-3">
+        <div class="card">
+            <div class="invoice-head">
+                <div class="iv-left col-6 mt-3">
+                    <span>Selección de Dieta: </span>
+                    <span class="text-info" id="id_diet_name"><a href=""></a></span>
+                    <span style="visibility:hidden" id="id_diet_id"></span>
+                </div>
+            </div>
+            <div class="modal-body col-sm-12">
 
-				<select name="all_diets" class="form-control" id="id_all_diets">
-					{% for diet in diets %}
-				       <option id="{{diet.id}}" value="{{diet.name}}" title="{{diet.id}}">{{diet.name}}</option>
-				    {% endfor %}
-				</select>
+                <select name="all_diets" class="form-control" id="id_all_diets">
+                    {% for diet in diets %}
+                        <option id="{{ diet.id }}" value="{{ diet.name }}"
+                                title="{{ diet.id }}">{{ diet.name }}</option>
+                    {% endfor %}
+                </select>
 
-			 </div>
+            </div>
 
-			 <button type="submit" name="action" class="btn btn-outline-success btn-lg btn-block mt-3" data-dismiss="modal" onclick="submit({{ breeding_cow.pk }})">Guardar</button>
-		</div>
-	</div>
+            <button type="submit" name="action" class="btn btn-outline-success btn-lg btn-block mt-3"
+                    data-dismiss="modal" onclick="submit({{ breeding_cow.pk }})">Guardar
+            </button>
+        </div>
+    </div>
 
-	<script>
-      function moves_in(){
-        var selected_animlas = $("#id_all_animals_from option:selected");
-        var unselected_animlas = $("#id_all_animals_from option:not(:selected)");
+    <script>
+        function moves_in() {
+            var selected_animlas = $("#id_all_animals_from option:selected");
+            var unselected_animlas = $("#id_all_animals_from option:not(:selected)");
 
-        $.each(selected_animlas, function(id, option, title) {
-          $("#id_selected_animals_to").append('<option id='+option.id+' value='+option.id+' title='+option.title+'>'+option.title+'</option>');
-        });
-        $("#id_all_animals_from").empty();
-        $.each(unselected_animlas, function(id, option, title) {
-          $("#id_all_animals_from").append('<option id='+option.id+' value='+option.id+' title='+option.title+'>'+option.title+'</option>');
-        });
-      };
+            $.each(selected_animlas, function (id, option, title) {
+                $("#id_selected_animals_to").append('<option id=' + option.id + ' value=' + option.id + ' title=' + option.title + '>' + option.title + '</option>');
+            });
+            $("#id_all_animals_from").empty();
+            $.each(unselected_animlas, function (id, option, title) {
+                $("#id_all_animals_from").append('<option id=' + option.id + ' value=' + option.id + ' title=' + option.title + '>' + option.title + '</option>');
+            });
+        };
     </script>
 
     <script>
-      function moves_out(){
-        var selected_animlas = $("#id_selected_animals_to option:selected");
-        var unselected_animlas = $("#id_selected_animals_to option:not(:selected)");
+        function moves_out() {
+            var selected_animlas = $("#id_selected_animals_to option:selected");
+            var unselected_animlas = $("#id_selected_animals_to option:not(:selected)");
 
-        $.each(selected_animlas, function(id, option, title) {
-          $("#id_all_animals_from").append('<option id='+option.id+' value='+option.id+' title='+option.title+'>'+option.title+'</option>');
-        });
-        $("#id_selected_animals_to").empty();
-        $.each(unselected_animlas, function(id, option, title) {
-          $("#id_selected_animals_to").append('<option id='+option.id+' value='+option.id+' title='+option.title+'>'+option.title+'</option>');
-        });
-      };
+            $.each(selected_animlas, function (id, option, title) {
+                $("#id_all_animals_from").append('<option id=' + option.id + ' value=' + option.id + ' title=' + option.title + '>' + option.title + '</option>');
+            });
+            $("#id_selected_animals_to").empty();
+            $.each(unselected_animlas, function (id, option, title) {
+                $("#id_selected_animals_to").append('<option id=' + option.id + ' value=' + option.id + ' title=' + option.title + '>' + option.title + '</option>');
+            });
+        };
     </script>
 
     <script>
-      function submit(breedingCowPk){
-        var selected_animlas = $("#id_selected_animals_to option");
-        var diet = $("#id_all_diets").find('option:selected')[0].id;
+        function submit(breedingCowPk) {
+            var selected_animlas = $("#id_selected_animals_to option");
+            var diet = $("#id_all_diets").find('option:selected')[0].id;
 
-        $.each(selected_animlas, function(id, option) {
-	        added_diet_animal(breedingCowPk, option.id, diet);
-        });
-    }
+            $.each(selected_animlas, function (id, option) {
+                added_diet_animal(breedingCowPk, option.id, diet);
+            });
+        }
     </script>
 
     <script>
-      function added_diet_animal(breedingCowPk, idAnimal, idDiet){
-          $.ajax({
-            type: 'POST',
-            url: '/'+breedingCowPk+'/animals/diet/new/',
-            data: {idAnimal: idAnimal, idDiet: idDiet},
-            success: function (data) {
-				window.location = "?message=success";
-			},
-			error: function(data) {
-				window.location = "?message=error";
-			}
-          });
+        function added_diet_animal(breedingCowPk, idAnimal, idDiet) {
+            $.ajax({
+                type: 'POST',
+                url: '/' + breedingCowPk + '/animals/diet/new/',
+                data: {idAnimal: idAnimal, idDiet: idDiet},
+                success: function (data) {
+                    window.location = "?message=success";
+                },
+                error: function (data) {
+                    window.location = "?message=error";
+                }
+            });
         };
     </script>
 

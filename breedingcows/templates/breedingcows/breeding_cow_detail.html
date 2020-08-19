@@ -14,16 +14,20 @@
             <div class="card-body">
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Ubicacion</a>
+                        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
+                           aria-controls="home" aria-selected="true">Ubicacion</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="owner-tab" data-toggle="tab" href="#owner" role="tab" aria-controls="owner" aria-selected="false">Dueño</a>
+                        <a class="nav-link" id="owner-tab" data-toggle="tab" href="#owner" role="tab"
+                           aria-controls="owner" aria-selected="false">Dueño</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="entry_date-tab" data-toggle="tab" href="#entry_date" role="tab" aria-controls="entry_date" aria-selected="false">Fecha de ingreso</a>
+                        <a class="nav-link" id="entry_date-tab" data-toggle="tab" href="#entry_date" role="tab"
+                           aria-controls="entry_date" aria-selected="false">Fecha de ingreso</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="description-tab" data-toggle="tab" href="#description" role="tab" aria-controls="description" aria-selected="false">Descripcion</a>
+                        <a class="nav-link" id="description-tab" data-toggle="tab" href="#description" role="tab"
+                           aria-controls="description" aria-selected="false">Descripcion</a>
                     </li>
                 </ul>
                 <div class="tab-content mt-3" id="myTabContent">
@@ -49,13 +53,19 @@
                     <h4 class="header-title">Notificaciones</h4>
                     <div class="row">
                         <div class="col-lg-4 col-md-4 col-sm-6">
-                            <a href="{% url 'animal_on_time_process' breedingCowsPk=breeding_cow.pk %}" role="button" class="btn btn-success btn-lg btn-block"> A tiempo <span class="badge badge-light">{{on_time_amount}}</span></a>
+                            <a href="{% url 'animal_on_time_process' breedingCowsPk=breeding_cow.pk %}" role="button"
+                               class="btn btn-success btn-lg btn-block"> A tiempo <span
+                                    class="badge badge-light">{{ on_time_amount }}</span></a>
                         </div>
                         <div class="col-lg-4 col-md-4 col-sm-6">
-                            <a href="{% url 'animal_warning_process' breedingCowsPk=breeding_cow.pk %}" role="button" class="btn btn-warning btn-lg btn-block"> Advertencia <span class="badge badge-light">{{warning_amount}}</span></a>
+                            <a href="{% url 'animal_warning_process' breedingCowsPk=breeding_cow.pk %}" role="button"
+                               class="btn btn-warning btn-lg btn-block"> Advertencia <span
+                                    class="badge badge-light">{{ warning_amount }}</span></a>
                         </div>
                         <div class="col-lg-4 col-md-4 col-sm-6">
-                             <a href="{% url 'animal_on_danger_process' breedingCowsPk=breeding_cow.pk %}" role="button" class="btn btn-danger btn-lg btn-block"> Atrazado <span class="badge badge-light">{{danger_amount}}</span></a>
+                            <a href="{% url 'animal_on_danger_process' breedingCowsPk=breeding_cow.pk %}" role="button"
+                               class="btn btn-danger btn-lg btn-block"> Atrazado <span
+                                    class="badge badge-light">{{ danger_amount }}</span></a>
                         </div>
                     </div>
                 </div>
@@ -70,30 +80,34 @@
                         <div class="table-responsive">
                             <table class="table table-hover progress-table text-center">
                                 <thead class="text-uppercase">
-                                    <tr>
-                                        <th scope="col">Tipo de Animal</th>
-                                        <th scope="col">Cantidad en el Rodeo</th>
-                                        <th scope="col">Reprecentacion grafica</th>
-                                        <th scope="col">Accion</th>
-                                    </tr>
+                                <tr>
+                                    <th scope="col">Tipo de Animal</th>
+                                    <th scope="col">Cantidad en el Rodeo</th>
+                                    <th scope="col">Reprecentacion grafica</th>
+                                    <th scope="col">Accion</th>
+                                </tr>
                                 </thead>
                                 <tbody>
-                                    {% for animal_type, amount, porcent in animals %}
-                                        <tr>
-                                            <th scope="row">{{ animal_type }}</th>
-                                            <td>{{ amount }}</td>
-                                            <td>
-                                                <div class="progress" style="height: 8px;">
-                                                    <div class="progress-bar progress-bar-striped bg-info progress-bar-animated" role="progressbar" style="width: {{ porcent }}%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <ul class="d-flex justify-content-center">
-                                                    <li class="mr-3"><a href="{% url 'animals_list' breedingCowsPk=breeding_cow.pk animalType=animal_type %}" class="text-secondary"><i class="fa fa-search"></i></a></li>
-                                                </ul>
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
+                                {% for animal_type, amount, porcent in animals %}
+                                    <tr>
+                                        <th scope="row">{{ animal_type }}</th>
+                                        <td>{{ amount }}</td>
+                                        <td>
+                                            <div class="progress" style="height: 8px;">
+                                                <div class="progress-bar progress-bar-striped bg-info progress-bar-animated"
+                                                     role="progressbar" style="width: {{ porcent }}%;"
+                                                     aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <ul class="d-flex justify-content-center">
+                                                <li class="mr-3"><a
+                                                        href="{% url 'animals_list' breedingCowsPk=breeding_cow.pk animalType=animal_type %}"
+                                                        class="text-secondary"><i class="fa fa-search"></i></a></li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
                                 </tbody>
                             </table>
                         </div>
@@ -107,8 +121,8 @@
                     <div class="card-body">
                         <h4 class="header-title">Estadisticas</h4>
                         <button type="button" class="btn btn-success btn-lg btn-block">
-                           Ver Estadisticas
-                       </button>
+                            Ver Estadisticas
+                        </button>
                     </div>
                 </div>
             </div>
@@ -120,20 +134,32 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="header-title">Posibles acciones</h4>
-                <a href="{% url 'animal_new' breedingCowsPk=breeding_cow.pk %}" role="button" class="btn btn-outline-secondary btn-lg btn-block">Agregar animal</a>
-                <a href="{% url 'animal_diet_new' breedingCowsPk=breeding_cow.pk%}" role="button" class="btn btn-outline-secondary btn-lg btn-block">Asociar dieta alimenticia</a>
-                <a href="{% url 'animal_sanitary_new' breedingCowsPk=breeding_cow.pk%}" role="button" class="btn btn-outline-secondary btn-lg btn-block">Asociar libreta Sanitaria</a>
-                <a href="{% url 'animal_weaning_new' breedingCowsPk=breeding_cow.pk%}" role="button" class="btn btn-outline-secondary btn-lg btn-block">Aplicar destete</a>  
-                <a href="{% url 'animal_palpation_new' breedingCowsPk=breeding_cow.pk%}" role="button" class="btn btn-outline-secondary btn-lg btn-block">Asociar palpitacion rectal</a>
-                <a href="{% url 'animal_reproduction_type_new' breedingCowsPk=breeding_cow.pk%}" role="button" class="btn btn-outline-secondary btn-lg btn-block">Iniciar proceso previo al servicio</a>
-                <a href="{% url 'animal_reproduction_execution_new' breedingCowsPk=breeding_cow.pk%}" role="button" class="btn btn-outline-secondary btn-lg btn-block">Ejectutar servicio</a>
-                <a href="{% url 'animal_reproduction_revision_new' breedingCowsPk=breeding_cow.pk%}" role="button" class="btn btn-outline-secondary btn-lg btn-block">Asociar ecografía</a>                
-                <a href="{% url 'animal_reproduction_separation_new' breedingCowsPk=breeding_cow.pk%}" role="button" class="btn btn-outline-secondary btn-lg btn-block">Separar del rodeo</a>
-                <a href="{% url 'animal_reproduction_success_new' breedingCowsPk=breeding_cow.pk%}" role="button" class="btn btn-outline-secondary btn-lg btn-block">Finalizar servicio</a>
-                <a href="{% url 'animal_rejected_new' breedingCowsPk=breeding_cow.pk%}" role="button" class="btn btn-outline-secondary btn-lg btn-block">Rechazar animal</a>
-                <a href="{% url 'animal_delete' breedingCowsPk=breeding_cow.pk%}" role="button" class="btn btn-outline-secondary btn-lg btn-block">Dar de baja animal</a>
+                <a href="{% url 'animal_new' breedingCowsPk=breeding_cow.pk %}" role="button"
+                   class="btn btn-outline-secondary btn-lg btn-block">Agregar animal</a>
+                <a href="{% url 'animal_diet_new' breedingCowsPk=breeding_cow.pk %}" role="button"
+                   class="btn btn-outline-secondary btn-lg btn-block">Asociar dieta alimenticia</a>
+                <a href="{% url 'animal_sanitary_new' breedingCowsPk=breeding_cow.pk %}" role="button"
+                   class="btn btn-outline-secondary btn-lg btn-block">Asociar libreta Sanitaria</a>
+                <a href="{% url 'animal_weaning_new' breedingCowsPk=breeding_cow.pk %}" role="button"
+                   class="btn btn-outline-secondary btn-lg btn-block">Aplicar destete</a>
+                <a href="{% url 'animal_palpation_new' breedingCowsPk=breeding_cow.pk %}" role="button"
+                   class="btn btn-outline-secondary btn-lg btn-block">Asociar palpitacion rectal</a>
+                <a href="{% url 'animal_reproduction_type_new' breedingCowsPk=breeding_cow.pk %}" role="button"
+                   class="btn btn-outline-secondary btn-lg btn-block">Iniciar proceso previo al servicio</a>
+                <a href="{% url 'animal_reproduction_execution_new' breedingCowsPk=breeding_cow.pk %}" role="button"
+                   class="btn btn-outline-secondary btn-lg btn-block">Ejectutar servicio</a>
+                <a href="{% url 'animal_reproduction_revision_new' breedingCowsPk=breeding_cow.pk %}" role="button"
+                   class="btn btn-outline-secondary btn-lg btn-block">Asociar ecografía</a>
+                <a href="{% url 'animal_reproduction_separation_new' breedingCowsPk=breeding_cow.pk %}" role="button"
+                   class="btn btn-outline-secondary btn-lg btn-block">Separar del rodeo</a>
+                <a href="{% url 'animal_reproduction_success_new' breedingCowsPk=breeding_cow.pk %}" role="button"
+                   class="btn btn-outline-secondary btn-lg btn-block">Finalizar servicio</a>
+                <a href="{% url 'animal_rejected_new' breedingCowsPk=breeding_cow.pk %}" role="button"
+                   class="btn btn-outline-secondary btn-lg btn-block">Rechazar animal</a>
+                <a href="{% url 'animal_delete' breedingCowsPk=breeding_cow.pk %}" role="button"
+                   class="btn btn-outline-secondary btn-lg btn-block">Dar de baja animal</a>
             </div>
         </div>
     </div>
-    
+
 {% endblock %}

@@ -165,9 +165,9 @@ def get_animals_without_reproduction_in_process_on_time(animals):
             animal=animal,
             finished_date__isnull=False).order_by('-finished_date').first()
         if has_not_reproduction_in_process_on_time(
-            reproductionInProcess,
-            lastReproductionProcessed,
-            animal
+                reproductionInProcess,
+                lastReproductionProcessed,
+                animal
         ):
             on_time_list.append(animal)
 
@@ -225,9 +225,9 @@ def get_animals_without_reproduction_in_process_warning(animals):
             animal=animal,
             finished_date__isnull=False).order_by('-finished_date').first()
         if has_no_reproduction_in_process_warning(
-            reproductionInProcess,
-            lastReproductionProcessed,
-            animal
+                reproductionInProcess,
+                lastReproductionProcessed,
+                animal
         ):
             warning_list.append(animal)
 
@@ -241,15 +241,15 @@ def get_animals_without_reproduction_in_process_warning(animals):
 
 def has_reproduction_in_process_warning(reproductionInProcess):
     return (
-        has_execution_type_in_same_specified_days(
-            reproductionInProcess.reproduction
-        ) or has_execution_in_same_specified_days(
-            reproductionInProcess.reproduction
-        ) or has_revision_in_same_specified_days(
-            reproductionInProcess.reproduction
-        ) or has_separation_in_same_specified_days(
-            reproductionInProcess.reproduction
-        )
+            has_execution_type_in_same_specified_days(
+                reproductionInProcess.reproduction
+            ) or has_execution_in_same_specified_days(
+        reproductionInProcess.reproduction
+    ) or has_revision_in_same_specified_days(
+        reproductionInProcess.reproduction
+    ) or has_separation_in_same_specified_days(
+        reproductionInProcess.reproduction
+    )
     )
 
 
@@ -289,8 +289,8 @@ def get_reproductions_process_on_danger(animals):
                 danger_list.append(reproductionInProcess)
         else:
             if has_no_reproduction_in_process_on_danger(
-                lastReproductionProcessed,
-                animal
+                    lastReproductionProcessed,
+                    animal
             ):
                 danger_list.append(lastReproductionProcessed)
 
@@ -298,16 +298,16 @@ def get_reproductions_process_on_danger(animals):
 
 
 def has_reproduction_in_process_on_danger(reproductionInProcess):
-    return(
-        has_execution_type_after_specified_days(
-            reproductionInProcess
-        ) or has_execution_after_specified_days(
-            reproductionInProcess
-        ) or has_revision_after_specified_days(
-            reproductionInProcess
-        ) or has_separation_after_specified_days(
-            reproductionInProcess
-        )
+    return (
+            has_execution_type_after_specified_days(
+                reproductionInProcess
+            ) or has_execution_after_specified_days(
+        reproductionInProcess
+    ) or has_revision_after_specified_days(
+        reproductionInProcess
+    ) or has_separation_after_specified_days(
+        reproductionInProcess
+    )
     )
 
 
@@ -339,8 +339,8 @@ def get_animals_without_reproduction(animals):
                 danger_list.append(animal)
             if animal.animal_type == AnimalType.VAQUILLONA.value:
                 if has_become_vaquillona_after_specified_days(
-                    animal,
-                    became_vaquillona_days
+                        animal,
+                        became_vaquillona_days
                 ):
                     danger_list.append(animal)
 
@@ -408,96 +408,96 @@ def get_weaning_on_danger(breeding_cow):
 
 def has_execution_type_before_next_date(reproductionInProcess):
     if (
-        reproductionInProcess.preparation_date and not
-        reproductionInProcess.execution_date
+            reproductionInProcess.preparation_date and not
+    reproductionInProcess.execution_date
     ):
         return datetime.now().date() < reproductionInProcess.next_date
 
 
 def has_execution_before_next_date(reproductionInProcess):
     if (
-        reproductionInProcess.execution_date and not
-        reproductionInProcess.revision_date
+            reproductionInProcess.execution_date and not
+    reproductionInProcess.revision_date
     ):
         return datetime.now().date() < reproductionInProcess.next_date
 
 
 def has_revision_before_next_date(reproductionInProcess):
     if (
-        reproductionInProcess.revision_date and not
-        reproductionInProcess.separation_date
+            reproductionInProcess.revision_date and not
+    reproductionInProcess.separation_date
     ):
         return datetime.now().date() < reproductionInProcess.next_date
 
 
 def has_separation_before_next_date(reproductionInProcess):
     if (
-        reproductionInProcess.separation_date and not
-        reproductionInProcess.give_birth_date
+            reproductionInProcess.separation_date and not
+    reproductionInProcess.give_birth_date
     ):
         return datetime.now().date() < reproductionInProcess.next_date
 
 
 def has_execution_type_in_same_specified_days(reproductionInProcess):
     if (
-        reproductionInProcess.preparation_date and not
-        reproductionInProcess.execution_date
+            reproductionInProcess.preparation_date and not
+    reproductionInProcess.execution_date
     ):
         return datetime.now().date() == reproductionInProcess.next_date
 
 
 def has_execution_in_same_specified_days(reproductionInProcess):
     if (
-        reproductionInProcess.execution_date and not
-        reproductionInProcess.revision_date
+            reproductionInProcess.execution_date and not
+    reproductionInProcess.revision_date
     ):
         return datetime.now().date() == reproductionInProcess.next_date
 
 
 def has_revision_in_same_specified_days(reproductionInProcess):
     if (
-        reproductionInProcess.revision_date and not
-        reproductionInProcess.separation_date
+            reproductionInProcess.revision_date and not
+    reproductionInProcess.separation_date
     ):
         return datetime.now().date() == reproductionInProcess.next_date
 
 
 def has_separation_in_same_specified_days(reproductionInProcess):
     if (
-        reproductionInProcess.separation_date and not
-        reproductionInProcess.give_birth_date
+            reproductionInProcess.separation_date and not
+    reproductionInProcess.give_birth_date
     ):
         return datetime.now().date() == reproductionInProcess.next_date
 
 
 def has_execution_type_after_specified_days(reproductionInProcess):
     if (
-        reproductionInProcess.preparation_date and not
-        reproductionInProcess.execution_date
+            reproductionInProcess.preparation_date and not
+    reproductionInProcess.execution_date
     ):
         return datetime.now().date() > reproductionInProcess.next_date
 
 
 def has_execution_after_specified_days(reproductionInProcess):
     if (
-        reproductionInProcess.execution_date and not
-        reproductionInProcess.revision_date
+            reproductionInProcess.execution_date and not
+    reproductionInProcess.revision_date
     ):
         return datetime.now().date() > reproductionInProcess.next_date
 
 
 def has_revision_after_specified_days(reproductionInProcess):
     if (
-        reproductionInProcess.revision_date and not
-        reproductionInProcess.separation_date
+            reproductionInProcess.revision_date and not
+    reproductionInProcess.separation_date
     ):
         return datetime.now().date() > reproductionInProcess.next_date
 
 
 def has_separation_after_specified_days(reproductionInProcess):
     if (
-        reproductionInProcess.separation_date and not
-        reproductionInProcess.give_birth_date
+            reproductionInProcess.separation_date and not
+    reproductionInProcess.give_birth_date
     ):
         return datetime.now().date() > reproductionInProcess.next_date
 
@@ -586,16 +586,31 @@ class ChartData(APIView):
 
         for breeding_cow in breeding_cows_all:
             animals = Animals.objects.all().filter(breeding_cows=breeding_cow, leaving_date__isnull=True)
-            breeding_cows_animal_count.append(Animals.objects.all().filter(breeding_cows=breeding_cow, leaving_date__isnull=True).count())
-            breeding_cows_vacas_count.append(Animals.objects.all().filter(breeding_cows=breeding_cow, animal_type="Vaca", leaving_date__isnull=True).count())
-            breeding_cows_ternero_count.append(Animals.objects.all().filter(breeding_cows=breeding_cow, animal_type="Ternero", leaving_date__isnull=True).count())
-            breeding_cows_vaquillonas_count.append(Animals.objects.all().filter(breeding_cows=breeding_cow, animal_type="Vaquillona", leaving_date__isnull=True).count())
-            breeding_cows_toros_count.append(Animals.objects.all().filter(breeding_cows=breeding_cow, animal_type="Toro", leaving_date__isnull=True).count())
+            breeding_cows_animal_count.append(
+                Animals.objects.all().filter(breeding_cows=breeding_cow, leaving_date__isnull=True).count())
+            breeding_cows_vacas_count.append(
+                Animals.objects.all().filter(breeding_cows=breeding_cow, animal_type="Vaca",
+                                             leaving_date__isnull=True).count())
+            breeding_cows_ternero_count.append(
+                Animals.objects.all().filter(breeding_cows=breeding_cow, animal_type="Ternero",
+                                             leaving_date__isnull=True).count())
+            breeding_cows_vaquillonas_count.append(
+                Animals.objects.all().filter(breeding_cows=breeding_cow, animal_type="Vaquillona",
+                                             leaving_date__isnull=True).count())
+            breeding_cows_toros_count.append(
+                Animals.objects.all().filter(breeding_cows=breeding_cow, animal_type="Toro",
+                                             leaving_date__isnull=True).count())
 
-            vacas_count = vacas_count + Animals.objects.all().filter(breeding_cows=breeding_cow, animal_type="Vaca", leaving_date__isnull=True).count()
-            ternero_count = ternero_count + Animals.objects.all().filter(breeding_cows=breeding_cow, animal_type="Ternero", leaving_date__isnull=True).count()
-            vaquillonas_count = vaquillonas_count + Animals.objects.all().filter(breeding_cows=breeding_cow, animal_type="Vaquillona", leaving_date__isnull=True).count()
-            toros_count = toros_count + Animals.objects.all().filter(breeding_cows=breeding_cow, animal_type="Toro", leaving_date__isnull=True).count()
+            vacas_count = vacas_count + Animals.objects.all().filter(breeding_cows=breeding_cow, animal_type="Vaca",
+                                                                     leaving_date__isnull=True).count()
+            ternero_count = ternero_count + Animals.objects.all().filter(breeding_cows=breeding_cow,
+                                                                         animal_type="Ternero",
+                                                                         leaving_date__isnull=True).count()
+            vaquillonas_count = vaquillonas_count + Animals.objects.all().filter(breeding_cows=breeding_cow,
+                                                                                 animal_type="Vaquillona",
+                                                                                 leaving_date__isnull=True).count()
+            toros_count = toros_count + Animals.objects.all().filter(breeding_cows=breeding_cow, animal_type="Toro",
+                                                                     leaving_date__isnull=True).count()
 
             reproduction_in_process_count = 0
             for animal in animals:

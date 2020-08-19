@@ -36,7 +36,7 @@
     <script src="{% static 'assets/js/jquery.slicknav.min.js' %}"></script>
     <!-- start chart js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
-    </head>
+</head>
 
 <body>
 <!--[if lt IE 8]>
@@ -60,31 +60,41 @@
                     <ul class="metismenu" id="menu">
                         <!-- barra -->
                         <li>
-                            <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-users"></i><span>Contactos</span></a>
+                            <a href="javascript:void(0)" aria-expanded="true"><i
+                                    class="fa fa-users"></i><span>Contactos</span></a>
                             <ul class="collapse">
-                                <li><a href="{% url 'contact_new' %}"><i class="fa fa-user-plus"></i><span>Agregar</span></a></li>
-                                <li><a href="{% url 'contacts_list' %}"><i class="fa fa-search"></i><span>Buscar</span></a></li>
+                                <li><a href="{% url 'contact_new' %}"><i
+                                        class="fa fa-user-plus"></i><span>Agregar</span></a></li>
+                                <li><a href="{% url 'contacts_list' %}"><i class="fa fa-search"></i><span>Buscar</span></a>
+                                </li>
                             </ul>
                         </li>
                         <li>
                             <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-map-signs"></i><span>Rodeo de Crias</span></a>
                             <ul class="collapse">
-                                <li><a href="{% url 'breeding_cow_new' %}"><i class="fa fa-plus"></i><span>Agregar</span></a></li>
-                                <li><a href="{% url 'breeding_cows_list' %}"><i class="fa fa-search"></i><span>Buscar</span></a></li>
+                                <li><a href="{% url 'breeding_cow_new' %}"><i
+                                        class="fa fa-plus"></i><span>Agregar</span></a></li>
+                                <li><a href="{% url 'breeding_cows_list' %}"><i
+                                        class="fa fa-search"></i><span>Buscar</span></a></li>
                             </ul>
                         </li>
                         <li>
-                            <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-cutlery"></i><span>Dietas</span></a>
+                            <a href="javascript:void(0)" aria-expanded="true"><i
+                                    class="fa fa-cutlery"></i><span>Dietas</span></a>
                             <ul class="collapse">
-                                <li><a href="{% url 'diet_new' %}"><i class="fa fa-plus"></i><span>Agregar</span></a></li>
-                                <li><a href="{% url 'diets_list' %}"><i class="fa fa-search"></i><span>Buscar</span></a></li>
+                                <li><a href="{% url 'diet_new' %}"><i class="fa fa-plus"></i><span>Agregar</span></a>
+                                </li>
+                                <li><a href="{% url 'diets_list' %}"><i class="fa fa-search"></i><span>Buscar</span></a>
+                                </li>
                             </ul>
                         </li>
                         <li>
                             <a href="javascript:void(0)" aria-expanded="true"><i class="fa fa-stethoscope"></i><span>Libretas Sanitarias</span></a>
                             <ul class="collapse">
-                                <li><a href="{% url 'sanitary_book_new' %}"><i class="fa fa-plus"></i><span>Agregar</span></a></li>
-                                <li><a href="{% url 'sanitary_book_list' %}"><i class="fa fa-search"></i><span>Buscar</span></a></li>
+                                <li><a href="{% url 'sanitary_book_new' %}"><i
+                                        class="fa fa-plus"></i><span>Agregar</span></a></li>
+                                <li><a href="{% url 'sanitary_book_list' %}"><i
+                                        class="fa fa-search"></i><span>Buscar</span></a></li>
                             </ul>
                         </li>
                     </ul>
@@ -119,12 +129,13 @@
                     <div class="user-profile pull-right">
                         {% if user.is_authenticated %}
                             <img class="avatar user-thumb" src="{% static 'assets/images/author/avatar.png' %}"
-                             alt="avatar">
-                            <h4 class="user-name dropdown-toggle" data-toggle="dropdown">{{ user.get_username }} &nbsp <i
-                                    class="fa fa-angle-down"></i></h4>
+                                 alt="avatar">
+                            <h4 class="user-name dropdown-toggle" data-toggle="dropdown">{{ user.get_username }} &nbsp
+                                <i
+                                        class="fa fa-angle-down"></i></h4>
                             <div class="dropdown-menu">
-                            <a class="dropdown-item" href="{% url 'profile' %}">Perfil</a>
-                            <a class="dropdown-item" href="{% url 'logout' %}">Cerrar sesion</a>
+                                <a class="dropdown-item" href="{% url 'profile' %}">Perfil</a>
+                                <a class="dropdown-item" href="{% url 'logout' %}">Cerrar sesion</a>
                             </div>
                         {% else %}
                         {% endif %}

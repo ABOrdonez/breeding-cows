@@ -15,26 +15,31 @@
                 <h4 class="header-title">Dieta</h4>
                 <form method="POST" class="post-form">
                     {% csrf_token %}
-                     <div class="form-group">
+                    <div class="form-group">
                         <div class="modal-body">
                             <div class="row">
                                 <div class="form-group col-6">
                                     <label for="name">Nombre</label>
-                                    <input name="name" class="form-control" id="id_name" placeholder="Ingrese el nombre" type="text" value="{{form.name.value}}">
+                                    <input name="name" class="form-control" id="id_name" placeholder="Ingrese el nombre"
+                                           type="text" value="{{ form.name.value }}">
 
                                     <label for="protein">Poteinas</label>
-                                    <input name="protein" class="form-control" id="id_protein" placeholder="Ingrese las proteinas de la Dieta" type="text" value="{{form.protein.value}}">
+                                    <input name="protein" class="form-control" id="id_protein"
+                                           placeholder="Ingrese las proteinas de la Dieta" type="text"
+                                           value="{{ form.protein.value }}">
 
                                     <label for="energies">Energias</label>
-                                    <input name="energies" class="form-control" id="id_energies" placeholder="Ingrese las energias de la Dieta" type="text" value="{{form.energies.value}}">
+                                    <input name="energies" class="form-control" id="id_energies"
+                                           placeholder="Ingrese las energias de la Dieta" type="text"
+                                           value="{{ form.energies.value }}">
 
                                     <label for="animal_type">Tipo de animal involucrado en la dieta</label>
                                     {% render_field form.animal_type class="form-control" %}
 
                                 </div>
                                 <div class="dropdown col-lg-6">
-                                        <label for="province">Descripción del Rodeo</label>
-                                        {{form.description}}
+                                    <label for="province">Descripción del Rodeo</label>
+                                    {{ form.description }}
                                 </div>
                             </div>
                             <button type="submit" class="btn btn-outline-success btn-lg btn-block mt-3">Guardar</button>

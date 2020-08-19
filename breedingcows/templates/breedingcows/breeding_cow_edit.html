@@ -9,39 +9,43 @@
 {% endblock %}
 
 {% block content %}
-        <div class="col-12 mt-5">
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="header-title">Rodeo de Cria</h4>
-                    <form method="POST" class="post-form">
-                        {% csrf_token %}
-                        <div class="form-group">
-                            <div class="modal-body">
-                                <div class="row">
-                                    <div class="form-group col-lg-6">
-                                        <label for="province">Provincia</label>
-                                        <input name="province" class="form-control" id="id_province" placeholder="Ingrese la provincia del Rodeo" type="text" value="{{form.province.value}}">
+    <div class="col-12 mt-5">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="header-title">Rodeo de Cria</h4>
+                <form method="POST" class="post-form">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="form-group col-lg-6">
+                                    <label for="province">Provincia</label>
+                                    <input name="province" class="form-control" id="id_province"
+                                           placeholder="Ingrese la provincia del Rodeo" type="text"
+                                           value="{{ form.province.value }}">
 
-                                        <label for="address">Dirección</label>
-                                        <input name="address" class="form-control" id="id_address" placeholder="Ingrese la dirección del Rodeo" type="text" value="{{form.address.value}}">
+                                    <label for="address">Dirección</label>
+                                    <input name="address" class="form-control" id="id_address"
+                                           placeholder="Ingrese la dirección del Rodeo" type="text"
+                                           value="{{ form.address.value }}">
 
-                                        <label for="contact">Dueño</label>
-                                        {{ form.contact }}
+                                    <label for="contact">Dueño</label>
+                                    {{ form.contact }}
 
-                                        <label for="entry_date">Fecha de ingreso</label>
-                                        {% render_field form.entry_date type="date" class="form-control" %}  
+                                    <label for="entry_date">Fecha de ingreso</label>
+                                    {% render_field form.entry_date type="date" class="form-control" %}
 
-                                    </div>
-                                    <div class="dropdown col-lg-6">
-                                        <label for="province">Descripción del Rodeo</label>
-                                        {{form.description}}
-                                    </div>
                                 </div>
-                                <button type="submit" class="btn btn-outline-success btn-lg btn-block mt-3">Guardar</button>
+                                <div class="dropdown col-lg-6">
+                                    <label for="province">Descripción del Rodeo</label>
+                                    {{ form.description }}
+                                </div>
                             </div>
+                            <button type="submit" class="btn btn-outline-success btn-lg btn-block mt-3">Guardar</button>
                         </div>
-                    </form>
-                </div>
+                    </div>
+                </form>
             </div>
         </div>
+    </div>
 {% endblock %}

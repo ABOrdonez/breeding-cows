@@ -17,19 +17,19 @@
                 <h4 class="header-title">Edicion del Animal</h4>
                 <form method="POST" class="post-form">
                     {% csrf_token %}
-                    <div class="row"> 
+                    <div class="row">
                         <div class="form-group col-6">
                             <b class="text-muted mb-3 d-block">Datos asociados al animal</b>
 
                             <label for="birthday">Fecha de nacimiento</label>
-                            {% render_field form.birthday type="date" class="form-control"%}
+                            {% render_field form.birthday type="date" class="form-control" %}
 
                             <label for="animal_type">Tipo de animal</label>
-                            {{form.animal_type}}
+                            {{ form.animal_type }}
 
                             <div id="flock_number_div">
                                 <label for="flock_number">Numero de rodeo</label>
-                                {% render_field form.flock_number class="form-control" placeholder="Ingrese el numero de rebaño de animal"%}
+                                {% render_field form.flock_number class="form-control" placeholder="Ingrese el numero de rebaño de animal" %}
                             </div>
 
                             <label for="weight">Peso</label>
@@ -39,22 +39,22 @@
                             <b class="text-muted mb-3 d-block">Caracteristicas su adquisicion al rodeo:</b>
 
                             <label for="birthday">Tipo de adquisicion</label>
-                            {{form.acquisition}}
+                            {{ form.acquisition }}
 
                             <label for="birthday">Fecha de adquicision</label>
-                            {% render_field form.entry_date type="date" class="form-control" %}                            
+                            {% render_field form.entry_date type="date" class="form-control" %}
 
-                            <div class="row mt-3"> 
+                            <div class="row mt-3">
                                 <div class="col-sm-6">
                                     <label for="Mother">Madre del animal</label>
-                                    <div id="selected_mother_id" class="selector-available"> 
-                                        {{formMother.animal}}
+                                    <div id="selected_mother_id" class="selector-available">
+                                        {{ formMother.animal }}
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
                                     <label for="Father">Padre del animal</label>
-                                    <div id="selected_father_id" class="selector-available"> 
-                                        {{formFather.animal}}
+                                    <div id="selected_father_id" class="selector-available">
+                                        {{ formFather.animal }}
                                     </div>
                                 </div>
                             </div>
@@ -68,9 +68,9 @@
     </div>
 
     <script>
-        function try_to_disable_flock_number(){
+        function try_to_disable_flock_number() {
             var selected_animal_type = $('#id_animalForm-animal_type').val();
-            if (selected_animal_type == "Ternero"){
+            if (selected_animal_type == "Ternero") {
                 $('#flock_number_div').find(':input').prop('disabled', true);
                 $('#id_animalForm-flock_number').val('');
             } else {
@@ -80,13 +80,13 @@
     </script>
 
     <script>
-        function try_to_disable_parents(){
+        function try_to_disable_parents() {
             var selected_acquisition_type = $('#id_animalForm-acquisition').val();
-            if(selected_acquisition_type == "Monta natural"){
+            if (selected_acquisition_type == "Monta natural") {
                 $('#selected_mother_id').find(':input').prop('disabled', false);
                 $('#selected_father_id').find(':input').prop('disabled', false);
             }
-            if (selected_acquisition_type == "Compra"){
+            if (selected_acquisition_type == "Compra") {
                 $('#selected_mother_id').find(':input').prop('disabled', true);
                 $('#id_motherAnimalForm-animal').val('');
                 $('#selected_father_id').find(':input').prop('disabled', true);

@@ -36,8 +36,12 @@
                                         <td>{{ contact.phone }}</td>
                                         <td>
                                             <ul class="d-flex justify-content-center">
-                                                <li class="mr-3"><a href="{% url 'contact_detail' pk=contact.pk %}" class="text-secondary"><i class="fa fa-search"></i></a></li>
-                                                <li class="mr-3"><a href="{% url 'contact_edit' pk=contact.pk %}" class="text-secondary"><i class="fa fa-pencil"></i></a></li>
+                                                <li class="mr-3"><a href="{% url 'contact_detail' pk=contact.pk %}"
+                                                                    class="text-secondary"><i class="fa fa-search"></i></a>
+                                                </li>
+                                                <li class="mr-3"><a href="{% url 'contact_edit' pk=contact.pk %}"
+                                                                    class="text-secondary"><i class="fa fa-pencil"></i></a>
+                                                </li>
                                             </ul>
                                         </td>
                                     </tr>
@@ -55,14 +59,14 @@
                             <a class="page-link" href="?page={{ contacts.previous_page_number }}">Previous</a>
                         </li>
                     {% endif %}
-                        <li class="page-item active">
-                            <a class="page-link" href="#">{{ contacts.number }}<span class="sr-only">(current)</span></a>
-                        </li>
+                    <li class="page-item active">
+                        <a class="page-link" href="#">{{ contacts.number }}<span class="sr-only">(current)</span></a>
+                    </li>
                     {% if contacts.has_next %}
                         <li class="page-item">
                             <a class="page-link" href="?page={{ contacts.next_page_number }}">Next</a>
                         </li>
-                    {% endif %} 
+                    {% endif %}
                 </ul>
             </div>
         </div>
