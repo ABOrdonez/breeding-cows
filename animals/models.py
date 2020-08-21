@@ -5,6 +5,8 @@ from enum import Enum
 from diets import models as dietsmodels
 from sanitarybook import models as sanitarysmodels
 from reproduction import models as reproductionmodels
+from datetime import datetime
+from reproduction.models import ReproductionProcessDays
 
 
 class ReproductiveStatus(Enum):
@@ -88,8 +90,53 @@ class Animals(models.Model):
         related_name='children'
     )
 
-    def get_animal_type_label(self):
-        return AnimalType(self.type).name.title()
+    def has_born_before_expected_days(self):
+        if self.birthday:
+            diff = datetime.now().date() - self.birthday
+            return diff.days < 120
+        return False
+
+    def has_born_after_expected_days(self):
+        if self.birthday:
+            diff = datetime.now().date() - self.birthday
+            return diff.days > 120
+        return False
+
+    def has_born_in_same_expected_days(self):
+        if self.birthday:
+            diff = datetime.now().date() - self.birthday
+            return diff.days == 120
+        return False
+
+    def has_become_vaquillona_before_expected_days(self):
+        if self.birthday:
+            diff = datetime.now().date() - self.birthday
+            return diff.days < 720
+        return False
+
+    def has_become_vaquillona_after_expected_days(self):
+        if self.birthday:
+            diff = datetime.now().date() - self.birthday
+            return diff.days > 720
+        return False
+
+    def has_become_vaquillona_in_same_expected_days(self):
+        if self.birthday:
+            diff = datetime.now().date() - self.birthday
+            return diff.days == 720
+        return False
+
+    def is_ternero(self):
+        return self.animal_type == AnimalType.TERNERO.value
+
+    def is_vaquillona(self):
+        return self.animal_type == AnimalType.VAQUILLONA.value
+
+    def is_vaca(self):
+        return self.animal_type == AnimalType.VACA.value
+
+    def is_toro(self):
+        return self.animal_type == AnimalType.TORO.value
 
     def get_mother(self):
         acquisition = self.acquisition
@@ -216,6 +263,24 @@ class AnimalRepoduction(models.Model):
     reproduction = models.ForeignKey(
         reproductionmodels.Reproduction,
         on_delete=models.CASCADE)
+
+    def has_finished_before_expected_days(self):
+        if self.finished_date:
+            diff = datetime.now().date() - self.finished_date
+            return diff.days < ReproductionProcessDays.REPEAT_PROCESS.value
+        return False
+
+    def has_finished_after_expected_days(self):
+        if self.finished_date:
+            diff = datetime.now().date() - self.finished_date
+            return diff.days > ReproductionProcessDays.REPEAT_PROCESS.value
+        return False
+
+    def has_finished_in_same_expected_days(self):
+        if self.finished_date:
+            diff = datetime.now().date() - self.finished_date
+            return diff.days == ReproductionProcessDays.REPEAT_PROCESS.value
+        return False
 
     def __str__(self):
         return self.reproduction.reproduction_type

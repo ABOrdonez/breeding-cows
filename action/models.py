@@ -11,9 +11,6 @@ class ActionDefinition(models.Model):
     animal_type = models.CharField(choices=animalsmodels.AnimalType.choices(), default=animalsmodels.AnimalType.TERNERO,
                                    max_length=100)
 
-    def get_animal_type_label(self):
-        return animalsmodels.AnimalType(self.type).name.title()
-
     def __str__(self):
         return self.name
 

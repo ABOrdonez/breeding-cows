@@ -612,7 +612,7 @@ def animal_on_time_process(request, breedingCowsPk):
 def get_animals_info_on_time(animals_without_reproduction):
     animals_without_reproduction_info = []
     for animal in animals_without_reproduction:
-        if animal.animal_type == AnimalType.VAQUILLONA.value:
+        if Animals.is_vaquillona(animal):
             days = animal.birthday + timedelta(days=730)
             animals_without_reproduction_info.append([animal, days])
 
@@ -675,7 +675,7 @@ def animal_warning_process(request, breedingCowsPk):
 def get_animals_info_warning(animals_without_reproduction):
     animals_without_reproduction_info = []
     for animal in animals_without_reproduction:
-        if animal.animal_type == AnimalType.VAQUILLONA.value:
+        if Animals.is_vaquillona(animal):
             days = animal.birthday + timedelta(days=730)
             animals_without_reproduction_info.append([animal, days])
 
@@ -719,7 +719,7 @@ def animal_on_danger_process(request, breedingCowsPk):
     animals_without_reproduction = get_animals_without_reproduction(animals)
     animals_without_reproduction_info = []
     for animal in animals_without_reproduction:
-        if animal.animal_type == AnimalType.VACA.value:
+        if Animals.is_vaca(animal):
             animals_without_reproduction_info.append([animal, animal.birthday])
         else:
             days = animal.birthday + timedelta(days=730)

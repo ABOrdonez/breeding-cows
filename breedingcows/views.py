@@ -1,6 +1,5 @@
 from .models import BreedingCows
 from animals.models import Animals, AnimalType, AnimalRepoduction
-from django.utils import timezone
 from django.shortcuts import render, get_object_or_404
 from .forms import BreedingCowForm
 from django.shortcuts import redirect
@@ -8,8 +7,7 @@ from django.core.paginator import Paginator
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.views.decorators.csrf import csrf_exempt
-from datetime import datetime
-from reproduction.models import ReproductionProcessDays, Reproduction
+from reproduction.models import Reproduction, ReproductionProcessDays
 from operator import attrgetter
 from django.contrib.auth.decorators import login_required
 
@@ -36,7 +34,8 @@ def breeding_cows_list(request):
     return render(
         request,
         'breedingcows/breeding_cows_list.html',
-        {'breeding_cows': breeding_cows_pagenated})
+        {'breeding_cows': breeding_cows_pagenated}
+    )
 
 
 @csrf_exempt
@@ -69,12 +68,17 @@ def breeding_cow_detail(request, pk):
     danger_amount += len(get_weaning_on_danger(pk))
     danger_amount += len(get_animals_without_reproduction(animals))
 
-    return render(request, 'breedingcows/breeding_cow_detail.html', {
-        'breeding_cow': breeding_cow,
-        'animals': animals_info,
-        'on_time_amount': on_time_amount,
-        'warning_amount': warning_amount,
-        'danger_amount': danger_amount})
+    return render(
+        request,
+        'breedingcows/breeding_cow_detail.html',
+        {
+            'breeding_cow': breeding_cow,
+            'animals': animals_info,
+            'on_time_amount': on_time_amount,
+            'warning_amount': warning_amount,
+            'danger_amount': danger_amount
+        }
+    )
 
 
 def breeding_cow_new(request):
@@ -87,8 +91,11 @@ def breeding_cow_new(request):
             return redirect('breeding_cow_detail', pk=breeding_cow.pk)
     else:
         form = BreedingCowForm()
-        return render(request, 'breedingcows/breeding_cow_edit.html', {
-            'form': form})
+        return render(
+            request,
+            'breedingcows/breeding_cow_edit.html',
+            {'form': form}
+        )
 
 
 def breeding_cow_edit(request, pk):
@@ -102,8 +109,11 @@ def breeding_cow_edit(request, pk):
     else:
         form = BreedingCowForm(instance=breeding_cow)
 
-    return render(request, 'breedingcows/breeding_cow_edit.html', {
-        'form': form})
+    return render(
+        request,
+        'breedingcows/breeding_cow_edit.html',
+        {'form': form}
+    )
 
 
 def breeding_cow_delete(request, pk):
@@ -129,9 +139,7 @@ def breeding_cow_notification(request, pk, notification_type):
     return render(
         request,
         'breedingcows/breeding_cow_notification.html',
-        {
-            'breeding_cow': breeding_cow
-        }
+        {'breeding_cow': breeding_cow}
     )
 
 
@@ -190,21 +198,17 @@ def get_animals_without_reproduction_in_process_on_time(animals):
 
 
 def has_not_reproduction_in_process_on_time(reproductionInProcess, lastReproductionProcessed, animal):
-    finished_reproduction_days = ReproductionProcessDays.REPEAT_PROCESS.value
-    became_vaquillona_days = 720
-
     if reproductionInProcess:
         return False
 
     if lastReproductionProcessed:
-        return has_finished_redroduction_before_specified_days(
+        return AnimalRepoduction.has_finished_before_expected_days(
             lastReproductionProcessed,
-            finished_reproduction_days
         )
-    if animal.animal_type == AnimalType.VAQUILLONA.value:
-        return has_become_vaquillona_before_specified_days(
-            animal,
-            became_vaquillona_days
+
+    if Animals.is_vaquillona(animal):
+        return Animals.has_become_vaquillona_before_expected_days(
+            animal
         )
 
     return False
@@ -262,21 +266,16 @@ def has_reproduction_in_process_warning(reproduction):
 
 
 def has_no_reproduction_in_process_warning(reproductionInProcess, lastReproductionProcessed, animal):
-    finished_reproduction_days = ReproductionProcessDays.REPEAT_PROCESS.value
-    became_vaquillona_days = 730
-
     if reproductionInProcess:
         return False
 
     if lastReproductionProcessed:
-        return has_finished_redroduction_in_same_specified_days(
+        return AnimalRepoduction.has_finished_in_same_expected_days(
             lastReproductionProcessed,
-            finished_reproduction_days
         )
-    if animal.animal_type == AnimalType.VAQUILLONA.value:
-        return has_become_vaquillona_in_same_specified_days(
-            animal,
-            became_vaquillona_days
+    if Animals.is_vaquillona(animal):
+        return Animals.has_become_vaquillona_in_same_expected_days(
+            animal
         )
 
     return False
@@ -318,12 +317,9 @@ def has_reproduction_in_process_on_danger(reproduction):
 
 
 def has_no_reproduction_in_process_on_danger(lastReproductionProcessed, animal):
-    finished_reproduction_days = ReproductionProcessDays.REPEAT_PROCESS.value
-
     if lastReproductionProcessed:
-        return has_finished_redroduction_after_specified_days(
+        return AnimalRepoduction.has_finished_after_expected_days(
             lastReproductionProcessed,
-            finished_reproduction_days
         )
 
     return False
@@ -331,7 +327,6 @@ def has_no_reproduction_in_process_on_danger(lastReproductionProcessed, animal):
 
 def get_animals_without_reproduction(animals):
     danger_list = []
-    became_vaquillona_days = 730
 
     for animal in animals:
         reproductionInProcess = AnimalRepoduction.objects.filter(
@@ -341,12 +336,11 @@ def get_animals_without_reproduction(animals):
             animal=animal,
             finished_date__isnull=False).order_by('-finished_date').first()
         if not reproductionInProcess and not lastReproductionProcessed:
-            if animal.animal_type == AnimalType.VACA.value:
+            if Animals.is_vaca(animal):
                 danger_list.append(animal)
-            if animal.animal_type == AnimalType.VAQUILLONA.value:
-                if has_become_vaquillona_after_specified_days(
-                        animal,
-                        became_vaquillona_days
+            if Animals.is_vaquillona(animal):
+                if Animals.has_become_vaquillona_after_expected_days(
+                        animal
                 ):
                     danger_list.append(animal)
 
@@ -355,7 +349,6 @@ def get_animals_without_reproduction(animals):
 
 def get_weaning_on_time(breeding_cow):
     on_time_list = []
-    weaning_days = 120
 
     terneros = Animals.objects.filter(
         breeding_cows=breeding_cow,
@@ -365,7 +358,7 @@ def get_weaning_on_time(breeding_cow):
     )
 
     for ternero in terneros:
-        if has_born_before_specified_days(ternero, weaning_days):
+        if Animals.has_born_before_expected_days(ternero):
             on_time_list.append(ternero)
 
     on_time_list = sorted(
@@ -378,7 +371,6 @@ def get_weaning_on_time(breeding_cow):
 
 def get_weaning_warning(breeding_cow):
     weaning_list = []
-    weaning_days = 120
 
     terneros = Animals.objects.filter(
         breeding_cows=breeding_cow,
@@ -388,7 +380,7 @@ def get_weaning_warning(breeding_cow):
     )
 
     for ternero in terneros:
-        if has_born_in_same_specified_days(ternero, weaning_days):
+        if Animals.has_born_in_same_expected_days(ternero):
             weaning_list.append(ternero)
 
     return weaning_list
@@ -396,7 +388,6 @@ def get_weaning_warning(breeding_cow):
 
 def get_weaning_on_danger(breeding_cow):
     weaning_on_danger_list = []
-    weaning_days = 120
 
     terneros = Animals.objects.filter(
         breeding_cows=breeding_cow,
@@ -406,64 +397,10 @@ def get_weaning_on_danger(breeding_cow):
     )
 
     for ternero in terneros:
-        if has_born_after_specified_days(ternero, weaning_days):
+        if Animals.has_born_after_expected_days(ternero):
             weaning_on_danger_list.append(ternero)
 
     return weaning_on_danger_list
-
-
-def has_born_before_specified_days(animals, days):
-    if animals.birthday:
-        diff = datetime.now().date() - animals.birthday
-        return diff.days < days
-
-
-def has_born_after_specified_days(animals, days):
-    if animals.birthday:
-        diff = datetime.now().date() - animals.birthday
-        return diff.days > days
-
-
-def has_born_in_same_specified_days(animals, days):
-    if animals.birthday:
-        diff = datetime.now().date() - animals.birthday
-        return diff.days == days
-
-
-def has_finished_redroduction_before_specified_days(finishedReproduction, days):
-    if finishedReproduction.finished_date:
-        diff = datetime.now().date() - finishedReproduction.finished_date
-        return diff.days < days
-
-
-def has_finished_redroduction_after_specified_days(finishedReproduction, days):
-    if finishedReproduction.finished_date:
-        diff = datetime.now().date() - finishedReproduction.finished_date
-        return diff.days > days
-
-
-def has_finished_redroduction_in_same_specified_days(finishedReproduction, days):
-    if finishedReproduction.finished_date:
-        diff = datetime.now().date() - finishedReproduction.finished_date
-        return diff.days == days
-
-
-def has_become_vaquillona_before_specified_days(animal, days):
-    if animal.birthday:
-        diff = datetime.now().date() - animal.birthday
-        return diff.days < days
-
-
-def has_become_vaquillona_after_specified_days(animal, days):
-    if animal.birthday:
-        diff = datetime.now().date() - animal.birthday
-        return diff.days > days
-
-
-def has_become_vaquillona_in_same_specified_days(animal, days):
-    if animal.birthday:
-        diff = datetime.now().date() - animal.birthday
-        return diff.days == days
 
 
 class ChartData(APIView):
