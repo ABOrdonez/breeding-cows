@@ -57,7 +57,9 @@ def animal_detail(request, pk):
             'successfulInsemination': successful[0],
             'unsuccessfulInsemination': unsuccessful[0],
             'successfulNatural': successful[1],
-            'unsuccessfulNatural': unsuccessful[1]
+            'unsuccessfulNatural': unsuccessful[1],
+            'mother': Animals.get_mother(animal),
+            'father': Animals.get_father(animal)
         }
     )
 
@@ -668,6 +670,30 @@ def animal_warning_process(request, breedingCowsPk):
             'reproduction_warning': ReproductionWarningPaginated,
             'calfs_info': calfsInfoPaginated,
             'animals_without_reproduction': reproductionInfoPaginated
+        }
+    )
+
+
+@csrf_exempt
+def change_animal_weight(request, breedingCowsPk):
+    if request.method == "POST":
+        animal = get_object_or_404(Animals, id=request.POST['idAnimal'])
+        animal.weight = request.POST['idWeight']
+        animal.save()
+
+    breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
+    animals = Animals.objects.order_by(
+        'flock_number'
+    ).filter(
+        breeding_cows=breedingCows,
+        leaving_date__isnull=True
+    )
+    return render(
+        request,
+        'animals/animal_weight.html',
+        {
+            'animals': animals,
+            'breeding_cow': breedingCows,
         }
     )
 

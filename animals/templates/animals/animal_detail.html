@@ -28,7 +28,6 @@
                                         nacimiento: {{ animal.entry_date|date:"Y-m-d" }}</li>
                                     <li class="list-group-item">Fecha de
                                         adquisicion: {{ animal.entry_date|date:"Y-m-d" }}</li>
-                                    <li class="list-group-item">Tipo de adquisicion: {{ animal.acquisition }}</li>
                                     {% if animal.rejection_date %}
                                         <li class="list-group-item">Fecha de rechazo: {{ animal.rejection_date }}</li>
                                     {% else %}
@@ -73,6 +72,26 @@
                                     {% if animal.disease_description %}
                                         <li class="list-group-item">Descripción de la
                                             enfermedad: {{ animal.disease_description }}</li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="card">
+                        <div class="card-header">
+                            <a class="collapsed card-link" data-toggle="collapse" href="#accordion4">Descendencia</a>
+                        </div>
+                        <div id="accordion4" class="collapse" data-parent="#accordion">
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item">Tipo de adquisicion: {{ animal.acquisition }}</li>
+                                    {% if mother %}
+                                        <li class="list-group-item">Madre - {{mother}}</li>
+                                    {% endif %}
+                                    {% if father %}
+                                        <li class="list-group-item">Padre - {{father}}</li>
                                     {% endif %}
                                 </ul>
                             </div>

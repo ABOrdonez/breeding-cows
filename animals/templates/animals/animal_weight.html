@@ -1,10 +1,10 @@
 {% extends 'breedingcows/base.html' %}
 
 {% block header %}
-    <h4 class="page-title pull-left">Asociar Dieta</h4>
+    <h4 class="page-title pull-left">Asociar peso</h4>
     <ul class="breadcrumbs pull-left">
         <li><a href="{% url 'breeding_cow_detail' pk=breeding_cow.pk %}">Detalle del Rodeo de Cría</a></li>
-        <li><span>Asociar Dieta</span></li>
+        <li><span>Asociar peso</span></li>
     </ul>
 {% endblock %}
 
@@ -12,8 +12,8 @@
     <div class="col-12 mt-5">
         {% if request.GET.message == 'success' %}
             <div class="alert alert-success" role="alert">
-                <strong>La dieta se concreto con éxio.</strong>
-                Podés seguir asociando dietas o
+                <strong>El peso se asocio con éxio.</strong>
+                Podés seguir asociando pesos o
                 <a href="{% url 'breeding_cow_detail' pk=breeding_cow.pk %}" class="alert-link">hacer click aquí</a>
                 para volver al Rodeo de Cría.
             </div>
@@ -63,19 +63,14 @@
         <div class="card">
             <div class="invoice-head">
                 <div class="iv-left col-6 mt-3">
-                    <span>Selección de Dieta: </span>
-                    <span class="text-info" id="id_diet_name"><a href=""></a></span>
-                    <span style="visibility:hidden" id="id_diet_id"></span>
+                    <span>Ingrese peso: </span>
                 </div>
             </div>
             <div class="modal-body col-sm-12">
-
-                <select name="all_diets" class="form-control" id="id_all_diets">
-                    {% for diet in diets %}
-                        <option id="{{ diet.id }}" value="{{ diet.name }}"
-                                title="{{ diet.id }}">{{ diet.name }}</option>
-                    {% endfor %}
-                </select>
+                <div class="form-group">
+                    <label for="example-number-input" class="col-form-label">Peso en kilogramos</label>
+                    <input class="form-control" type="number" id="id_weight">
+                </div>
 
             </div>
 
@@ -118,20 +113,20 @@
     <script>
         function submit(breedingCowPk) {
             var selected_animlas = $("#id_selected_animals_to option");
-            var diet = $("#id_all_diets").find('option:selected')[0].id;
+            var weight = $("#id_weight").val();
 
             $.each(selected_animlas, function (id, option) {
-                added_diet_animal(breedingCowPk, option.id, diet);
+                added_diet_animal(breedingCowPk, option.id, weight);
             });
         }
     </script>
 
     <script>
-        function added_diet_animal(breedingCowPk, idAnimal, idDiet) {
+        function added_diet_animal(breedingCowPk, idAnimal, idWeight) {
             $.ajax({
                 type: 'POST',
-                url: '/' + breedingCowPk + '/animals/diet/new/',
-                data: {idAnimal: idAnimal, idDiet: idDiet},
+                url: '/' + breedingCowPk + '/animals/weight/',
+                data: {idAnimal: idAnimal, idWeight: idWeight},
                 success: function (data) {
                     window.location = "?message=success";
                 },

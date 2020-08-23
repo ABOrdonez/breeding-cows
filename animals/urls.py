@@ -85,4 +85,9 @@ urlpatterns = [
         views.animal_on_danger_process,
         name='animal_on_danger_process'
     ),
+    path(
+        '<int:breedingCowsPk>/animals/weight/',
+        views.change_animal_weight,
+        name='change_animal_weight'
+    ),
 ]
