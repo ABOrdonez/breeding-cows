@@ -123,16 +123,6 @@ def breeding_cow_delete(request, pk):
     return redirect('breeding_cows_list')
 
 
-def breeding_cow_dashboard(request, pk):
-    breedingCows = get_object_or_404(BreedingCows, pk=pk)
-
-    return render(
-        request,
-        'breedingcows/breeding_cow_bashboard.html',
-        {'breeding_cow': breedingCows}
-    )
-
-
 def breeding_cow_notification(request, pk, notification_type):
     breeding_cow = get_object_or_404(BreedingCows, pk=pk)
 
@@ -401,6 +391,145 @@ def get_weaning_on_danger(breeding_cow):
             weaning_on_danger_list.append(ternero)
 
     return weaning_on_danger_list
+
+
+def breeding_cow_dashboard(request, pk):
+    breedingCow = get_object_or_404(BreedingCows, pk=pk)
+    animals = Animals.objects.all().filter(
+        breeding_cows=pk,
+        leaving_date__isnull=True
+    )
+    vacas = Animals.objects.all().filter(
+        breeding_cows=pk,
+        leaving_date__isnull=True,
+        animal_type=AnimalType.VACA.value
+    )
+    terneros = Animals.objects.all().filter(
+        breeding_cows=pk,
+        leaving_date__isnull=True,
+        animal_type=AnimalType.TERNERO.value
+    )
+    vaquillonas = Animals.objects.all().filter(
+        breeding_cows=pk,
+        leaving_date__isnull=True,
+        animal_type=AnimalType.VAQUILLONA.value
+    )
+    toros = Animals.objects.all().filter(
+        breeding_cows=pk,
+        leaving_date__isnull=True,
+        animal_type=AnimalType.TORO.value
+    )
+
+    vacas_reproduction_in_process = 0
+    vacas_inseminacion_successful = 0
+    vacas_monta_successful = 0
+    vacas_inseminacion_unsuccessful = 0
+    vacas_monta_unsuccessful = 0
+
+    vaquillonas_reproduction_in_process = 0
+    vaquillonas_inseminacion_successful = 0
+    vaquillonas_monta_successful = 0
+    vaquillonas_inseminacion_unsuccessful = 0
+    vaquillonas_monta_unsuccessful = 0
+
+    kilograms = 0
+
+    animals_types = [
+        AnimalType.VACA.value,
+        AnimalType.TERNERO.value,
+        AnimalType.VAQUILLONA.value,
+        AnimalType.TORO.value
+    ]
+
+    for vaca in vacas:
+        successful, unsuccessful = getReproductionInfo(vaca)
+        vacas_inseminacion_successful += successful[0]
+        vacas_monta_successful += successful[1]
+        vacas_inseminacion_unsuccessful += unsuccessful[0]
+        vacas_monta_unsuccessful += unsuccessful[1]
+
+        reproduction_in_process = AnimalRepoduction.objects.filter(
+            animal=vaca,
+            finished_date__isnull=True,
+        ).first()
+        if reproduction_in_process:
+            vacas_reproduction_in_process += 1
+
+    for vaquillona in vaquillonas:
+        successful, unsuccessful = getReproductionInfo(vaquillona)
+        vaquillonas_inseminacion_successful += successful[0]
+        vaquillonas_monta_successful += successful[1]
+        vaquillonas_inseminacion_unsuccessful += unsuccessful[0]
+        vaquillonas_monta_unsuccessful += unsuccessful[1]
+
+        reproduction_in_process = AnimalRepoduction.objects.filter(
+            animal=vaquillona,
+            finished_date__isnull=True,
+        ).first()
+
+        if reproduction_in_process:
+            vaquillonas_reproduction_in_process += 1
+
+    for animal in animals:
+        kilograms += animal.weight
+
+    data = {
+        "animals_types": animals_types,
+        "animal_count": len(animals),
+        "vacas_count": len(vacas),
+        "vaquillonas_count": len(vaquillonas),
+        "ternero_count": len(terneros),
+        "toros_count": len(toros),
+        "kilograms": kilograms,
+        "vaca_reproductions": vacas_reproduction_in_process,
+        "vaquillona_reproductions": vaquillonas_reproduction_in_process,
+        "vacas_inseminacion_successful": vacas_inseminacion_successful,
+        "vacas_monta_successful": vacas_monta_successful,
+        "vacas_inseminacion_unsuccessful": vacas_inseminacion_unsuccessful,
+        "vacas_monta_unsuccessful": vacas_monta_unsuccessful,
+        "vaquillonas_inseminacion_successful": vaquillonas_inseminacion_successful,
+        "vaquillonas_monta_successful": vaquillonas_monta_successful,
+        "vaquillonas_inseminacion_unsuccessful": vaquillonas_inseminacion_unsuccessful,
+        "vaquillonas_monta_unsuccessful": vaquillonas_monta_unsuccessful,
+    }
+
+    print(data)
+
+    return render(
+        request,
+        'breedingcows/breeding_cow_bashboard.html',
+        {
+            'breeding_cow': breedingCow,
+            'data': data
+        }
+    )
+
+
+def getReproductionInfo(animal):
+    animalReproductions = AnimalRepoduction.objects.all().order_by(
+        '-started_date'
+    ).filter(
+        animal=animal
+    )
+    successfulReproductions = [0, 0]
+    unsuccessfulReproductions = [0, 0]
+
+    for reproduction in animalReproductions:
+        if reproduction.finished_date:
+            if reproduction.reproduction.give_birth_date:
+                if reproduction.reproduction.reproduction_type == "Inseminacion Artificial":
+                    successfulReproductions[0] += 1
+                else:
+                    successfulReproductions[1] += 1
+            else:
+                if reproduction.reproduction.reproduction_type == "Inseminacion Artificial":
+                    unsuccessfulReproductions[0] += 1
+                else:
+                    unsuccessfulReproductions[1] += 1
+    return (
+        successfulReproductions,
+        unsuccessfulReproductions,
+    )
 
 
 class ChartData(APIView):

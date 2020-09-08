@@ -65,11 +65,11 @@ class Animals(models.Model):
         null=True,
         blank=True)
     flock_number = models.IntegerField(null=True, blank=True)
-    birthday = models.DateField(blank=True, null=True)
-    entry_date = models.DateField(blank=True, null=True)
+    birthday = models.DateField(blank=False, null=False, default=datetime.now())
+    entry_date = models.DateField(blank=False, null=False, default=datetime.now())
     leaving_date = models.DateField(blank=True, null=True)
     rejection_date = models.DateField(blank=True, null=True)
-    weight = models.DecimalField(max_digits=30, decimal_places=15, default='')
+    weight = models.DecimalField(max_digits=30, decimal_places=2, default='')
     animal_type = models.CharField(
         choices=AnimalType.choices(),
         default=AnimalType.TERNERO,
@@ -80,7 +80,10 @@ class Animals(models.Model):
     acquisition = models.CharField(
         choices=AcquisitionType.choices(),
         default='',
-        max_length=50)
+        max_length=50,
+        blank=False,
+        null=False
+    )
     disease_description = models.CharField(default='', max_length=100)
     brood = models.ManyToManyField(
         'self',
