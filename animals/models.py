@@ -262,7 +262,7 @@ class AnimalRepoduction(models.Model):
         null=True,
         blank=True)
     animal = models.ForeignKey(Animals, on_delete=models.CASCADE)
-    started_date = models.DateField(blank=False, null=False)
+    started_date = models.DateField(blank=True, null=True)
     finished_date = models.DateField(blank=True, null=True)
     reproduction = models.ForeignKey(
         reproductionmodels.Reproduction,

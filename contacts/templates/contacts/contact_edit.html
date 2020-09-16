@@ -25,18 +25,18 @@
                                     <label for="first_name">Nombre</label>
                                     <input name="first_name" class="form-control" id="id_first_name"
                                            placeholder="Ingrese el nombre" type="text"
-                                           value="{{ form.first_name.value }}">
+                                           value="{{ form.first_name.value }}" required="True">
                                     <br>
 
                                     <label for="last_name">Apellido</label>
                                     <input name="last_name" class="form-control" id="id_last_name"
                                            placeholder="Ingrese el apellido" type="text"
-                                           value="{{ form.last_name.value }}">
+                                           value="{{ form.last_name.value }}" required="True">
                                     <br>
 
                                     <label for="birthday">Fecha de nacimiento</label>
                                     <input name="birthday" class="form-control" id="id_birthday" type="date"
-                                           value="{{ form.birthday.value }}">
+                                           value="{{ form.birthday.value }}" required="True">
                                     <br>
 
                                     <label for="civil_status">Estado civil</label>
@@ -48,7 +48,7 @@
 
                                     <label for="phone">Telefono</label>
                                     <input name="phone" class="form-control" id="id_phone"
-                                           placeholder="Ingrese el telefono" type="text" value="{{ form.phone.value }}">
+                                           placeholder="Ingrese el telefono" type="text" value="{{ form.phone.value }}" required="True">
                                     <br>
 
                                     <label for="email">Mail</label>
@@ -59,13 +59,13 @@
                                     <label for="province">Provincia a la que pertenece</label>
                                     <input name="province" class="form-control" id="id_provincel"
                                            placeholder="Ingrese la provincia de residencia" type="text"
-                                           value="{{ form.province.value }}">
+                                           value="{{ form.province.value }}" required="True">
                                     <br>
 
                                     <label for="direction">Direccion a la que pertenece</label>
                                     <input name="direction" class="form-control" id="id_direction"
                                            placeholder="Ingrese la dirreccion de residencia" type="text"
-                                           value="{{ form.direction.value }}">
+                                           value="{{ form.direction.value }}" required="True">
                                 </div>
 
                                 <button type="submit" class="btn btn-outline-success btn-lg btn-block mt-3">Guardar

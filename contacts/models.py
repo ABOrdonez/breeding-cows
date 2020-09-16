@@ -14,9 +14,24 @@ class CivilStatus(Enum):
 
 
 class Contact(models.Model):
-    first_name = models.CharField(max_length=30, default='')
-    last_name = models.CharField(max_length=30, default='')
-    phone = models.CharField(max_length=20, default='')
+    first_name = models.CharField(
+        max_length=30,
+        default='',
+        blank=False,
+        null=False
+    )
+    last_name = models.CharField(
+        max_length=30,
+        default='',
+        blank=False,
+        null=False
+    )
+    phone = models.IntegerField(
+        max_length=30,
+        default='',
+        blank=False,
+        null=False
+    )
     email = models.EmailField(default='')
     owner = models.ForeignKey(
         User,
@@ -26,8 +41,18 @@ class Contact(models.Model):
     )
     entry_date = models.DateTimeField(blank=True, null=True)
     birthday = models.DateTimeField(blank=True, null=True, default='')
-    direction = models.CharField(max_length=30, default='')
-    province = models.CharField(max_length=30, default='')
+    direction = models.CharField(
+        max_length=30,
+        default='',
+        blank=False,
+        null=False
+    )
+    province = models.CharField(
+        max_length=30,
+        default='',
+        blank=False,
+        null=False
+    )
     civil_status = models.CharField(
         choices=CivilStatus.choices(),
         default=CivilStatus.SOLTERO,
