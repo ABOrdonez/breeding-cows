@@ -248,7 +248,8 @@ class AnimalSanitary(models.Model):
     done_date = models.DateField(blank=True, null=True)
     sanitary = models.ForeignKey(
         sanitarysmodels.Sanitary,
-        on_delete=models.CASCADE)
+        on_delete=models.CASCADE,
+        null=False, blank=True)
 
     def __str__(self):
         return u'%s | %s' % (self.sanitary.name, self.animal.flock_number)

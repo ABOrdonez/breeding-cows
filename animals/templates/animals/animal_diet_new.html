@@ -9,13 +9,19 @@
 {% endblock %}
 
 {% block content %}
-    <div class="col-12 mt-5">
+    <div class="col-12 mt-3">
         {% if request.GET.message == 'success' %}
             <div class="alert alert-success" role="alert">
                 <strong>La dieta se concreto con éxio.</strong>
                 Podés seguir asociando dietas o
                 <a href="{% url 'breeding_cow_detail' pk=breeding_cow.pk %}" class="alert-link">hacer click aquí</a>
                 para volver al Rodeo de Cría.
+            </div>
+        {% endif %}
+        {% if request.GET.message == 'error' %}
+            <div class="alert alert-danger" role="alert">
+                <strong>Ocurrio un error al asociar la dieta.</strong>
+                Compruebe que existan animales a los que se les quiere definir una dieta.
             </div>
         {% endif %}
         <div class="card">
@@ -50,7 +56,7 @@
                         <h4 class="header-title">Aplicado en</h4>
                         <div class="selector-chosen">
                             <select id="id_selected_animals_to" multiple="multiple" size="0" name="selected_animals"
-                                    class="filtered form-control">
+                                    class="filtered form-control" required>
                             </select>
                         </div>
                     </div>
@@ -118,6 +124,9 @@
     <script>
         function submit(breedingCowPk) {
             var selected_animlas = $("#id_selected_animals_to option");
+            if (selected_animlas.length == 0){
+                    window.location = "?message=error";
+            }
             var diet = $("#id_all_diets").find('option:selected')[0].id;
 
             $.each(selected_animlas, function (id, option) {

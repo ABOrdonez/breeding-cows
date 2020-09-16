@@ -93,7 +93,7 @@ class WearningAnimalForm(forms.Form):
         queryset=Sanitary.objects.all().order_by(
             'name'
         ),
-        required=False,
+        required=True,
         help_text="Libreta Sanitaria",
         widget=forms.Select(attrs={'class': 'form-control'})
     )

@@ -9,13 +9,19 @@
 {% endblock %}
 
 {% block content %}
-    <div class="col-12 mt-5">
+    <div class="col-12 mt-3">
         {% if request.GET.message == 'success' %}
             <div class="alert alert-success" role="alert">
                 <strong>La libreta sanitaria se concreto con éxio.</strong>
                 Podés seguir asociando libretas sanitarias o
                 <a href="{% url 'breeding_cow_detail' pk=breeding_cow.pk %}" class="alert-link">hacer click aquí</a>
                 para volver al Rodeo de Cría.
+            </div>
+        {% endif %}
+        {% if request.GET.message == 'error' %}
+            <div class="alert alert-danger" role="alert">
+                <strong>Ocurrio un error al asociar la libreta sanitaria.</strong>
+                Compruebe que existan animales a los que se les quiere definir una libreta.
             </div>
         {% endif %}
         <div class="card">
@@ -117,6 +123,10 @@
         function submit(breedingCowPk) {
             var selected_animlas = $("#id_selected_animals_to option");
             var sanitary = $("#id_all_sanitaries").find('option:selected')[0].id;
+
+            if (selected_animlas.length == 0){
+                    window.location = "?message=error";
+            }
 
             $.each(selected_animlas, function (id, option) {
                 added_sanitary_animal(breedingCowPk, option.id, sanitary);

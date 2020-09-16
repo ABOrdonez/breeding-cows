@@ -11,7 +11,8 @@
 {% endblock %}
 
 {% block content %}
-    <div class="col-12 mt-5">
+ <body onload="find_required_fields()">
+    <div document.onload ="try_to_disable_flock_number" class="col-12 mt-5">
         <div class="card">
             <div class="card-body">
                 <h4 class="header-title">Edicion del Animal</h4>
@@ -66,15 +67,46 @@
             </div>
         </div>
     </div>
+</body>
 
     <script>
-        function try_to_disable_flock_number() {
+         function find_required_fields() {
+            var selected_acquisition_type = $('#id_animalForm-acquisition').val();
+            if (selected_acquisition_type == "Monta natural") {
+                $('#selected_mother_id').find(':input').prop('required', true);
+                $('#selected_father_id').find(':input').prop('required', true);
+            }
+            if (selected_acquisition_type == "Compra") {
+                $('#selected_mother_id').find(':input').prop('required', false);
+                $('#selected_father_id').find(':input').prop('required', false)
+
+            }
+            if (selected_acquisition_type == "Inseminacio Artificial a tiempo fijo") {
+                $('#selected_mother_id').find(':input').prop('required', true);
+                $('#selected_father_id').find(':input').prop('required', false);
+            }
+
+            var selected_animal_type = $('#id_animalForm-animal_type').val();
+            if (selected_animal_type == "Ternero") {
+                $("#id_animalForm-flock_number").prop('required',false);
+
+            } else {
+                $("#id_animalForm-flock_number").prop('required',true);
+            }
+        };
+    </script>
+
+    <script>
+         function try_to_disable_flock_number() {
             var selected_animal_type = $('#id_animalForm-animal_type').val();
             if (selected_animal_type == "Ternero") {
                 $('#flock_number_div').find(':input').prop('disabled', true);
                 $('#id_animalForm-flock_number').val('');
+                $("#id_animalForm-flock_number").prop('required',false);
+
             } else {
                 $('#flock_number_div').find(':input').prop('disabled', false);
+                $("#id_animalForm-flock_number").prop('required',true);
             }
         };
     </script>
@@ -85,18 +117,24 @@
             if (selected_acquisition_type == "Monta natural") {
                 $('#selected_mother_id').find(':input').prop('disabled', false);
                 $('#selected_father_id').find(':input').prop('disabled', false);
+                $('#selected_mother_id').find(':input').prop('required', true);
+                $('#selected_father_id').find(':input').prop('required', true);
             }
             if (selected_acquisition_type == "Compra") {
                 $('#selected_mother_id').find(':input').prop('disabled', true);
                 $('#id_motherAnimalForm-animal').val('');
                 $('#selected_father_id').find(':input').prop('disabled', true);
                 $('#id_fatherAnimalForm-animal').val('');
+                $('#selected_mother_id').find(':input').prop('required', false);
+                $('#selected_father_id').find(':input').prop('required', false)
 
             }
             if (selected_acquisition_type == "Inseminacio Artificial a tiempo fijo") {
                 $('#selected_mother_id').find(':input').prop('disabled', false);
                 $('#selected_father_id').find(':input').prop('disabled', true);
                 $('#id_fatherAnimalForm-animal').val('');
+                $('#selected_mother_id').find(':input').prop('required', true);
+                $('#selected_father_id').find(':input').prop('required', false);
             }
         };
     </script>

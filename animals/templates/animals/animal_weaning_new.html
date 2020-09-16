@@ -10,43 +10,52 @@
 {% endblock %}
 
 {% block content %}
-    <div class="col-12 mt-5">
-        {% if success == True %}
-            <div class="alert alert-success" role="alert">
-                <strong>El destete se concreto con éxio.</strong>
-                Podés seguir efectuando destetes o
-                <a href="{% url 'breeding_cow_detail' pk=breeding_cow.pk %}" class="alert-link">hacer click aquí</a>
-                para volver al Rodeo de Cría.
-            </div>
-        {% endif %}
-        <div class="card">
-            <div class="invoice-head" style="
-    margin-bottom: 5px;">
-                <div class="iv-left col-6 mt-3">
-                    <span>Datos necesarios para destetar a un ternero:</span>
+     <body onload="find_required_fields()">
+        <div class="col-12 mt-5">
+            {% if success == True %}
+                <div class="alert alert-success" role="alert">
+                    <strong>El destete se concreto con éxio.</strong>
+                    Podés seguir efectuando destetes o
+                    <a href="{% url 'breeding_cow_detail' pk=breeding_cow.pk %}" class="alert-link">hacer click aquí</a>
+                    para volver al Rodeo de Cría.
+                </div>
+            {% endif %}
+            <div class="card">
+                <div class="invoice-head" style="
+        margin-bottom: 5px;">
+                    <div class="iv-left col-6 mt-3">
+                        <span>Datos necesarios para destetar a un ternero:</span>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" class="post-form">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label for="animals">Ternero al que se le va a aplicar el destete</label>
+                                {{ form.animals }}
+                                <label for="sex">Sexo del animal</label>
+                                {{ form.sex_type }}
+                            </div>
+                            <div class="col-sm-6">
+                                <label for="flock_number">Numero de rebaño</label>
+                                {% render_field form.flock_number type="number" class="form-control" %}
+                                <label for="sanitary_books">Sanidad aplicada</label>
+                                {{ form.sanitary_books}}
+                            </div>
+                        </div>
+                        <br>
+                        <button type="submit" class="btn btn-outline-success btn-lg btn-block mt-3">Guardar</button>
+                    </form>
                 </div>
             </div>
-            <div class="modal-body">
-                <form method="POST" class="post-form">
-                    {% csrf_token %}
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <label for="animals">Ternero al que se le va a aplicar el destete</label>
-                            {{ form.animals }}
-                            <label for="sex">Sexo del animal</label>
-                            {{ form.sex_type }}
-                        </div>
-                        <div class="col-sm-6">
-                            <label for="flock_number">Numero de rebaño</label>
-                            {% render_field form.flock_number type="number" class="form-control" %}
-                            <label for="sanitary_books">Sanidad aplicada</label>
-                            {{ form.sanitary_books }}
-                        </div>
-                    </div>
-                    <br>
-                    <button type="submit" class="btn btn-outline-success btn-lg btn-block mt-3">Guardar</button>
-                </form>
-            </div>
         </div>
-    </div>
+    </body>
+
+    <script>
+         function find_required_fields() {
+            $('#id_sanitary_books').find(':input').prop('required', true);
+        };
+    </script>
+
 {% endblock %}

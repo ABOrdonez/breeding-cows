@@ -9,13 +9,25 @@
 {% endblock %}
 
 {% block content %}
-    <div class="col-12 mt-5">
+    <div class="col-12 mt-3">
         {% if request.GET.message == 'success' %}
             <div class="alert alert-success" role="alert">
                 <strong>El peso se asocio con éxio.</strong>
                 Podés seguir asociando pesos o
                 <a href="{% url 'breeding_cow_detail' pk=breeding_cow.pk %}" class="alert-link">hacer click aquí</a>
                 para volver al Rodeo de Cría.
+            </div>
+        {% endif %}
+        {% if request.GET.message == 'badRequest' %}
+            <div class="alert alert-danger" role="alert">
+                <strong>Ocurrio un error al asociar el peso.</strong>
+                Compruebe que se les haya definido un peso.
+            </div>
+        {% endif %}
+        {% if request.GET.message == 'notFound' %}
+            <div class="alert alert-danger" role="alert">
+                <strong>Ocurrio un error al asociar el peso.</strong>
+                Compruebe que existan animales a los que se les quiere definir el peso.
             </div>
         {% endif %}
         <div class="card">
@@ -69,14 +81,12 @@
             <div class="modal-body col-sm-12">
                 <div class="form-group">
                     <label for="example-number-input" class="col-form-label">Peso en kilogramos</label>
-                    <input class="form-control" type="number" id="id_weight">
+                    <input class="form-control" type="number" id="id_weight" required="">
                 </div>
-
-            </div>
-
             <button type="submit" name="action" class="btn btn-outline-success btn-lg btn-block mt-3"
                     data-dismiss="modal" onclick="submit({{ breeding_cow.pk }})">Guardar
             </button>
+            </div>
         </div>
     </div>
 
@@ -115,6 +125,10 @@
             var selected_animlas = $("#id_selected_animals_to option");
             var weight = $("#id_weight").val();
 
+            if (selected_animlas.length == 0){
+                    window.location = "?message=notFound";
+            }
+
             $.each(selected_animlas, function (id, option) {
                 added_diet_animal(breedingCowPk, option.id, weight);
             });
@@ -131,7 +145,7 @@
                     window.location = "?message=success";
                 },
                 error: function (data) {
-                    window.location = "?message=error";
+                    window.location = "?message=badRequest";
                 }
             });
         };
