@@ -9,13 +9,19 @@
 {% endblock %}
 
 {% block content %}
-    <div class="col-12 mt-5">
+    <div class="col-12 mt-3">
         {% if request.GET.message == 'success' %}
             <div class="alert alert-success" role="alert">
                 <strong>El servicio finalizó con con éxio.</strong>
                 Podés seguir finalizando servicios o
                 <a href="{% url 'breeding_cow_detail' pk=breeding_cow.pk %}" class="alert-link">hacer click aquí</a>
                 para volver al Rodeo de Cría.
+            </div>
+        {% endif %}
+        {% if request.GET.message == 'error' %}
+            <div class="alert alert-danger" role="alert">
+                <strong>Ocurrio un error al intentar finalizar el servicio.</strong>
+                Compruebe que existan animales a los que se les quiere finalizar.
             </div>
         {% endif %}
         <div class="card">
@@ -79,7 +85,7 @@
                     </div>
                     <div class="form-group col-lg-6">
                         <label for="execution_date">Fecha en la que se finalizo el servicio</label>
-                        <input class="form-control" type="date" id="execution_date_id">
+                        <input class="form-control" type="date" id="execution_date_id" value="{{time|date:"Y-m-d"}}">
                     </div>
 
                 </div>
@@ -126,6 +132,10 @@
             var selected_animlas = $("#id_selected_animals_to option");
             var result = $("#result_id").val();
             var execution_date_id = $("#execution_date_id").val();
+
+            if (selected_animlas.length == 0){
+                    window.location = "?message=error";
+            }
 
             $.each(selected_animlas, function (id, option) {
                 add_animal_result(breedingCowPk, option.id, result, execution_date_id);

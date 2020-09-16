@@ -289,7 +289,11 @@ def animal_reproduction_type_new(request, breedingCowsPk):
     return render(
         request,
         'animals/animal_reproduction_type_new.html',
-        {'animals': animals, 'breeding_cow': breedingCows}
+        {
+            'animals': animals,
+            'breeding_cow': breedingCows,
+            'time': timezone.now
+        }
     )
 
 
@@ -317,7 +321,11 @@ def animal_reproduction_execution_new(request, breedingCowsPk):
     return render(
         request,
         'animals/animal_reproduction_execution_new.html',
-        {'animals': animals, 'breeding_cow': breedingCows}
+        {
+            'animals': animals,
+            'breeding_cow': breedingCows,
+            'time': timezone.now
+        }
     )
 
 
@@ -358,7 +366,11 @@ def animal_reproduction_revision_new(request, breedingCowsPk):
     return render(
         request,
         'animals/animal_reproduction_revision_new.html',
-        {'animals': animals, 'breeding_cow': breedingCows}
+        {
+            'animals': animals,
+            'breeding_cow': breedingCows,
+            'time': timezone.now
+        }
     )
 
 
@@ -387,7 +399,12 @@ def animal_reproduction_separation_new(request, breedingCowsPk):
     return render(
         request,
         'animals/animal_reproduction_separation_new.html',
-        {'animals': animals, 'breeding_cow': breedingCows, 'diets': diets}
+        {
+            'animals': animals,
+            'breeding_cow': breedingCows,
+            'time': timezone.now,
+            'diets': diets
+        }
     )
 
 
@@ -422,7 +439,11 @@ def animal_reproduction_success_new(request, breedingCowsPk):
     return render(
         request,
         'animals/animal_reproduction_success_new.html',
-        {'animals': animals, 'breeding_cow': breedingCows}
+        {
+            'animals': animals,
+            'breeding_cow': breedingCows,
+            'time': timezone.now
+        }
     )
 
 
@@ -437,7 +458,6 @@ def animal_rejected_new(request, breedingCowsPk):
             animal.rejection_date = timezone.now()
         animal.save()
 
-    diets = Diet.objects.order_by('name')
     potentialRejectedAnimals = []
     breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
     animals = Animals.objects.all().order_by(
@@ -461,13 +481,15 @@ def animal_rejected_new(request, breedingCowsPk):
                 if not animal in potentialRejectedAnimals:
                     potentialRejectedAnimals.append(animal)
 
+    diets = Diet.objects.order_by('name')
     return render(
         request,
         'animals/animal_rejected_new.html',
         {
             'breeding_cow': breedingCows,
             'animals': potentialRejectedAnimals,
-            'diets': diets
+            'diets': diets,
+            'time': timezone.now
         }
     )
 
@@ -496,7 +518,8 @@ def animal_delete(request, breedingCowsPk):
         'animals/animal_delete.html',
         {
             'breeding_cow': breedingCows,
-            'animals': animals
+            'animals': animals,
+            'time': timezone.now
         }
     )
 

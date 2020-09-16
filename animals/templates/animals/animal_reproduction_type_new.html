@@ -18,6 +18,12 @@
                 para volver al Rodeo de Cría.
             </div>
         {% endif %}
+        {% if request.GET.message == 'error' %}
+            <div class="alert alert-danger" role="alert">
+                <strong>Ocurrio un error al inciar el proceso previo a ejecutar el servicio.</strong>
+                Compruebe que existan animales a los que se les quiere iniciar el proceso previo.
+            </div>
+        {% endif %}
         <div class="card">
             <div class="invoice-head" style="margin-bottom: 5px;">
                 <div class="iv-left col-6 mt-3">
@@ -75,7 +81,7 @@
                             <option>Monta Natural</option>
                         </select>
                         <label for="execution_date">Fecha en la que se ejecutó la acción</label>
-                        <input class="form-control" type="date" id="execution_date_id">
+                        <input class="form-control" type="date" id="execution_date_id" value="{{time|date:"Y-m-d"}}">
 
                     </div>
                     <div class="col-sm-6 mt-5">
@@ -137,11 +143,15 @@
             var has_prostaglandin_vaccine = $('#has_prostaglandin_vaccine').is(":checked");
             var has_vaginal_device = $('#has_vaginal_device').is(":checked");
             var execution_date_id = $("#execution_date_id").val();
+            
+            if (selected_animlas.length == 0){
+                    window.location = "?message=error";
+            }
 
             $.each(selected_animlas, function (id, option) {
                 add_animal_reproduction_type(breedingCowPk, option.id, reproduction_type, has_prostaglandin_vaccine, has_vaginal_device, execution_date_id);
             });
-        }
+        };
     </script>
 
     <script>

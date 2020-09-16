@@ -18,6 +18,12 @@
                 para volver al Rodeo de Cría.
             </div>
         {% endif %}
+        {% if request.GET.message == 'error' %}
+            <div class="alert alert-danger" role="alert">
+                <strong>Ocurrio un error al intentar separar a los animales.</strong>
+                Compruebe que existan animales a los que se les quiere separar.
+            </div>
+        {% endif %}
         <div class="card">
             <div class="invoice-head" style="
     margin-bottom: 5px;">
@@ -81,7 +87,7 @@
                         </div>
                         <div class="dropdown col-lg-6">
                             <label for="execution_date">Fecha en la que se separó al animal</label>
-                            <input class="form-control" type="date" id="execution_date_id">
+                            <input class="form-control" type="date" id="execution_date_id" value="{{time|date:"Y-m-d"}}">
                         </div>
                     </div>
                 </div>
@@ -128,6 +134,10 @@
             var selected_animlas = $("#id_selected_animals_to option");
             var diet = $("#id_all_diets").find('option:selected')[0].id;
             var execution_date_id = $("#execution_date_id").val();
+
+            if (selected_animlas.length == 0){
+                    window.location = "?message=error";
+            }
 
             $.each(selected_animlas, function (id, option) {
                 add_reproduction_separation(breedingCowPk, option.id, diet, execution_date_id);

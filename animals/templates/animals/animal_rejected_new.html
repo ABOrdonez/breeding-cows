@@ -18,6 +18,12 @@
                 para volver al Rodeo de Cría.
             </div>
         {% endif %}
+        {% if request.GET.message == 'error' %}
+            <div class="alert alert-danger" role="alert">
+                <strong>Ocurrio un error al dar de baja los animales.</strong>
+                Compruebe que existan animales a los que se les quiere dar de baja.
+            </div>
+        {% endif %}
         <div class="card">
             <div class="invoice-head" style="margin-bottom: 5px;">
                 <div class="iv-left col-6 mt-3">
@@ -69,7 +75,7 @@
                 <div class="row">
                     <div class="col-sm-6">
                         <label for="execution_date">Fecha en la que se ejecutó la acción</label>
-                        <input class="form-control" type="date" id="execution_date_id">
+                        <input class="form-control" type="date" id="execution_date_id"  value="{{time|date:"Y-m-d"}}">
                     </div>
                     <div class="form-group col-lg-6 mt-1">
                         <label for="execution_date">Seleccione dieta a aplicar</label>
@@ -124,6 +130,10 @@
             var selected_animlas = $("#id_selected_animals_to option");
             var execution_date = $("#execution_date_id").val();
             var diet_id = $("#id_all_diets").find('option:selected')[0].id;
+
+            if (selected_animlas.length == 0){
+                    window.location = "?message=error";
+            }
 
             $.each(selected_animlas, function (id, option) {
                 reject_animal(breedingCowPk, option.id, execution_date, diet_id);

@@ -65,8 +65,8 @@ class Animals(models.Model):
         null=True,
         blank=True)
     flock_number = models.IntegerField(null=True, blank=True)
-    birthday = models.DateField(blank=False, null=False, default=datetime.now())
-    entry_date = models.DateField(blank=False, null=False, default=datetime.now())
+    birthday = models.DateField(blank=False, null=False, default=datetime.now)
+    entry_date = models.DateField(blank=False, null=False, default=datetime.now)
     leaving_date = models.DateField(blank=True, null=True)
     rejection_date = models.DateField(blank=True, null=True)
     weight = models.DecimalField(max_digits=30, decimal_places=2, default='')
@@ -262,7 +262,7 @@ class AnimalRepoduction(models.Model):
         null=True,
         blank=True)
     animal = models.ForeignKey(Animals, on_delete=models.CASCADE)
-    started_date = models.DateField(blank=True, null=True)
+    started_date = models.DateField(blank=False, null=False)
     finished_date = models.DateField(blank=True, null=True)
     reproduction = models.ForeignKey(
         reproductionmodels.Reproduction,

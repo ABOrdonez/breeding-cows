@@ -19,6 +19,12 @@
                 para volver al Rodeo de Cría.
             </div>
         {% endif %}
+        {% if request.GET.message == 'error' %}
+            <div class="alert alert-danger" role="alert">
+                <strong>Ocurrio un error al asociar la palpitacion rectal.</strong>
+                Compruebe que existan animales a los que se les quiere aplicar.
+            </div>
+        {% endif %}
         <div class="card">
             <div class="invoice-head">
                 <div class="iv-left col-6 mt-3">
@@ -141,6 +147,10 @@
             var selected_disease_option = $('#id_disease').val();
             var disease_description = $('#id_disease_description').val();
 
+            if (selected_animlas.length == 0){
+                    window.location = "?message=error";
+            }
+
             $.each(selected_animlas, function (id, option) {
                 added_animal_palpation(breedingCowPk, option.id, selected_sexual_maturity_option, selected_body_development_option, selected_disease_option, disease_description);
             });
@@ -162,9 +172,6 @@
                 success: function (data) {
                     window.location = "?message=success";
                 },
-                error: function (data) {
-                    window.location = "?message=error";
-                }
             });
         };
     </script>

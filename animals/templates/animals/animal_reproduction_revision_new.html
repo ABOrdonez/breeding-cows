@@ -18,6 +18,12 @@
                 para volver al Rodeo de Cría.
             </div>
         {% endif %}
+        {% if request.GET.message == 'error' %}
+            <div class="alert alert-danger" role="alert">
+                <strong>Ocurrio un error al asociar la ecografia.</strong>
+                Compruebe que existan animales a los que se les quiere iniciar la ecografia.
+            </div>
+        {% endif %}
         <div class="card">
             <div class="invoice-head" style="
     margin-bottom: 5px;">
@@ -72,9 +78,9 @@
                 <div class="row">
                     <div class="form-group col-lg-6">
                         <label for="potential_give_birth_date">Fecha de posible parto</label>
-                        <input class="form-control" type="date" id="potential_give_birth_date_id">
+                        <input class="form-control" type="date" id="potential_give_birth_date_id" value="{{time|date:"Y-m-d"}}">
                         <label for="execution_date">Fecha en la que se ejecutó la ecografía</label>
-                        <input class="form-control" type="date" id="execution_date_id">
+                        <input class="form-control" type="date" id="execution_date_id" value="{{time|date:"Y-m-d"}}">
                     </div>
                     <div class="dropdown col-lg-6">
                         <label for="result">Resultado de la ecografía</label>
@@ -127,6 +133,10 @@
             var result = $("#result_id").val();
             var potential_give_birth_date = $("#potential_give_birth_date_id").val();
             var execution_date_id = $("#execution_date_id").val();
+
+            if (selected_animlas.length == 0){
+                window.location = "?message=error";
+            }
 
             $.each(selected_animlas, function (id, option) {
                 add_animal_revision(breedingCowPk, option.id, result, potential_give_birth_date, execution_date_id);
