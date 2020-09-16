@@ -22,12 +22,12 @@
                                     <label for="province">Provincia</label>
                                     <input name="province" class="form-control" id="id_province"
                                            placeholder="Ingrese la provincia del Rodeo" type="text"
-                                           value="{{ form.province.value }}">
+                                           value="{{ form.province.value }}" required="True">
 
                                     <label for="address">Dirección</label>
                                     <input name="address" class="form-control" id="id_address"
                                            placeholder="Ingrese la dirección del Rodeo" type="text"
-                                           value="{{ form.address.value }}">
+                                           value="{{ form.address.value }}" required="True">
 
                                     <label for="contact">Dueño</label>
                                     {{ form.contact }}
