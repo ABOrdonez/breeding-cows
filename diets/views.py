@@ -61,10 +61,18 @@ def diet_edit(request, pk):
             return redirect('diet_detail', pk=diet.pk)
     else:
         form = DietForm(instance=diet)
-    return render(request, 'diets/diet_edit.html', {'form': form})
+    return render(
+        request,
+        'diets/diet_edit.html',
+        {
+            'form': form,
+            'message': True
+        }
+    )
 
 
 def diet_new(request):
+    success = True
     if request.method == "POST":
         form = DietForm(request.POST)
         if form.is_valid():
@@ -74,9 +82,19 @@ def diet_new(request):
             diet.owner = request.user
             diet.save()
             return redirect('diet_detail', pk=diet.pk)
+        else:
+            success = False
+
     else:
         form = DietForm()
-    return render(request, 'diets/diet_edit.html', {'form': form})
+    return render(
+        request,
+        'diets/diet_edit.html',
+        {
+            'form': form,
+            'message': success
+        }
+    )
 
 
 class ChartData(APIView):

@@ -35,6 +35,10 @@ def sanitary_book_edit(request, pk):
         form = SanitaryForm(request.POST, instance=sanitary)
         if form.is_valid():
             sanitary = form.save(commit=False)
+            if not sanitary.copper:
+                sanitary.copper = 0
+            if not sanitary.clostridiosis:
+                sanitary.clostridiosis = 0
             sanitary.save()
             return redirect('sanitary_book_detail', pk=sanitary.pk)
     else:
@@ -74,6 +78,10 @@ def sanitary_book_new(request):
             sanitary = form.save(commit=False)
             sanitary.created_date = timezone.now()
             sanitary.owner = request.user
+            if not sanitary.copper:
+                sanitary.copper = 0
+            if not sanitary.clostridiosis:
+                sanitary.clostridiosis = 0
             sanitary.save()
             return redirect('sanitary_book_detail', pk=sanitary.pk)
     else:

@@ -20,24 +20,25 @@
                             <div class="row">
                                 <div class="form-group col-6">
                                     <label for="name">Nombre</label>
-                                    {% render_field form.name class="form-control" %}
+                                    {% render_field form.name class="form-control" placeholder="Ingrese el nombre de la libreta" %}
                                     <br>
 
-                                    <label for="protein">Antiparacitario</label>
-                                    {% render_field form.antiparasitic class="form-control" %}
+                                    <label for="energies">Animales a los que se les aplica</label>
+                                    {% render_field form.animal_type class="form-control" %}
                                     <br>
 
                                     <label for="energies">Cobre</label>
-                                    {% render_field form.copper class="form-control" %}
+                                    {% render_field form.copper class="form-control" placeholder="Ingrese el cobre asociado a la libreta" %}
                                     <br>
 
                                     <label for="energies">Clostridiosis</label>
-                                    {% render_field form.clostridiosis class="form-control" %}
+                                    {% render_field form.clostridiosis class="form-control" placeholder="Ingrese la clostridiosis de la libreta" %}
 
                                 </div>
                                 <div class="dropdown col-lg-6 ">
-                                    <label for="energies">Animales a los que se les aplica</label>
-                                    {% render_field form.animal_type class="form-control" %}
+                                    <br>
+                                    <label for="protein">Antiparacitario - Tildar en caso que sea afirmativo</label>
+                                    {% render_field form.antiparasitic class="form-control" %}
                                     <br>
 
                                     <label for="province">Descripción del Rodeo</label>

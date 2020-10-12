@@ -15,19 +15,19 @@ class CivilStatus(Enum):
 
 class Contact(models.Model):
     first_name = models.CharField(
-        max_length=30,
+        max_length=50,
         default='',
         blank=False,
         null=False
     )
     last_name = models.CharField(
-        max_length=30,
+        max_length=50,
         default='',
         blank=False,
         null=False
     )
     phone = models.IntegerField(
-        max_length=30,
+        max_length=50,
         default='',
         blank=False,
         null=False
@@ -42,13 +42,13 @@ class Contact(models.Model):
     entry_date = models.DateTimeField(blank=True, null=True)
     birthday = models.DateTimeField(blank=True, null=True, default='')
     direction = models.CharField(
-        max_length=30,
+        max_length=300,
         default='',
         blank=False,
         null=False
     )
     province = models.CharField(
-        max_length=30,
+        max_length=100,
         default='',
         blank=False,
         null=False
@@ -56,7 +56,7 @@ class Contact(models.Model):
     civil_status = models.CharField(
         choices=CivilStatus.choices(),
         default=CivilStatus.SOLTERO,
-        max_length=100)
+        max_length=50)
 
     @property
     def full_name(self):

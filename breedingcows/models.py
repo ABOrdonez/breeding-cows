@@ -42,16 +42,19 @@ class BreedingCows(models.Model):
     owner = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        null=True,
-        blank=True
+        null=False,
+        blank=False,
     )
     contact = models.ForeignKey(
         Contact,
         on_delete=models.CASCADE,
-        null=True,
-        blank=True
+        null=False,
+        blank=False,
     )
-    entry_date = models.DateTimeField(blank=True, null=True)
+    entry_date = models.DateTimeField(
+        null=False,
+        blank=False
+    )
     leaving_date = models.DateTimeField(blank=True, null=True)
     description = models.CharField(default='', max_length=1000)
 

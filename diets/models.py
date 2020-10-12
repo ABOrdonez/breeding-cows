@@ -15,9 +15,26 @@ class AnimalType(Enum):
 
 
 class Diet(models.Model):
-    name = models.CharField(max_length=30, default='')
-    protein = models.DecimalField(max_digits=5, decimal_places=2, default='')
-    energies = models.DecimalField(max_digits=5, decimal_places=2, default='')
+    name = models.CharField(
+        max_length=30,
+        default='',
+        blank=False,
+        null=False
+    )
+    protein = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        default='',
+        blank=False,
+        null=False
+    )
+    energies = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        default='',
+        blank=False,
+        null=False
+    )
     description = models.CharField(max_length=1000, default='')
     owner = models.ForeignKey(
         User,
@@ -25,11 +42,17 @@ class Diet(models.Model):
         null=True,
         blank=True
     )
-    created_on = models.DateTimeField(auto_now_add=True)
+    created_on = models.DateTimeField(
+        auto_now_add=True,
+        blank=False,
+        null=False
+    )
     animal_type = models.CharField(
         choices=AnimalType.choices(),
         default=AnimalType.TERNERO,
-        max_length=100
+        max_length=100,
+        blank=False,
+        null=False
     )
 
     def __unicode__(self):

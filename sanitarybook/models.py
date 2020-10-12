@@ -15,14 +15,48 @@ class AnimalType(Enum):
 
 
 class Sanitary(models.Model):
-    name = models.CharField(max_length=30, default='')
-    antiparasitic = models.BooleanField(blank=True, null=True)
-    copper = models.DecimalField(max_digits=5, decimal_places=2, default='')
-    clostridiosis = models.DecimalField(max_digits=5, decimal_places=2, default='')
-    description = models.CharField(max_length=100, default='')
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    name = models.CharField(
+        max_length=30,
+        default='',
+        blank=False,
+        null=False
+    )
+    antiparasitic = models.BooleanField(
+        blank=False,
+        null=False
+    )
+    copper = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        default='',
+        null=True,
+        blank=True
+    )
+    clostridiosis = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        default='',
+        null=True,
+        blank=True
+    )
+    description = models.CharField(
+        max_length=1000,
+        default='',
+        blank=False,
+        null=False
+    )
+    owner = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
     created_date = models.DateTimeField(auto_now_add=True)
-    animal_type = models.CharField(choices=AnimalType.choices(), default=AnimalType.TERNERO, max_length=100)
+    animal_type = models.CharField(
+        choices=AnimalType.choices(),
+        default=AnimalType.TERNERO,
+        max_length=100
+    )
 
     def __str__(self):
         return self.name
