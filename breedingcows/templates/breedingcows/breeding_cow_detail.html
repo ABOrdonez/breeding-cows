@@ -158,6 +158,8 @@
                    class="btn btn-outline-secondary btn-lg btn-block">Rechazar animal</a>
                 <a href="{% url 'animal_delete' breedingCowsPk=breeding_cow.pk %}" role="button"
                    class="btn btn-outline-secondary btn-lg btn-block">Dar de baja animal</a>
+                <a href="{% url 'undo_rejected_animal' breedingCowsPk=breeding_cow.pk %}" role="button"
+                   class="btn btn-outline-secondary btn-lg btn-block">Deshacer baja de animal</a>
             </div>
         </div>
     </div>

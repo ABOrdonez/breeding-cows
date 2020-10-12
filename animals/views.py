@@ -721,6 +721,30 @@ def change_animal_weight(request, breedingCowsPk):
     )
 
 
+@csrf_exempt
+def undo_rejected_animal(request, breedingCowsPk):
+    if request.method == "POST":
+        animal = get_object_or_404(Animals, id=request.POST['idAnimal'])
+        animal.leaving_date = None
+        animal.save()
+
+    breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
+    animals = Animals.objects.order_by(
+        'flock_number'
+    ).filter(
+        breeding_cows=breedingCows,
+        leaving_date__isnull=False
+    )
+    return render(
+        request,
+        'animals/animal_undo_rejected.html',
+        {
+            'animals': animals,
+            'breeding_cow': breedingCows,
+        }
+    )
+
+
 def get_animals_info_warning(animals_without_reproduction):
     animals_without_reproduction_info = []
     for animal in animals_without_reproduction:
