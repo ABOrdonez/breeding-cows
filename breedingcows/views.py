@@ -493,6 +493,7 @@ def breeding_cow_dashboard(request, pk):
         "vaquillonas_monta_unsuccessful": vaquillonas_monta_unsuccessful,
     }
 
+    ##En desarrollo por eso esta el print.
     print(data)
 
     return render(

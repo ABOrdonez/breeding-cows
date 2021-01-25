@@ -59,4 +59,5 @@ class Sanitary(models.Model):
     )
 
     def __str__(self):
-        return self.name
+        return f'{self.name}'
+

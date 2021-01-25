@@ -42,18 +42,18 @@ class BreedingCows(models.Model):
     owner = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        null=False,
-        blank=False,
+        null=True,
+        blank=True,
     )
     contact = models.ForeignKey(
         Contact,
         on_delete=models.CASCADE,
-        null=False,
-        blank=False,
+        null=True,
+        blank=True,
     )
     entry_date = models.DateTimeField(
         null=False,
-        blank=False
+        blank=False,
     )
     leaving_date = models.DateTimeField(blank=True, null=True)
     description = models.CharField(default='', max_length=1000)
@@ -61,20 +61,29 @@ class BreedingCows(models.Model):
     def add_leaving_date(self):
         self.leaving_date = timezone.now()
         self.save()
-        return self.address
+        return f'{self.address}'
 
     def __str__(self):
-        return self.address
+        return f'{self.address}'
 
 
 class WorkPosition(models.Model):
     breeding_cows = models.ForeignKey(BreedingCows, on_delete=models.CASCADE)
-    person = models.ForeignKey(contactsmodels.Contact, on_delete=models.CASCADE, null=True, blank=True)
+    person = models.ForeignKey(
+        contactsmodels.Contact,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
     entry_date = models.DateTimeField(blank=True, null=True)
-    position = models.CharField(choices=PositionType.choices(), default=PositionType.DUEÑO, max_length=50)
+    position = models.CharField(
+        choices=PositionType.choices(),
+        default=PositionType.DUEÑO,
+        max_length=50
+    )
 
     def get_position_type_label(self):
         return PositionType(self.type).name.title()
 
     def __str__(self):
-        return self.person.username
+        return f'{self.person.username}'

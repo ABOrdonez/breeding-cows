@@ -34,7 +34,7 @@ class Reproduction(models.Model):
         max_length=100
     )
     potential_give_birth_date = models.DateField(blank=True, null=True)
-    preparation_date = models.DateField(blank=True, null=True, default=datetime.now())
+    preparation_date = models.DateField(blank=True, null=True)
     execution_date = models.DateField(blank=True, null=True)
     revision_date = models.DateField(blank=True, null=True)
     success_revision = models.BooleanField(blank=True, null=True)
@@ -103,4 +103,4 @@ class Reproduction(models.Model):
         return False
 
     def __str__(self):
-        return self.reproduction_type
+        return f'{self.reproduction_type}'

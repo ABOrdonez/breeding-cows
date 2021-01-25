@@ -76,7 +76,6 @@ def diet_new(request):
     if request.method == "POST":
         form = DietForm(request.POST)
         if form.is_valid():
-            print("valido")
             diet = form.save(commit=False)
             diet.created_on = timezone.now()
             diet.owner = request.user

@@ -55,8 +55,5 @@ class Diet(models.Model):
         null=False
     )
 
-    def __unicode__(self):
-        return u'%s' % self.name
-
     def __str__(self):
-        return u'%s' % (self.name)
+        return f'{self.name}'

@@ -66,7 +66,11 @@ class Animals(models.Model):
         blank=True)
     flock_number = models.IntegerField(null=True, blank=True)
     birthday = models.DateField(blank=False, null=False, default=datetime.now)
-    entry_date = models.DateField(blank=False, null=False, default=datetime.now)
+    entry_date = models.DateField(
+        blank=False,
+        null=False,
+        default=datetime.now
+    )
     leaving_date = models.DateField(blank=True, null=True)
     rejection_date = models.DateField(blank=True, null=True)
     weight = models.DecimalField(max_digits=30, decimal_places=2, default='')
@@ -87,8 +91,6 @@ class Animals(models.Model):
     disease_description = models.CharField(default='', max_length=100)
     brood = models.ManyToManyField(
         'self',
-        blank=True,
-        null=True,
         symmetrical=False,
         related_name='children'
     )
@@ -151,9 +153,8 @@ class Animals(models.Model):
             for potencial_mother in potencial_mothers:
                 if self in potencial_mother.brood.all():
                     mother = potencial_mother
-            return u'N° de rebaño: %s' % (
-                mother.flock_number
-            )
+            return f'N° de rebaño: {mother.flock_number}'
+
         return None
 
     def get_father(self):
@@ -166,9 +167,8 @@ class Animals(models.Model):
             for potencial_father in potencial_fathers:
                 if self in potencial_father.brood.all():
                     father = potencial_father
-            return u'N° de rebaño: %s' % (
-                father.flock_number
-            )
+            return f'N° de rebaño: {father.flock_number}'
+
         return None
 
     def __str__(self):
@@ -197,10 +197,7 @@ class Animals(models.Model):
                 for potencial_mother in potencial_mothers:
                     if self in potencial_mother.brood.all():
                         mother = potencial_mother
-                return u'Numero de rebaño de la madre: %s - Numero de rebaño del padre: %s' % (
-                    mother.flock_number,
-                    father.flock_number
-                )
+                return f'Numero de rebaño de la madre: {mother.flock_number} - Numero de rebaño del padre:{father.flock_number}'
 
             if acquisition == AcquisitionType.INSEMINACION.value:
                 potencial_mothers = Animals.objects.filter(
@@ -211,7 +208,7 @@ class Animals(models.Model):
                 for potencial_mother in potencial_mothers:
                     if self in potencial_mother.brood.all():
                         mother = potencial_mother
-                return u'%s | Numero de rebaño de la madre: %s' % (AcquisitionType.INSEMINACION.value, mother.flock_number)
+                return f'{AcquisitionType.INSEMINACION.value} | Numero de rebaño de la madre: {mother.flock_number}'
 
         return str(self.flock_number)
 
@@ -227,7 +224,7 @@ class AnimalDisease(models.Model):
         return DiagnosisType(self.type).name.title()
 
     def __str__(self):
-        return self.animal
+        return f'{self.animal}'
 
 
 class AnimalDiet(models.Model):
@@ -240,7 +237,7 @@ class AnimalDiet(models.Model):
         blank=True)
 
     def __str__(self):
-        return self.diet.name
+        return f'{self.diet.name}'
 
 
 class AnimalSanitary(models.Model):
@@ -252,7 +249,7 @@ class AnimalSanitary(models.Model):
         null=False, blank=True)
 
     def __str__(self):
-        return u'%s | %s' % (self.sanitary.name, self.animal.flock_number)
+        return f'{self.sanitary.name} | {self.animal.flock_number}'
 
 
 class AnimalRepoduction(models.Model):
@@ -287,4 +284,4 @@ class AnimalRepoduction(models.Model):
         return False
 
     def __str__(self):
-        return self.reproduction.reproduction_type
+        return f'{self.reproduction.reproduction_type}'

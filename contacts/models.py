@@ -27,7 +27,6 @@ class Contact(models.Model):
         null=False
     )
     phone = models.IntegerField(
-        max_length=50,
         default='',
         blank=False,
         null=False
@@ -60,10 +59,7 @@ class Contact(models.Model):
 
     @property
     def full_name(self):
-        return u'%s %s' % (self.first_name, self.last_name)
-
-    def __unicode__(self):
-        return u'%s' % self.full_name
+        return f'{self.first_name} {self.last_name}'
 
     def __str__(self):
-        return u'%s %s' % (self.first_name, self.last_name)
+        return f'{self.first_name} {self.last_name}'
