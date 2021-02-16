@@ -1,11 +1,5 @@
 from django.contrib import admin
-from .models import(
-	Animals,
-	AnimalDisease,
-	AnimalDiet,
-	AnimalRepoduction,
-	AnimalSanitary
-)
+from .models import (Animals, AnimalDisease, AnimalDiet, AnimalRepoduction, AnimalSanitary)
 
 
 admin.site.register(Animals)

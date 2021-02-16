@@ -7,7 +7,7 @@ from django.core.paginator import Paginator
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.views.decorators.csrf import csrf_exempt
-from reproduction.models import Reproduction, ReproductionProcessDays
+from reproduction.models import Reproduction
 from operator import attrgetter
 from django.contrib.auth.decorators import login_required
 
@@ -493,7 +493,7 @@ def breeding_cow_dashboard(request, pk):
         "vaquillonas_monta_unsuccessful": vaquillonas_monta_unsuccessful,
     }
 
-    ##En desarrollo por eso esta el print.
+    # En desarrollo por eso esta el print.
     print(data)
 
     return render(

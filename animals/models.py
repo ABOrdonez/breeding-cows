@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils import timezone
 from breedingcows import models as breedingcowsmodels
 from enum import Enum
 from diets import models as dietsmodels

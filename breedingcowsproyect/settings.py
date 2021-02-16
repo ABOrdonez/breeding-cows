@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'breedingcows.apps.BreedingcowsConfig',
     'users.apps.UsersConfig',
     'animals.apps.AnimalsConfig',
-    'action.apps.ActionConfig',
     'contacts.apps.ContactsConfig',
     'diets.apps.DietsConfig',
     'sanitarybook.apps.SanitarybookConfig',

@@ -14,6 +14,10 @@ class BreedingCowForm(forms.ModelForm):
             'description'
         )
         widgets = {
-            'description': forms.Textarea(attrs={'class': 'form-control', 'required':'True'}),
-            'contact': forms.Select(attrs={'class': 'form-control', 'required':'True'}),
+            'description': forms.Textarea(
+                attrs={'class': 'form-control', 'required': 'True'}
+            ),
+            'contact': forms.Select(
+                attrs={'class': 'form-control', 'required': 'True'}
+            ),
         }

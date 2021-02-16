@@ -7,7 +7,6 @@ from .models import (
     AnimalDiet
 )
 from breedingcows.models import BreedingCows
-from reproduction.models import Reproduction
 from breedingcows.views import (
     get_reproductions_process_on_time,
     get_weaning_on_time,
@@ -18,8 +17,8 @@ from breedingcows.views import (
     get_reproductions_process_on_danger,
     get_weaning_on_danger,
     get_animals_without_reproduction,
-    ReproductionProcessDays
 )
+from reproduction.models import ReproductionProcessDays
 from diets.models import Diet
 from reproduction.forms import ReproductionForm
 from sanitarybook.models import Sanitary
@@ -389,7 +388,6 @@ def animal_reproduction_separation_new(request, breedingCowsPk):
         )
         if reproduction.separation_date is None:
             reproduction.separation_date = timezone.now()
-        days = timedelta(days=ReproductionProcessDays.GIVE_BIRTH.value)
         reproduction.next_date = reproduction.potential_give_birth_date
         reproduction.save()
 
@@ -478,7 +476,7 @@ def animal_rejected_new(request, breedingCowsPk):
 
         if animalReproduction:
             if hasReproductionComplication(animalReproduction):
-                if not animal in potentialRejectedAnimals:
+                if animal not in potentialRejectedAnimals:
                     potentialRejectedAnimals.append(animal)
 
     diets = Diet.objects.order_by('name')
@@ -645,7 +643,7 @@ def get_animals_info_on_time(animals_without_reproduction):
             animal=animal,
             finished_date__isnull=False).order_by('-finished_date').first()
 
-        if not reproduction_finished is None:
+        if reproduction_finished is not None:
             days = reproduction_finished.finished_date + timedelta(
                 days=ReproductionProcessDays.REPEAT_PROCESS.value
             )
@@ -756,7 +754,7 @@ def get_animals_info_warning(animals_without_reproduction):
             animal=animal,
             finished_date__isnull=False).order_by('-finished_date').first()
 
-        if not reproduction_finished is None:
+        if reproduction_finished is not None:
             days = reproduction_finished.finished_date + timedelta(
                 days=ReproductionProcessDays.REPEAT_PROCESS.value
             )
