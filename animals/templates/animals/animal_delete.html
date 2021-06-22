@@ -39,7 +39,7 @@
                                     multiple="" data-is-stacked="0" data-field-name="selected_animals">
                                 {% for animal in animals %}
                                     <option id="{{ animal.id }}" value="{{ animal.id }}"
-                                            title="{{ animal.flock_number }}">{{ animal.flock_number }}</option>
+                                            title="{{ animal }}">{{ animal }}</option>
                                 {% endfor %}
                             </select>
                         </div>
