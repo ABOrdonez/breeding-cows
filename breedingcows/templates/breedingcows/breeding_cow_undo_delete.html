@@ -1,0 +1,140 @@
+{% extends 'breedingcows/base.html' %}
+
+{% block header %}
+    <h4 class="page-title pull-left">Recuperar Rodeos de Cría</h4>
+    <ul class="breadcrumbs pull-left">
+        <li><a href="{% url 'breeding_cows_list' %}">Rodeos de Cría</a></li>
+        <li><span>Deshacer eliminados</span></li>
+    </ul>
+{% endblock %}
+
+{% block content %}
+    <div class="col-12 mt-3">
+        {% if request.GET.message == 'success' %}
+            <div class="alert alert-success" role="alert">
+                <strong>El rodeo se recuperó con éxio.</strong>
+                Podés seguir recuperando rodeos o
+                <a href="{% url 'breeding_cows_list' %}" class="alert-link">hacer click aquí</a>
+                para volver el listado de Rodeos de Cría activos.
+            </div>
+        {% endif %}
+        {% if request.GET.message == 'error' %}
+            <div class="alert alert-danger" role="alert">
+                <strong>Ocurrio un error al recuperar el rodeo.</strong>
+                Compruebe que existan rodeos a los que se les quiere recuperar.
+            </div>
+        {% endif %}
+        <div class="card">
+            <div class="invoice-head" style="margin-bottom: 5px;">
+                <div class="iv-left col-6 mt-3">
+                    <span>Selección de Rodeo</span>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-5">
+                        <h4 class="header-title">Rodeos elimiandos</h4>
+                        <div class="selector-available">
+                            <select name="all_breeding_cows" class="filtered form-control" id="id_all_breeding_cows_from"
+                                    multiple="" data-is-stacked="0" data-field-name="selected_breeding_cows">
+                                {% for breeding_cow in breeding_cows %}
+                                    <option id="{{ breeding_cow.id }}" value="{{ breeding_cow.id }}"
+                                            title="{{ breeding_cow }}">{{ breeding_cow }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-2 text-center">
+                        <br><br><br>
+                        <button onclick="moves_out()" type="button" class="btn btn-rounded btn-light mb-3">
+                            <i class="fa fa-arrow-left"></i></button>
+
+                        <button onclick="moves_in()" type="button" class="btn btn-rounded btn-light mb-3">
+                            <i class="fa fa-arrow-right"></i></button>
+                    </div>
+                    <div class="col-sm-5">
+                        <h4 class="header-title">Rodeos a recuperar</h4>
+                        <div class="selector-chosen">
+                            <select id="id_selected_breeding_cows_to" multiple="multiple" size="0" name="selected_breeding_cows"
+                                    class="filtered form-control">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 mt-3">
+        <div class="card">
+            <div class="invoice-head" style="margin-bottom: 5px;">
+                <div class="iv-left col-6 mt-3">
+                    <span>Confirmar acción</span>
+                </div>
+            </div>
+            <div class="modal-body">
+                <button type="submit" name="action" class="btn btn-outline-success btn-lg btn-block mt-3"
+                        data-dismiss="modal" onclick="submit();">Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function moves_in() {
+            var selected_breeding_cows = $("#id_all_breeding_cows_from option:selected");
+            var unselected_breeding_cows = $("#id_all_breeding_cows_from option:not(:selected)");
+
+            $.each(selected_breeding_cows, function (id, option, title) {
+                $("#id_selected_breeding_cows_to").append('<option id=' + option.id + ' value=' + option.id + ' title=' + option.title + '>' + option.title + '</option>');
+            });
+            $("#id_all_breeding_cows_from").empty();
+            $.each(unselected_breeding_cows, function (id, option, title) {
+                $("#id_all_breeding_cows_from").append('<option id=' + option.id + ' value=' + option.id + ' title=' + option.title + '>' + option.title + '</option>');
+            });
+        };
+    </script>
+
+    <script>
+        function moves_out() {
+            var selected_breeding_cows = $("#id_selected_breeding_cows_to option:selected");
+            var unselected_breeding_cows = $("#id_selected_breeding_cows_to option:not(:selected)");
+
+            $.each(selected_breeding_cows, function (id, option, title) {
+                $("#id_all_breeding_cows_from").append('<option id=' + option.id + ' value=' + option.id + ' title=' + option.title + '>' + option.title + '</option>');
+            });
+            $("#id_selected_breeding_cows_to").empty();
+            $.each(unselected_breeding_cows, function (id, option, title) {
+                $("#id_selected_breeding_cows_to").append('<option id=' + option.id + ' value=' + option.id + ' title=' + option.title + '>' + option.title + '</option>');
+            });
+        };
+    </script>
+
+    <script>
+        function submit() {
+            var selected_breeding_cows = $("#id_selected_breeding_cows_to option");
+            if (selected_breeding_cows.length == 0){
+                    window.location = "?message=error";
+            }
+
+            $.each(selected_breeding_cows, function (id, option) {
+                undo_delete_breeding_cow(option.id);
+            });
+        }
+    </script>
+
+    <script>
+        function undo_delete_breeding_cow(idBreedingCow) {
+            $.ajax({
+                type: 'POST',
+                url: '',
+                data: {idBreedingCow: idBreedingCow},
+                success: function () {
+                    window.location = "?message=success";
+                },
+                error: function () {
+                    window.location = "?message=error";
+                }
+            });
+        };
+    </script>
+{% endblock %}

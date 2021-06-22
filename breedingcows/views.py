@@ -118,6 +118,31 @@ def breeding_cow_edit(request, pk):
     )
 
 
+@csrf_exempt
+def breeding_cow_undo_delete(request):
+    if request.method == "POST":
+        breedingCow = get_object_or_404(
+            BreedingCows,
+            id=request.POST['idBreedingCow']
+        )
+        breedingCow.leaving_date = None
+        breedingCow.save()
+
+    breedingCows = BreedingCows.objects.filter(
+        leaving_date__isnull=False,
+    ).order_by(
+        'entry_date'
+    )
+
+    return render(
+        request,
+        'breedingcows/breeding_cow_undo_delete.html',
+        {
+            'breeding_cows': breedingCows,
+        }
+    )
+
+
 def breeding_cow_delete(request, pk):
     breeding_cow = get_object_or_404(BreedingCows, pk=pk)
     BreedingCows.add_leaving_date(breeding_cow)
