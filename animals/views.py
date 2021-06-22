@@ -279,7 +279,7 @@ def animal_reproduction_type_new(request, breedingCowsPk):
 
         animalRepoduction.reproduction = reproduction
         animalRepoduction.animal = animal
-        animalRepoduction.started_date = timezone.now()
+        animalRepoduction.started_date = reproduction.preparation_date
         animalRepoduction.breeding_cow = animal.breeding_cows
         animalRepoduction.save()
 
@@ -848,12 +848,12 @@ def getReproductionInfo(animal):
     for reproduction in animalReproductions:
         if reproduction.finished_date:
             if reproduction.reproduction.give_birth_date:
-                if reproduction.reproduction.reproduction_type == "Inseminacion Artificial":
+                if reproduction.reproduction.reproduction_type == 'Inseminacion Artificial A Tiempos Fijos':
                     successfulReproductions[0] += 1
                 else:
                     successfulReproductions[1] += 1
             else:
-                if reproduction.reproduction.reproduction_type == "Inseminacion Artificial":
+                if reproduction.reproduction.reproduction_type == 'Inseminacion Artificial A Tiempos Fijos':
                     unsuccessfulReproductions[0] += 1
                 else:
                     unsuccessfulReproductions[1] += 1

@@ -10,6 +10,8 @@ from django.views.decorators.csrf import csrf_exempt
 from reproduction.models import Reproduction
 from operator import attrgetter
 from django.contrib.auth.decorators import login_required
+import datetime
+from django.utils import timezone
 
 
 @login_required
@@ -421,16 +423,21 @@ def breeding_cow_dashboard(request, pk):
     )
 
     vacas_reproduction_in_process = 0
+    vaquillonas_reproduction_in_process = 0
+
     vacas_inseminacion_successful = 0
     vacas_monta_successful = 0
     vacas_inseminacion_unsuccessful = 0
     vacas_monta_unsuccessful = 0
 
-    vaquillonas_reproduction_in_process = 0
-    vaquillonas_inseminacion_successful = 0
-    vaquillonas_monta_successful = 0
-    vaquillonas_inseminacion_unsuccessful = 0
-    vaquillonas_monta_unsuccessful = 0
+    vacas_inseminacion_successful_last_year = 0
+    vacas_monta_successful_last_year = 0
+    vacas_inseminacion_unsuccessful_last_year = 0
+    vacas_monta_unsuccessful_last_year = 0
+
+    on_time_amount = len(get_reproductions_process_on_time(animals))
+    warning_amount = len(get_reproductions_process_warning(animals))
+    danger_amount = len(get_reproductions_process_on_danger(animals))
 
     kilograms = 0
 
@@ -442,11 +449,19 @@ def breeding_cow_dashboard(request, pk):
     ]
 
     for vaca in vacas:
-        successful, unsuccessful = getReproductionInfo(vaca)
+        successful, unsuccessful = getReproductionInfo(vaca, False)
         vacas_inseminacion_successful += successful[0]
         vacas_monta_successful += successful[1]
         vacas_inseminacion_unsuccessful += unsuccessful[0]
         vacas_monta_unsuccessful += unsuccessful[1]
+
+        successfulLastYear, unsuccessfulLastYear = getReproductionInfo(
+            vaca,
+            True)
+        vacas_inseminacion_successful_last_year += successfulLastYear[0]
+        vacas_monta_successful_last_year += successfulLastYear[1]
+        vacas_inseminacion_unsuccessful_last_year += unsuccessfulLastYear[0]
+        vacas_monta_unsuccessful_last_year += unsuccessfulLastYear[1]
 
         reproduction_in_process = AnimalRepoduction.objects.filter(
             animal=vaca,
@@ -456,12 +471,6 @@ def breeding_cow_dashboard(request, pk):
             vacas_reproduction_in_process += 1
 
     for vaquillona in vaquillonas:
-        successful, unsuccessful = getReproductionInfo(vaquillona)
-        vaquillonas_inseminacion_successful += successful[0]
-        vaquillonas_monta_successful += successful[1]
-        vaquillonas_inseminacion_unsuccessful += unsuccessful[0]
-        vaquillonas_monta_unsuccessful += unsuccessful[1]
-
         reproduction_in_process = AnimalRepoduction.objects.filter(
             animal=vaquillona,
             finished_date__isnull=True,
@@ -475,7 +484,7 @@ def breeding_cow_dashboard(request, pk):
 
     data = {
         "animals_types": animals_types,
-        "animal_count": len(animals),
+        "animals_count": len(animals),
         "vacas_count": len(vacas),
         "vaquillonas_count": len(vaquillonas),
         "ternero_count": len(terneros),
@@ -487,14 +496,17 @@ def breeding_cow_dashboard(request, pk):
         "vacas_monta_successful": vacas_monta_successful,
         "vacas_inseminacion_unsuccessful": vacas_inseminacion_unsuccessful,
         "vacas_monta_unsuccessful": vacas_monta_unsuccessful,
-        "vaquillonas_inseminacion_successful": vaquillonas_inseminacion_successful,
-        "vaquillonas_monta_successful": vaquillonas_monta_successful,
-        "vaquillonas_inseminacion_unsuccessful": vaquillonas_inseminacion_unsuccessful,
-        "vaquillonas_monta_unsuccessful": vaquillonas_monta_unsuccessful,
+        "vacas_inseminacion_successful_last_year":
+        vacas_inseminacion_successful_last_year,
+        "vacas_monta_successful_last_year": vacas_monta_successful_last_year,
+        "vacas_inseminacion_unsuccessful_last_year":
+        vacas_inseminacion_unsuccessful_last_year,
+        "vacas_monta_unsuccessful_last_year":
+        vacas_monta_unsuccessful_last_year,
+        "on_time_amount": on_time_amount,
+        "warning_amount": warning_amount,
+        'danger_amount': danger_amount,
     }
-
-    # En desarrollo por eso esta el print.
-    print(data)
 
     return render(
         request,
@@ -506,24 +518,36 @@ def breeding_cow_dashboard(request, pk):
     )
 
 
-def getReproductionInfo(animal):
-    animalReproductions = AnimalRepoduction.objects.all().order_by(
-        '-started_date'
-    ).filter(
-        animal=animal
-    )
+def getReproductionInfo(animal, isfromLastYear):
+    if isfromLastYear:
+        animalReproductions = AnimalRepoduction.objects.all().order_by(
+            '-started_date'
+        ).filter(
+            animal=animal,
+            started_date__gte=datetime.datetime(
+                timezone.now().year,
+                1,
+                1)
+        )
+    else:
+        animalReproductions = AnimalRepoduction.objects.all().order_by(
+            '-started_date'
+        ).filter(
+            animal=animal
+        )
+
     successfulReproductions = [0, 0]
     unsuccessfulReproductions = [0, 0]
 
     for reproduction in animalReproductions:
         if reproduction.finished_date:
             if reproduction.reproduction.give_birth_date:
-                if reproduction.reproduction.reproduction_type == "Inseminacion Artificial":
+                if reproduction.reproduction.reproduction_type == 'Inseminacion Artificial A Tiempos Fijos':
                     successfulReproductions[0] += 1
                 else:
                     successfulReproductions[1] += 1
             else:
-                if reproduction.reproduction.reproduction_type == "Inseminacion Artificial":
+                if reproduction.reproduction.reproduction_type == 'Inseminacion Artificial A Tiempos Fijos':
                     unsuccessfulReproductions[0] += 1
                 else:
                     unsuccessfulReproductions[1] += 1

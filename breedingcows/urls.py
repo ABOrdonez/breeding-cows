@@ -10,5 +10,4 @@ urlpatterns = [
     path('breeding_cow/<int:pk>/delete/', views.breeding_cow_delete, name='breeding_cow_delete'),
     path('breeding_cow/<int:pk>/notification/<str:notification_type>/', views.breeding_cow_notification, name='breeding_cow_notification'),
     path('breeding_cow/<int:pk>/dashboard/', views.breeding_cow_dashboard, name='breeding_cow_dashboard'),
-    path('api/breeding_cow/<int:pk>/dashboard/', views.ChartData.as_view()),
 ]
