@@ -31,7 +31,16 @@
     {{data.vacas_monta_unsuccessful_last_year}});
     setReproductionInProcessChart(
     {{data.vaca_reproductions}},
-    {{data.vaquillona_reproductions}});">
+    {{data.vaquillona_reproductions}});
+    setSexualMaturityChart(
+    {{data.animals_count}},
+    {{data.sexual_maturity_count}});
+    setBodyDevelopmentChart(
+    {{data.animals_count}},
+    {{data.body_development_count}});
+    setDiseaseChart(
+    {{data.animals_count}},
+    {{data.disease_count}});">
         <div class="row">
     		<div class="col-lg-8 mt-3">
                 <div class="card">
@@ -113,6 +122,7 @@
                 </div>
             </div>
         </div>
+        
         <div class="row">
 
             <div class="col-lg-4 mt-3">
@@ -172,6 +182,26 @@
                 </div>
             </div>
         </div> 
+
+        <div class="card col-lg-12 mt-3">
+            <div class="card-body">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">Estado físico</h5>
+                </div>
+                <small>A continuación se lista el estado físico de los animales, indiando si los mismos contienen o no madurez sexual, desarrollo coporal o alguna enfermedad</small>
+                <div class="row">   
+                    <div class="col-md-4">
+                        <canvas id="sexualMaturityChart" width="400" height="400"></canvas>
+                    </div>
+                    <div class="col-md-4">
+                        <canvas id="bodyDevelopmentChart" width="400" height="400"></canvas>
+                    </div>
+                    <div class="col-md-4">
+                        <canvas id="diseaseChart" width="400" height="400"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
     </body>
 
     <script>
@@ -357,9 +387,104 @@
             });
         }
 
+        function setSexualMaturityChart(animal, sexualMaturity) {
+            var noTiene = animal - sexualMaturity
+            var ctx = document.getElementById('sexualMaturityChart').getContext('2d');
+            var totalAnimalTypesPerBreedingCowChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Contiene', 'No contiene'],
+                    datasets: [{
+                        label: 'Madurez sexual',
+                        data: [sexualMaturity, noTiene],
+                        backgroundColor: [
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                        ],
+                        borderColor: [
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(54, 162, 235, 1)',
+                        ],
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                },
 
+            });
+        }
 
+        function setBodyDevelopmentChart(animal, bodyDevelopment) {
+            var noTiene = animal - bodyDevelopment
+            var ctx = document.getElementById('bodyDevelopmentChart').getContext('2d');
+            var totalAnimalTypesPerBreedingCowChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Contiene', 'No contiene'],
+                    datasets: [{
+                        label: 'Desarrollo corporal',
+                        data: [bodyDevelopment, noTiene],
+                        backgroundColor: [
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                        ],
+                        borderColor: [
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(54, 162, 235, 1)',
+                        ],
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                },
 
-        
+            });
+        }
+
+        function setDiseaseChart(animal, disease) {
+            var noTiene = animal - disease
+            var ctx = document.getElementById('diseaseChart').getContext('2d');
+            var totalAnimalTypesPerBreedingCowChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Contiene', 'No contiene'],
+                    datasets: [{
+                        label: 'Enfermedad',
+                        data: [disease, noTiene],
+                        backgroundColor: [
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                        ],
+                        borderColor: [
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(54, 162, 235, 1)',
+                        ],
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                },
+
+            });
+        }
+
     </script>
 {% endblock %}

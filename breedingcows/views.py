@@ -439,6 +439,9 @@ def breeding_cow_dashboard(request, pk):
     warning_amount = len(get_reproductions_process_warning(animals))
     danger_amount = len(get_reproductions_process_on_danger(animals))
 
+    sexual_maturity_count = 0
+    body_development_count = 0
+    disease_count = 0
     kilograms = 0
 
     animals_types = [
@@ -481,6 +484,12 @@ def breeding_cow_dashboard(request, pk):
 
     for animal in animals:
         kilograms += animal.weight
+        if animal.sexual_maturity:
+            sexual_maturity_count += 1
+        if animal.body_development:
+            body_development_count += 1
+        if animal.disease:
+            disease_count += 1
 
     data = {
         "animals_types": animals_types,
@@ -506,6 +515,9 @@ def breeding_cow_dashboard(request, pk):
         "on_time_amount": on_time_amount,
         "warning_amount": warning_amount,
         'danger_amount': danger_amount,
+        'sexual_maturity_count': sexual_maturity_count,
+        'body_development_count': body_development_count,
+        'disease_count': disease_count,
     }
 
     return render(
