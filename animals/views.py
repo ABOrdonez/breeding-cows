@@ -176,6 +176,8 @@ def animal_palpation_new(request, breedingCowsPk):
         animal.disease = isPositive(disease)
         if isPositive(disease):
             animal.disease_description = diseaseDescription
+        else:
+            animal.disease_description = ""
 
         animal.save()
         success = True
