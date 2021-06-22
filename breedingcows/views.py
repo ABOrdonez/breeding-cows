@@ -422,18 +422,10 @@ def breeding_cow_dashboard(request, pk):
         animal_type=AnimalType.TORO.value
     )
 
-    vacas_reproduction_in_process = 0
-    vaquillonas_reproduction_in_process = 0
-
-    vacas_inseminacion_successful = 0
-    vacas_monta_successful = 0
-    vacas_inseminacion_unsuccessful = 0
-    vacas_monta_unsuccessful = 0
-
-    vacas_inseminacion_successful_last_year = 0
-    vacas_monta_successful_last_year = 0
-    vacas_inseminacion_unsuccessful_last_year = 0
-    vacas_monta_unsuccessful_last_year = 0
+    vacas_insemination = [0, 0]
+    vacas_natural = [0, 0]
+    vacas_insemination_last_year = [0, 0]
+    vacas_natural_last_year = [0, 0]
 
     on_time_amount = len(get_reproductions_process_on_time(animals))
     warning_amount = len(get_reproductions_process_warning(animals))
@@ -451,27 +443,41 @@ def breeding_cow_dashboard(request, pk):
         AnimalType.TORO.value
     ]
 
+    animals_count_by_types = [
+        len(vacas),
+        len(terneros),
+        len(vaquillonas),
+        len(toros),
+    ]
+
+    reproductions_in_process_animals_types = [
+        AnimalType.VACA.value,
+        AnimalType.VAQUILLONA.value,
+    ]
+
+    reproductions_in_process = [0, 0]
+
     for vaca in vacas:
         successful, unsuccessful = getReproductionInfo(vaca, False)
-        vacas_inseminacion_successful += successful[0]
-        vacas_monta_successful += successful[1]
-        vacas_inseminacion_unsuccessful += unsuccessful[0]
-        vacas_monta_unsuccessful += unsuccessful[1]
+        vacas_insemination[0] += successful[0]
+        vacas_natural[0] += successful[1]
+        vacas_insemination[1] += unsuccessful[0]
+        vacas_natural[1] += unsuccessful[1]
 
         successfulLastYear, unsuccessfulLastYear = getReproductionInfo(
             vaca,
             True)
-        vacas_inseminacion_successful_last_year += successfulLastYear[0]
-        vacas_monta_successful_last_year += successfulLastYear[1]
-        vacas_inseminacion_unsuccessful_last_year += unsuccessfulLastYear[0]
-        vacas_monta_unsuccessful_last_year += unsuccessfulLastYear[1]
+        vacas_insemination_last_year[0] += successfulLastYear[0]
+        vacas_natural_last_year[0] += successfulLastYear[1]
+        vacas_insemination_last_year[1] += unsuccessfulLastYear[0]
+        vacas_natural_last_year[1] += unsuccessfulLastYear[1]
 
         reproduction_in_process = AnimalRepoduction.objects.filter(
             animal=vaca,
             finished_date__isnull=True,
         ).first()
         if reproduction_in_process:
-            vacas_reproduction_in_process += 1
+            reproductions_in_process[0] += 1
 
     for vaquillona in vaquillonas:
         reproduction_in_process = AnimalRepoduction.objects.filter(
@@ -480,7 +486,7 @@ def breeding_cow_dashboard(request, pk):
         ).first()
 
         if reproduction_in_process:
-            vaquillonas_reproduction_in_process += 1
+            reproductions_in_process[1] += 1
 
     for animal in animals:
         kilograms += animal.weight
@@ -493,25 +499,16 @@ def breeding_cow_dashboard(request, pk):
 
     data = {
         "animals_types": animals_types,
+        "animals_count_by_types": animals_count_by_types,
         "animals_count": len(animals),
-        "vacas_count": len(vacas),
-        "vaquillonas_count": len(vaquillonas),
-        "ternero_count": len(terneros),
-        "toros_count": len(toros),
         "kilograms": kilograms,
-        "vaca_reproductions": vacas_reproduction_in_process,
-        "vaquillona_reproductions": vaquillonas_reproduction_in_process,
-        "vacas_inseminacion_successful": vacas_inseminacion_successful,
-        "vacas_monta_successful": vacas_monta_successful,
-        "vacas_inseminacion_unsuccessful": vacas_inseminacion_unsuccessful,
-        "vacas_monta_unsuccessful": vacas_monta_unsuccessful,
-        "vacas_inseminacion_successful_last_year":
-        vacas_inseminacion_successful_last_year,
-        "vacas_monta_successful_last_year": vacas_monta_successful_last_year,
-        "vacas_inseminacion_unsuccessful_last_year":
-        vacas_inseminacion_unsuccessful_last_year,
-        "vacas_monta_unsuccessful_last_year":
-        vacas_monta_unsuccessful_last_year,
+        "reproductions_in_process_animals_types":
+        reproductions_in_process_animals_types,
+        "reproductions_in_process": reproductions_in_process,
+        "vacas_insemination": vacas_insemination,
+        'vacas_natural': vacas_natural,
+        "vacas_insemination_last_year": vacas_insemination_last_year,
+        "vacas_natural_last_year": vacas_natural_last_year,
         "on_time_amount": on_time_amount,
         "warning_amount": warning_amount,
         'danger_amount': danger_amount,

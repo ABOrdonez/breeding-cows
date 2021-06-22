@@ -11,69 +11,40 @@
 {% endblock %}
 
 {% block content %}
-    <body onload="setTotalAnimalTypesPerBreedingCowChart(
+    <body onload="loadCharts(
     {{ data.animals_types }},
-    {{ data.vacas_count }},
-    {{ data.vaquillonas_count }},
-    {{ data.ternero_count }},
-    {{ data.toros_count }});
-    setVacasInseminationChart(
-    {{data.vacas_inseminacion_successful}},
-    {{data.vacas_inseminacion_unsuccessful}});
-    setVacasNaturalChart(
-    {{data.vacas_monta_successful}},
-    {{data.vacas_monta_unsuccessful}});
-    setVacasInseminationLastYearChart(
-    {{data.vacas_inseminacion_successful_last_year}},
-    {{data.vacas_inseminacion_unsuccessful_last_year}});
-    setVacasNaturalLastYearChart(
-    {{data.vacas_monta_successful_last_year}},
-    {{data.vacas_monta_unsuccessful_last_year}});
-    setReproductionInProcessChart(
-    {{data.vaca_reproductions}},
-    {{data.vaquillona_reproductions}});
-    setSexualMaturityChart(
-    {{data.animals_count}},
-    {{data.sexual_maturity_count}});
-    setBodyDevelopmentChart(
-    {{data.animals_count}},
-    {{data.body_development_count}});
-    setDiseaseChart(
-    {{data.animals_count}},
-    {{data.disease_count}});">
+    {{ data.animals_count_by_types }},
+    {{ data.vacas_insemination }},
+    {{ data.vacas_natural }},
+    {{ data.vacas_insemination_last_year }},
+    {{ data.vacas_natural_last_year }},
+    {{ data.reproductions_in_process_animals_types }},
+    {{ data.reproductions_in_process }},
+    {{ data.sexual_maturity_count }},
+    {{ data.body_development_count }},
+    {{ data.disease_count }},
+    {{ data.animals_count }});">
         <div class="row">
     		<div class="col-lg-8 mt-3">
-                <div class="card">
-                    <div class="card-body">
+                <div class="card" style="min-height: 100%;">
+                    <div class="card-body" style="display:flex; justify-content: center; align-items: center;">
                         <div class="row">
                             <div class="col-md-12">
                                <h2><img src="{% static '/assets/images/icon/dashboard_icon.jpeg' %}" width="80" height="80"> Tablero del Rodeo</h2>
                            </div>
                             <div class="col-md-12 mt-2 mb-3">
-                                <div class="card">
-                                    <div class="seo-fact sbg1">
-                                    	<div class="chartjs-size-monitor">
-                                    		<div class="chartjs-size-monitor-expand">
-                                    			<div></div></div><div class="chartjs-size-monitor-shrink"><div></div>
-                                    		</div>
-                                    	</div>
-                                        <div class="p-4 d-flex justify-content-between align-items-center">
-                                            <div class="seofct-icon"><i><img src="{% static '/assets/images/icon/cow_white1.png' %}" alt="icon"></i> Total de animales</div>
-                                        	<h2>{{data.animals_count}}</h2>
-                                        </div>
+                                <div class="seo-fact sbg1">
+                                    <div class="p-4 d-flex justify-content-between align-items-center">
+                                        <div class="seofct-icon"><i><img src="{% static '/assets/images/icon/cow_white1.png' %}" alt="icon"></i> Total de animales</div>
+                                        <h2>{{data.animals_count}}</h2>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-12">
-                                <div class="card">
-                                    <div class="seo-fact sbg2">
-                                    	<div class="chartjs-size-monitor">
-                                    		<div class="chartjs-size-monitor-expand">
-                                    			<div></div></div><div class="chartjs-size-monitor-shrink"><div></div></div></div>
-                                        <div class="p-4 d-flex justify-content-between align-items-center">
-                                            <div class="seofct-icon"><i class="fa fa-balance-scale"></i> Total de kilogramos</div>
-                                        	<h2>{{data.kilograms|floatformat:"0"}}</h2>
-                                        </div>
+                                <div class="seo-fact sbg2">
+                                    <div class="p-4 d-flex justify-content-between align-items-center">
+                                        <div class="seofct-icon"><i class="fa fa-balance-scale"></i> Total de kilogramos</div>
+                                        <h2>{{data.kilograms|floatformat:"0"}}</h2>
                                     </div>
                                 </div>
                             </div>
@@ -135,45 +106,30 @@
             </div>
 
             <div class="col-lg-8 mt-3">
-                <div class="card">
-                    <div class="card-body">
+               <div class="card" style="min-height: 100%;">
+                    <div class="card-body" style="display:flex; justify-content: center; align-items: center;">
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="card">
-                                    <div class="seo-fact sbg2">
-                                        <div class="chartjs-size-monitor">
-                                            <div class="chartjs-size-monitor-expand">
-                                                <div></div></div><div class="chartjs-size-monitor-shrink"><div></div></div></div>
-                                        <div class="p-4 d-flex justify-content-between align-items-center">
-                                            <div class="seofct-icon"><i class="fa fa-hourglass-1"></i> Reproducciones a tiempo</div>
-                                            <h2>{{data.on_time_amount|floatformat:"0"}}</h2>
-                                        </div>
+                                <div class="seo-fact sbg2">
+                                    <div class="p-4 d-flex justify-content-between align-items-center">
+                                        <div class="seofct-icon"><i class="fa fa-hourglass-1"></i> Reproducciones a tiempo</div>
+                                        <h2>{{data.on_time_amount|floatformat:"0"}}</h2>
                                     </div>
                                 </div>
                             </div>
                              <div class="col-md-12 mt-3">
-                                <div class="card">
-                                    <div class="seo-fact sbg4">
-                                        <div class="chartjs-size-monitor">
-                                            <div class="chartjs-size-monitor-expand">
-                                                <div></div></div><div class="chartjs-size-monitor-shrink"><div></div></div></div>
-                                        <div class="p-4 d-flex justify-content-between align-items-center">
-                                            <div class="seofct-icon"><i class="fa fa-hourglass-2"></i> Reproducciones al limite</div>
-                                            <h2>{{data.warning_amount|floatformat:"0"}}</h2>
-                                        </div>
+                                <div class="seo-fact sbg4">
+                                    <div class="p-4 d-flex justify-content-between align-items-center">
+                                        <div class="seofct-icon"><i class="fa fa-hourglass-2"></i> Reproducciones al limite</div>
+                                        <h2>{{data.warning_amount|floatformat:"0"}}</h2>
                                     </div>
                                 </div>
                             </div>
                              <div class="col-md-12">
-                                <div class="card">
-                                    <div class="seo-fact sbg3 mt-3">
-                                        <div class="chartjs-size-monitor">
-                                            <div class="chartjs-size-monitor-expand">
-                                                <div></div></div><div class="chartjs-size-monitor-shrink"><div></div></div></div>
-                                        <div class="p-4 d-flex justify-content-between align-items-center">
-                                            <div class="seofct-icon"><i class="fa fa-hourglass-3"></i> Reproducciones atrazadas</div>
-                                            <h2>{{data.danger_amount|floatformat:"0"}}</h2>
-                                        </div>
+                                <div class="seo-fact sbg3 mt-3">
+                                    <div class="p-4 d-flex justify-content-between align-items-center">
+                                        <div class="seofct-icon"><i class="fa fa-hourglass-3"></i> Reproducciones atrazadas</div>
+                                        <h2>{{data.danger_amount|floatformat:"0"}}</h2>
                                     </div>
                                 </div>
                             </div>
@@ -205,7 +161,21 @@
     </body>
 
     <script>
-		function setTotalAnimalTypesPerBreedingCowChart(animals_types, vacas_count, ternero_count, vaquillonas_count, toros_count) {
+        function loadCharts(animals_types, animals_count_by_types, vacas_insemination, vacas_natural, vacas_insemination_last_year,
+            vacas_natural_last_year, reproductions_in_process_animals_types, reproductions_in_process,sexual_maturity_count, 
+            body_development_count, disease_count, animals_count) {
+            setTotalAnimalTypesPerBreedingCowChart(animals_types, animals_count_by_types);
+            setVacasInseminationChart(vacas_insemination);
+            setVacasNaturalChart(vacas_natural);
+            setVacasInseminationLastYearChart(vacas_insemination_last_year);
+            setVacasNaturalLastYearChart(vacas_natural_last_year);
+            setReproductionInProcessChart(reproductions_in_process_animals_types, reproductions_in_process);
+            setSexualMaturityChart(animals_count, sexual_maturity_count);
+            setBodyDevelopmentChart(animals_count, body_development_count);
+            setDiseaseChart(animals_count, disease_count);
+        }
+
+		function setTotalAnimalTypesPerBreedingCowChart(animals_types, animals_count_by_types) {
             var ctx = document.getElementById('totalAnimalTypesPerBreedingCowChart').getContext('2d');
             var totalAnimalTypesPerBreedingCowChart = new Chart(ctx, {
                 type: 'polarArea',
@@ -213,7 +183,7 @@
                     labels: animals_types,
                     datasets: [{
                         label: 'Animales en los Rodeos',
-                        data: [vacas_count, ternero_count, vaquillonas_count, toros_count],
+                        data: animals_count_by_types,
                         backgroundColor: [
                             'rgba(255, 99, 132, 0.2)',
                             'rgba(54, 162, 235, 0.2)',
@@ -236,7 +206,7 @@
             });
         }
 
-        function setVacasInseminationChart(insemination_successful, insemination_unsuccessful) {
+        function setVacasInseminationChart(vacas_insemination) {
             var ctx = document.getElementById('vacasInseminationChart').getContext('2d');
             var totalAnimalTypesPerBreedingCowChart = new Chart(ctx, {
                 type: 'bar',
@@ -244,7 +214,7 @@
                     labels: ['Exitosa', 'No exitosa'],
                     datasets: [{
                         label: 'Inseminaciones',
-                        data: [insemination_successful, insemination_unsuccessful],
+                        data: vacas_insemination,
                         backgroundColor: [
                             'rgba(255, 99, 132, 0.2)',
                             'rgba(54, 162, 235, 0.2)',
@@ -268,7 +238,7 @@
             });
         }
 
-        function setVacasNaturalChart(successful, unsuccessful) {
+        function setVacasNaturalChart(vacas_natural) {
             var ctx = document.getElementById('vacasNaturalChart').getContext('2d');
             var totalAnimalTypesPerBreedingCowChart = new Chart(ctx, {
                 type: 'bar',
@@ -276,7 +246,7 @@
                     labels: ['Exitosa', 'No exitosa'],
                     datasets: [{
                         label: 'Montas Naturales',
-                        data: [successful, unsuccessful],
+                        data: vacas_natural,
                         backgroundColor: [
                             'rgba(255, 99, 132, 0.2)',
                             'rgba(54, 162, 235, 0.2)',
@@ -300,7 +270,7 @@
             });
         }
 
-        function setVacasInseminationLastYearChart(successful, unsuccessful) {
+        function setVacasInseminationLastYearChart(vacas_insemination_last_year) {
             var ctx = document.getElementById('vacasInseminationLastYearChart').getContext('2d');
             var totalAnimalTypesPerBreedingCowChart = new Chart(ctx, {
                 type: 'bar',
@@ -308,7 +278,7 @@
                     labels: ['Exitosa', 'No exitosa'],
                     datasets: [{
                         label: 'Inseminaciones',
-                        data: [successful, unsuccessful],
+                        data: vacas_insemination_last_year,
                         backgroundColor: [
                             'rgba(153, 102, 255, 0.2)',
                             'rgba(255, 159, 64, 0.2)'
@@ -332,7 +302,7 @@
             });
         }
 
-        function setVacasNaturalLastYearChart(successful, unsuccessful) {
+        function setVacasNaturalLastYearChart(vacas_natural_last_year) {
             var ctx = document.getElementById('vacasNaturalLastYearChart').getContext('2d');
             var totalAnimalTypesPerBreedingCowChart = new Chart(ctx, {
                 type: 'bar',
@@ -340,7 +310,7 @@
                     labels: ['Exitosa', 'No exitosa'],
                     datasets: [{
                         label: 'Montas Naturales',
-                        data: [successful, unsuccessful],
+                        data: vacas_natural_last_year,
                         backgroundColor: [
                             'rgba(153, 102, 255, 0.2)',
                             'rgba(255, 159, 64, 0.2)'
@@ -364,15 +334,15 @@
             });
         }
 
-        function setReproductionInProcessChart(vacas_count, vaquillonas_count) {
+        function setReproductionInProcessChart(reproductions_in_process_animals_types, reproductions_in_process) {
             var ctx = document.getElementById('reproductionInProcessChart').getContext('2d');
             var totalAnimalTypesPerBreedingCowChart = new Chart(ctx, {
                 type: 'polarArea',
                 data: {
-                    labels: ['Vacas','Vaquillonas'],
+                    labels: reproductions_in_process_animals_types,
                     datasets: [{
                         label: 'Animales en los Rodeos',
-                        data: [vacas_count, vaquillonas_count],
+                        data: reproductions_in_process,
                         backgroundColor: [
                             'rgba(255, 206, 86, 0.2)',
                             'rgba(75, 192, 192, 0.2)',
