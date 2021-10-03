@@ -27,21 +27,21 @@
                         <span>Datos necesarios para destetar a un ternero:</span>
                     </div>
                 </div>
-                <div class="modal-body">
+                <div class="card-body">
                     <form method="POST" class="post-form">
                         {% csrf_token %}
                         <div class="row">
                             <div class="col-sm-6">
                                 <label for="animals">Ternero al que se le va a aplicar el destete</label>
-                                {{ form.animals }}
+                                {% render_field form.animals class="form-control form-control-lg" %}
                                 <label for="sex">Sexo del animal</label>
-                                {{ form.sex_type }}
+                                {% render_field form.sex_type class="form-control form-control-lg" %}
                             </div>
                             <div class="col-sm-6">
                                 <label for="flock_number">Numero de rebaño</label>
-                                {% render_field form.flock_number type="number" class="form-control" %}
+                                {% render_field form.flock_number type="number" class="form-control form-control-lg" %}
                                 <label for="sanitary_books">Sanidad aplicada</label>
-                                {{ form.sanitary_books}}
+                                {% render_field form.sanitary_books class="form-control form-control-lg" %}
                             </div>
                         </div>
                         <br>

@@ -95,4 +95,9 @@ urlpatterns = [
         views.undo_rejected_animal,
         name='undo_rejected_animal'
     ),
+    path(
+        '<int:breedingCowsPk>/animals/prediction/',
+        views.animal_machine_learning_integration,
+        name='animal_machine_learning_integration'
+    ),
 ]

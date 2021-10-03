@@ -108,10 +108,8 @@ class AnimalPalpitationForm(forms.Form):
         choices=ReproductiveStatus.choices,
         widget=forms.Select(attrs={'class': 'form-control'})
     )
-    body_development = forms.ChoiceField(
-        choices=ReproductiveStatus.choices,
-        widget=forms.Select(attrs={'class': 'form-control'})
-    )
+    body_development = forms.IntegerField()
+
     disease = forms.ChoiceField(
         choices=ReproductiveStatus.choices,
         widget=forms.Select(

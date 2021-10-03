@@ -31,7 +31,7 @@
                     <span>Selección de Animales</span>
                 </div>
             </div>
-            <div class="modal-body">
+            <div class="card-body">
                 <div class="row">
                     <div class="col-sm-5">
                         <h4 class="header-title">Animales del Rodeo</h4>
@@ -72,26 +72,26 @@
                     <span>Resultados del analisis: </span>
                 </div>
             </div>
-            <div class="modal-body">
+            <div class="card-body">
                 <div class="row">
                     <div class="form-group col-6">
                         <label for="sexual_maturity">Madurez sexual</label>
                         {{ form.sexual_maturity }}
                         <label for="body_development">Desarrollo corporal</label>
-                        {{ form.body_development }}
+                        {% render_field form.body_development class="form-control" placeholder="Ingrese desarrollo corporal del animal" %}
                     </div>
                     <div class="form-group col-6">
                         <label for="disease">Problemas reproductivos</label>
                         {{ form.disease }}
                         <div id="disease_description_div">
                             <label for="disease_description">Descripcion de los problemas reproductivos</label>
-                            {% render_field form.disease_description class="form-control" type="textarea" placeholder="Ingrese los motivos por los cuales se detectaron problemas Resultadosproductivos" %}
+                            {% render_field form.disease_description class="form-control" type="textarea" placeholder="Ingrese los motivos por los cuales se detectaron problemas reproductivos" %}
                         </div>
                     </div>
-                    <button type="submit" name="action" class="btn btn-outline-success btn-lg btn-block mt-3"
-                            data-dismiss="modal" onclick="submit({{ breeding_cow.pk }})">Guardar
-                    </button>
                 </div>
+                <button type="submit" name="action" class="btn btn-outline-success btn-lg btn-block mt-3"
+                        data-dismiss="modal" onclick="submit({{ breeding_cow.pk }})">Guardar
+                </button>
             </div>
         </div>
     </div>
@@ -149,6 +149,10 @@
 
             if (selected_animlas.length == 0){
                     window.location = "?message=error";
+            }
+
+            if (selected_body_development_option == ''){
+                    selected_body_development_option = 0;
             }
 
             $.each(selected_animlas, function (id, option) {

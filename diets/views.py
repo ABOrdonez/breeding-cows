@@ -6,12 +6,17 @@ from django.utils import timezone
 from django.shortcuts import redirect
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
 
 
 def diets_list(request):
-    diets_list = Diet.objects.order_by('name')
     diets = []
+    diets_list = Diet.objects.filter(
+        delete_date__isnull=True,
+    ).order_by(
+        'name'
+    )
 
     for diet in diets_list:
         diets.append([
@@ -96,30 +101,70 @@ def diet_new(request):
     )
 
 
+def diet_delete(request, pk):
+    diet = get_object_or_404(Diet, pk=pk)
+    Diet.add_delete_date(diet)
+
+    return redirect('diets_list')
+
+
+@csrf_exempt
+def diet_undo_delete(request):
+    if request.method == "POST":
+        diet = get_object_or_404(
+            Diet,
+            id=request.POST['idDiet']
+        )
+        diet.delete_date = None
+        diet.save()
+
+    dietsList = Diet.objects.filter(
+        delete_date__isnull=False,
+    ).order_by(
+        'name'
+    )
+
+    return render(
+        request,
+        'diets/diet_undo_delete.html',
+        {
+            'diets': dietsList,
+        }
+    )
+
+
 class ChartData(APIView):
     authentication_classes = []
     permission_classes = []
 
     def get(self, request, format=None):
-        diets_name = Diet.objects.order_by(
+        diets_name = Diet.objects.filter(
+            delete_date__isnull=True,
+        ).order_by(
             'name'
         ).values_list(
             'name',
             flat=True
         )
-        diet_animal_types = Diet.objects.order_by(
+        diet_animal_types = Diet.objects.filter(
+            delete_date__isnull=True,
+        ).order_by(
             'name'
         ).values_list(
             'animal_type',
             flat=True
         )
-        diet_proteins = Diet.objects.order_by(
+        diet_proteins = Diet.objects.filter(
+            delete_date__isnull=True,
+        ).order_by(
             'name'
         ).values_list(
             'protein',
             flat=True
         )
-        diet_energies = Diet.objects.order_by(
+        diet_energies = Diet.objects.filter(
+            delete_date__isnull=True,
+        ).order_by(
             'name'
         ).values_list(
             'energies',

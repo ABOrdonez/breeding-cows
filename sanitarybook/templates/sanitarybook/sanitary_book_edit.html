@@ -24,7 +24,7 @@
                                     <br>
 
                                     <label for="energies">Animales a los que se les aplica</label>
-                                    {% render_field form.animal_type class="form-control" %}
+                                    {% render_field form.animal_type class="form-control form-control-lg" %}
                                     <br>
 
                                     <label for="energies">Cobre</label>
@@ -35,12 +35,12 @@
                                     {% render_field form.clostridiosis class="form-control" placeholder="Ingrese la clostridiosis de la libreta" %}
 
                                 </div>
-                                <div class="dropdown col-lg-6 ">
-                                    <br>
+                                <div class="dropdown col-lg-6 mt-4">
+                                    {% render_field form.antiparasitic %}
                                     <label for="protein">Antiparacitario - Tildar en caso que sea afirmativo</label>
-                                    {% render_field form.antiparasitic class="form-control" %}
                                     <br>
-
+                                    <br>
+                                    <br>
                                     <label for="province">Descripción del Rodeo</label>
                                     {{ form.description }}
                                 </div>

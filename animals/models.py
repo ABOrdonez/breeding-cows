@@ -5,6 +5,7 @@ from diets import models as dietsmodels
 from sanitarybook import models as sanitarysmodels
 from reproduction import models as reproductionmodels
 from datetime import datetime
+from datetime import date
 from reproduction.models import ReproductionProcessDays
 
 
@@ -78,7 +79,7 @@ class Animals(models.Model):
         default=AnimalType.TERNERO,
         max_length=100)
     sexual_maturity = models.BooleanField(blank=True, null=True)
-    body_development = models.BooleanField(blank=True, null=True)
+    body_development = models.IntegerField(default=0)
     disease = models.BooleanField(blank=True, null=True)
     acquisition = models.CharField(
         choices=AcquisitionType.choices(),
@@ -141,6 +142,10 @@ class Animals(models.Model):
 
     def is_toro(self):
         return self.animal_type == AnimalType.TORO.value
+
+    def get_age(self):
+        today = date.today()
+        return today.year - self.birthday.year - ((today.month, today.day) < (self.birthday.month, self.birthday.day))
 
     def get_mother(self):
         acquisition = self.acquisition

@@ -30,7 +30,7 @@
                     <span>Selección de Animales</span>
                 </div>
             </div>
-            <div class="modal-body">
+            <div class="card-body">
                 <div class="row">
                     <div class="col-sm-5">
                         <h4 class="header-title">Animales del Rodeo</h4>
@@ -72,20 +72,17 @@
                     <span>Selección de Libreta Sanitaria: </span>
                 </div>
             </div>
-            <div class="modal-body col-sm-12">
-
-                <select name="all_sanitaries" class="form-control" id="id_all_sanitaries">
+            <div class="card-body">
+                <select name="all_sanitaries" class="form-control form-control-lg" id="id_all_sanitaries">
                     {% for sanitary in sanitaries %}
                         <option id="{{ sanitary.id }}" value="{{ sanitary.name }}"
                                 title="{{ sanitary.id }}">{{ sanitary.name }}</option>
                     {% endfor %}
                 </select>
-
-            </div>
-
-            <button type="submit" name="action" class="btn btn-outline-success btn-lg btn-block mt-3"
+                <button type="submit" name="action" class="btn btn-outline-success btn-lg btn-block mt-3"
                     data-dismiss="modal" onclick="submit({{ breeding_cow.pk }})">Guardar
-            </button>
+                </button>
+            </div>
         </div>
     </div>
 

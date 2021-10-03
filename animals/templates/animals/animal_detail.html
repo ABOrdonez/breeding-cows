@@ -58,9 +58,9 @@
                                     {% endif %}
 
                                     {% if animal.body_development %}
-                                        <li class="list-group-item">Posee el suficiente desarrollo corporal: Si</li>
+                                        <li class="list-group-item">Desarrollo corporal: {{ animal.body_development }}</li>
                                     {% else %}
-                                        <li class="list-group-item">Posee el suficiente desarrollo corporal: No</li>
+                                        <li class="list-group-item">Desarrollo corporal: {{ animal.body_development }}</li>
                                     {% endif %}
 
                                     {% if animal.disease %}

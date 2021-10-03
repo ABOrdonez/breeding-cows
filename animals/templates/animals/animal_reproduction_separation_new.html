@@ -73,29 +73,26 @@
                     <span>Datos necesarios para separar al animal:</span>
                 </div>
             </div>
-            <div class="modal-body">
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="form-group col-lg-6">
-                            <label for="execution_date">Seleccione dieta a aplicar</label>
-                            <select name="all_diets" class="form-control" id="id_all_diets">
-                                {% for diet in diets %}
-                                    <option id="{{ diet.id }}" value="{{ diet.name }}"
-                                            title="{{ diet.id }}">{{ diet.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="dropdown col-lg-6">
-                            <label for="execution_date">Fecha en la que se separó al animal</label>
-                            <input class="form-control" type="date" id="execution_date_id" value="{{time|date:"Y-m-d"}}">
-                        </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="form-group col-lg-6">
+                        <label for="execution_date">Seleccione dieta a aplicar</label>
+                        <select name="all_diets" class="form-control form-control-lg" id="id_all_diets">
+                            {% for diet in diets %}
+                                <option id="{{ diet.id }}" value="{{ diet.name }}"
+                                        title="{{ diet.id }}">{{ diet.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="dropdown col-lg-6">
+                        <label for="execution_date">Fecha en la que se separó al animal</label>
+                        <input class="form-control" type="date" id="execution_date_id" value="{{time|date:"Y-m-d"}}">
                     </div>
                 </div>
-
+                <button type="submit" name="action" class="btn btn-outline-success btn-lg btn-block mt-3"
+                        data-dismiss="modal" onclick="submit({{ breeding_cow.pk }})">Guardar
+                </button>
             </div>
-            <button type="submit" name="action" class="btn btn-outline-success btn-lg btn-block mt-3"
-                    data-dismiss="modal" onclick="submit({{ breeding_cow.pk }})">Guardar
-            </button>
         </div>
     </div>
 

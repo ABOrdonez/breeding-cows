@@ -30,7 +30,7 @@
                     <span>Selección de Animales</span>
                 </div>
             </div>
-            <div class="modal-body">
+            <div class="card-body">
                 <div class="row">
                     <div class="col-sm-5">
                         <h4 class="header-title">Animales del Rodeo</h4>
@@ -74,20 +74,17 @@
                     <span style="visibility:hidden" id="id_diet_id"></span>
                 </div>
             </div>
-            <div class="modal-body col-sm-12">
-
-                <select name="all_diets" class="form-control" id="id_all_diets">
+            <div class="card-body">
+                <select name="all_diets" class="form-control form-control-lg" id="id_all_diets">
                     {% for diet in diets %}
                         <option id="{{ diet.id }}" value="{{ diet.name }}"
                                 title="{{ diet.id }}">{{ diet.name }}</option>
                     {% endfor %}
                 </select>
-
+                <button type="submit" name="action" class="btn btn-outline-success btn-lg btn-block mt-3"
+                        data-dismiss="modal" onclick="submit({{ breeding_cow.pk }})">Guardar
+                </button>
             </div>
-
-            <button type="submit" name="action" class="btn btn-outline-success btn-lg btn-block mt-3"
-                    data-dismiss="modal" onclick="submit({{ breeding_cow.pk }})">Guardar
-            </button>
         </div>
     </div>
 

@@ -1,6 +1,7 @@
 from django.db import models
 from enum import Enum
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 
 class AnimalType(Enum):
@@ -54,6 +55,12 @@ class Diet(models.Model):
         blank=False,
         null=False
     )
+    delete_date = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
+        return f'{self.name}'
+
+    def add_delete_date(self):
+        self.delete_date = timezone.now()
+        self.save()
         return f'{self.name}'

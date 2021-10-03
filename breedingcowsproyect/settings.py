@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'animals.apps.AnimalsConfig',
     'contacts.apps.ContactsConfig',
     'diets.apps.DietsConfig',
+    'predictions.apps.PredictionsConfig',
     'sanitarybook.apps.SanitarybookConfig',
     'reproduction.apps.ReproductionConfig',
     'crispy_forms',

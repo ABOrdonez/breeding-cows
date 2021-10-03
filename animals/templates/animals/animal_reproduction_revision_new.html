@@ -31,7 +31,7 @@
                     <span>Selección de Animales</span>
                 </div>
             </div>
-            <div class="modal-body">
+            <div class="card-body">
                 <div class="row">
                     <div class="col-sm-5">
                         <h4 class="header-title">Animales del Rodeo</h4>
@@ -74,7 +74,7 @@
                     <span>Datos necesarios para ejecutar la ecografía:</span>
                 </div>
             </div>
-            <div class="modal-body">
+            <div class="card-body">
                 <div class="row">
                     <div class="form-group col-lg-6">
                         <label for="potential_give_birth_date">Fecha de posible parto</label>
@@ -84,16 +84,16 @@
                     </div>
                     <div class="dropdown col-lg-6">
                         <label for="result">Resultado de la ecografía</label>
-                        <select id="result_id" class="form-control">
+                        <select id="result_id" class="form-control form-control-lg">
                             <option>Positivo</option>
                             <option>Negativo</option>
                         </select>
                     </div>
                 </div>
+                <button type="submit" name="action" class="btn btn-outline-success btn-lg btn-block mt-3"
+                        data-dismiss="modal" onclick="submit({{ breeding_cow.pk }})">Guardar
+                </button>
             </div>
-            <button type="submit" name="action" class="btn btn-outline-success btn-lg btn-block mt-3"
-                    data-dismiss="modal" onclick="submit({{ breeding_cow.pk }})">Guardar
-            </button>
         </div>
     </div>
 

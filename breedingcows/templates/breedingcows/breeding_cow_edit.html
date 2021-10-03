@@ -30,7 +30,7 @@
                                            value="{{ form.address.value }}" required="True">
 
                                     <label for="contact">Dueño</label>
-                                    {{ form.contact }}
+                                    {% render_field form.contact class="form-control form-control-lg"%}
 
                                     <label for="entry_date">Fecha de ingreso</label>
                                     {% render_field form.entry_date type="date" class="form-control"%}

@@ -37,6 +37,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.dateparse import parse_date
 from django.core.paginator import Paginator
 from datetime import timedelta
+from predictions.models import Inputs
+from predictions.views import predict
+from datetime import date, datetime
 
 
 @csrf_exempt
@@ -153,7 +156,11 @@ def animal_diet_new(request, breedingCowsPk):
         breeding_cows=breedingCows,
         leaving_date__isnull=True
     )
-    diets = Diet.objects.order_by('name')
+    diets = Diet.objects.filter(
+        delete_date__isnull=True,
+    ).order_by(
+        'name'
+    )
     return render(
         request,
         'animals/animal_diet_new.html',
@@ -172,7 +179,7 @@ def animal_palpation_new(request, breedingCowsPk):
         diseaseDescription = request.POST['diseaseDescription']
 
         animal.sexual_maturity = isPositive(sexualMaturity)
-        animal.body_development = isPositive(bodyDevelopment)
+        animal.body_development = bodyDevelopment
         animal.disease = isPositive(disease)
         if isPositive(disease):
             animal.disease_description = diseaseDescription
@@ -814,6 +821,89 @@ def animal_on_danger_process(request, breedingCowsPk):
     )
 
 
+def animal_machine_learning_integration(request, breedingCowsPk):
+    breedingCows = get_object_or_404(BreedingCows, pk=breedingCowsPk)
+    femaleAnimals = getFemaleAnimalsWithoutReproductionInProcess(breedingCows)
+    animalsInfo = []
+
+    for animal in femaleAnimals:
+        animalDiet, animalReproduction, animalSanitary = getAnimalInfo(animal)
+        newInput = get_input_from_animal(animal)
+        perduction = predict(newInput)
+        animalsInfo.append([
+            animal,
+            animalDiet.last(),
+            animalReproduction.first(),
+            animalSanitary.last(),
+            perduction
+        ])
+
+    paginator = Paginator(animalsInfo, 7)
+    page = request.GET.get('page')
+    animalsInfoPaginated = paginator.get_page(page)
+
+    return render(
+        request,
+        'animals/animals_machine_learning_integration.html',
+        {
+            'breeding_cow': breedingCows,
+            'female_animals': animalsInfoPaginated,
+        }
+    )
+
+
+def get_input_from_animal(animal):
+    newInput = Inputs
+    newInput.age = Animals.get_age(animal)
+    newInput.body_development = animal.body_development
+    newInput.season = get_season(date.today())
+
+    animalReproductions = AnimalRepoduction.objects.all().order_by(
+        '-started_date'
+    ).filter(
+        animal=animal,
+        finished_date__isnull=False
+    )
+
+    success_reproduction_count = 0
+    fail_reproduction_count = 0
+    pregnant_after_count = 0
+    empty_after_count = 0
+
+    for animalReproduction in animalReproductions:
+        if animalReproduction.reproduction.give_birth_date is not None:
+            success_reproduction_count += 1
+        else:
+            fail_reproduction_count += 1
+
+        if animalReproduction.reproduction.success_revision:
+            pregnant_after_count += 1
+        else:
+            empty_after_count += 1
+
+    newInput.success_reproduction_count = success_reproduction_count
+    newInput.fail_reproduction_count = fail_reproduction_count
+    newInput.pregnant_after_count = pregnant_after_count
+    newInput.empty_after_count = empty_after_count
+
+    lastSuccessReproduction = getLastSuccessReproduction(animal)
+    lastFailedReproduction = getLastFailedReproduction(animal)
+
+    if lastSuccessReproduction is not None:
+        newInput.days_from_last_success_reproduction = abs(
+            date.today() - lastSuccessReproduction.started_date).days
+    else:
+        newInput.days_from_last_success_reproduction = 0
+
+    if lastFailedReproduction is not None:
+        newInput.days_from_last_fail_reproduction = abs(
+            date.today() - lastFailedReproduction.started_date).days
+    else:
+        newInput.days_from_last_fail_reproduction = 0
+
+    return newInput
+
+
 def getAnimalInfo(animal):
     animalDiet = AnimalDiet.objects.all().order_by(
         'diagnosis_date'
@@ -886,14 +976,15 @@ def isNatural(string):
 
 
 def hasPalpitationProblems(animal):
+    print(animal.body_development)
     if hasPalpitationValuesComplete(animal):
-        return not animal.sexual_maturity or not animal.body_development or animal.disease
+        return not animal.sexual_maturity or animal.body_development == 0 or animal.disease
     else:
         return False
 
 
 def hasPalpitationValuesComplete(animal):
-    return animal.sexual_maturity is not None and animal.body_development is not None and animal.disease is not None
+    return animal.sexual_maturity is not None and animal.body_development != 0 and animal.disease is not None
 
 
 def hasReproductionComplication(animalReproduction):
@@ -907,12 +998,13 @@ def getFemaleAnimals(breedingCows):
         breeding_cows=breedingCows,
         leaving_date__isnull=True,
         sexual_maturity=True,
-        body_development=True,
         disease=False
     ).exclude(
         animal_type='Toro'
     ).exclude(
         animal_type='Ternero'
+    ).exclude(
+        body_development=0
     )
 
 
@@ -978,3 +1070,45 @@ def getFemaleAnimalsWithReproductionExecution(breedingcows):
         femaleAnimals.append(reproductionInProcess.animal)
 
     return femaleAnimals
+
+
+def getLastSuccessReproduction(animal):
+    animalReproductions = AnimalRepoduction.objects.all().order_by(
+        '-started_date'
+    ).filter(
+        animal=animal,
+        finished_date__isnull=False
+    )
+
+    for animalReproduction in animalReproductions:
+        if animalReproduction.reproduction.give_birth_date is not None:
+            return animalReproduction
+
+
+def getLastFailedReproduction(animal):
+    animalReproductions = AnimalRepoduction.objects.all().order_by(
+        '-started_date'
+    ).filter(
+        animal=animal,
+        finished_date__isnull=False
+    )
+
+    for animalReproduction in animalReproductions:
+        if animalReproduction.reproduction.give_birth_date is None:
+            return animalReproduction
+
+
+def get_season(now):
+    Y = 2021
+
+    seasons = [(4, (date(Y, 1, 1), date(Y, 3, 20))),
+               (1, (date(Y, 3, 21), date(Y, 6, 20))),
+               (2, (date(Y, 6, 21), date(Y, 9, 22))),
+               (3, (date(Y, 9, 23), date(Y, 12, 20))),
+               (4, (date(Y, 12, 21), date(Y, 12, 31)))]
+
+    if isinstance(now, datetime):
+        now = now.date()
+    now = now.replace(year=Y)
+    return next(season for season, (start, end) in seasons
+                if start <= now <= end)
