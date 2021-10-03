@@ -43,13 +43,21 @@
                                                 <li class="mr-3"><a href="{% url 'diet_detail' pk=diet.pk %}"
                                                     class="text-secondary"><i class="fa fa-search"></i></a>
                                                 </li>
-                                                <li class="mr-3"><a href="{% url 'diet_edit' pk=diet.pk %}"
-                                                    class="text-secondary"><i class="fa fa-pencil"></i></a>
-                                                </li>
                                                 {% if animal_count == 0 %} 
+                                                     <li class="mr-3"><a href="{% url 'diet_edit' pk=diet.pk %}"
+                                                        class="text-secondary"><i class="fa fa-pencil"></i></a>
+                                                    </li>
                                                     <li><a onclick="open_confirm_action_modal({{ diet.pk }})"
                                                         class="text-danger"><i class="ti-trash"></i></a></li>
                                                 {% else %}
+                                                    <span class="d-inline-block" data-toggle="popover" 
+                                                    data-content="La dieta ha sido aplicado en al menos un animal,
+                                                     no puede ser ediatda." data-original-title="Accion no disponible" 
+                                                     title="" aria-describedby="popover410897">
+                                                        <li class="mr-3"><a class="text-secondary" style="pointer-events: none;" disabled="">
+                                                            <i class="fa fa-pencil"></i></a>
+                                                        </li>
+                                                    </span>
                                                     <span class="d-inline-block" data-toggle="popover" 
                                                     data-content="La dieta ha sido aplicado en al menos un animal,
                                                      no puede ser eliminada." data-original-title="Accion no disponible" 
