@@ -70,32 +70,32 @@
                                             </ul>
                                         </td>
                                     </tr>
-                                     <!-- Modal -->
-                                        <div class="modal fade show" id="idConfirmActionModal{{ diet.pk }}"
-                                             tabindex="-1" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title">¿Seguro que desea eliminar la dieta
-                                                         {{ diet.name }}?</h5>
-                                                        <button type="button" class="close" data-dismiss="modal">
-                                                            <span>×</span></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <p> Una vez aceptado, la dieta será eliminado. En caso
-                                                            de necesitar reestablecer la dieta, acceder a la categoría:
-                                                            Dietas <i class="fa fa-long-arrow-right"></i> Recuperar. </p>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary"
-                                                                data-dismiss="modal">Volver atrás
-                                                        </button>
-                                                        <a href="{% url 'diet_delete' pk=diet.pk %}"
-                                                           role="button" class="btn btn-primary">Aceptar</a>
-                                                    </div>
+                                    <!-- Modal -->
+                                    <div class="modal fade show" id="idConfirmActionModal{{ diet.pk }}"
+                                         tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">¿Seguro que desea eliminar la dieta
+                                                     {{ diet.name }}?</h5>
+                                                    <button type="button" class="close" data-dismiss="modal">
+                                                        <span>×</span></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p> Una vez aceptado, la dieta será eliminado. En caso
+                                                        de necesitar reestablecer la dieta, acceder a la categoría:
+                                                        Dietas <i class="fa fa-long-arrow-right"></i> Recuperar. </p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                            data-dismiss="modal">Volver atrás
+                                                    </button>
+                                                    <a href="{% url 'diet_delete' pk=diet.pk %}"
+                                                       role="button" class="btn btn-primary">Aceptar</a>
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
                                 {% endfor %}
                                 </tbody>
                             </table>

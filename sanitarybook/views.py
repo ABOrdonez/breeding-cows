@@ -6,10 +6,15 @@ from animals.models import AnimalSanitary, Animals
 from django.core.paginator import Paginator
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django.views.decorators.csrf import csrf_exempt
 
 
 def sanitary_book_list(request):
-    sanitary_list = Sanitary.objects.order_by('name')
+    sanitary_list = Sanitary.objects.filter(
+        delete_date__isnull=True,
+    ).order_by(
+        'name'
+    )
     sanitaries = []
 
     for sanitary in sanitary_list:
@@ -86,7 +91,43 @@ def sanitary_book_new(request):
             return redirect('sanitary_book_detail', pk=sanitary.pk)
     else:
         form = SanitaryForm()
-        return render(request, 'sanitarybook/sanitary_book_edit.html', {'form': form})
+        return render(
+            request,
+            'sanitarybook/sanitary_book_edit.html',
+            {'form': form}
+        )
+
+
+def sanitary_book_delete(request, pk):
+    sanitaryBook = get_object_or_404(Sanitary, pk=pk)
+    Sanitary.add_delete_date(sanitaryBook)
+
+    return redirect('sanitary_book_list')
+
+
+@csrf_exempt
+def sanitary_book_undo_delete(request):
+    if request.method == "POST":
+        sanitaryBook = get_object_or_404(
+            Sanitary,
+            id=request.POST['idSanitary']
+        )
+        sanitaryBook.delete_date = None
+        sanitaryBook.save()
+
+    sanitaryBooksList = Sanitary.objects.filter(
+        delete_date__isnull=False,
+    ).order_by(
+        'name'
+    )
+
+    return render(
+        request,
+        'sanitarybook/sanitary_undo_delete.html',
+        {
+            'sanitaryBooks': sanitaryBooksList,
+        }
+    )
 
 
 class ChartData(APIView):
@@ -94,26 +135,38 @@ class ChartData(APIView):
     permission_classes = []
 
     def get(self, request, format=None):
-        sanitaries_all = Sanitary.objects.order_by('name')
-        sanitary_name = Sanitary.objects.order_by(
+        sanitaries_all = Sanitary.objects.filter(
+            delete_date__isnull=True,
+        ).order_by(
+            'name'
+        )
+        sanitary_name = Sanitary.objects.filter(
+            delete_date__isnull=True,
+        ).order_by(
             'name'
         ).values_list(
             'name',
             flat=True
         )
-        sanitary_animal_types = Sanitary.objects.order_by(
+        sanitary_animal_types = Sanitary.objects.filter(
+            delete_date__isnull=True,
+        ).order_by(
             'name'
         ).values_list(
             'animal_type',
             flat=True
         )
-        sanitary_copper = Sanitary.objects.order_by(
+        sanitary_copper = Sanitary.objects.filter(
+            delete_date__isnull=True,
+        ).order_by(
             'name'
         ).values_list(
             'copper',
             flat=True
         )
-        sanitary_clostridiosis = Sanitary.objects.order_by(
+        sanitary_clostridiosis = Sanitary.objects.filter(
+            delete_date__isnull=True,
+        ).order_by(
             'name'
         ).values_list(
             'clostridiosis',

@@ -43,14 +43,62 @@
                                         <td>
                                             <ul class="d-flex justify-content-center">
                                                 <li class="mr-3"><a
-                                                        href="{% url 'sanitary_book_detail' pk=sanitary.pk %}"
-                                                        class="text-secondary"><i class="fa fa-search"></i></a></li>
-                                                <li class="mr-3"><a href="{% url 'sanitary_book_edit' pk=sanitary.pk %}"
-                                                                    class="text-secondary"><i class="fa fa-pencil"></i></a>
+                                                    href="{% url 'sanitary_book_detail' pk=sanitary.pk %}"
+                                                    class="text-secondary"><i class="fa fa-search"></i></a>
+                                                </li>
+                                                {% if animal_count == 0 %} 
+                                                    <li class="mr-3"><a href="{% url 'sanitary_book_edit' pk=sanitary.pk %}"
+                                                        class="text-secondary"><i class="fa fa-pencil"></i></a>
+                                                    <li><a onclick="open_confirm_action_modal({{ sanitary.pk }})"
+                                                        class="text-danger"><i class="ti-trash"></i></a></li>
+                                                {% else %}
+                                                    <span class="d-inline-block" data-toggle="popover" 
+                                                    data-content="La libreta sanitaria ha sido aplicado en al menos un animal,
+                                                     no puede ser editada." data-original-title="Accion no disponible" 
+                                                     title="" aria-describedby="popover410897">
+                                                        <li class="mr-3"><a class="text-secondary" style="pointer-events: none;" disabled="">
+                                                            <i class="fa fa-pencil"></i></a>
+                                                        </li>
+                                                    </span>
+                                                    <span class="d-inline-block" data-toggle="popover" 
+                                                    data-content="La libreta sanitaria ha sido aplicado en al menos un animal,
+                                                     no puede ser eliminada." data-original-title="Accion no disponible" 
+                                                     title="" aria-describedby="popover410897">
+                                                        <li><a class="text-danger" style="pointer-events: none;" disabled="">
+                                                            <i class="ti-trash"></i>
+                                                        </a></li>
+                                                    </span>
+                                                {% endif %}
                                                 </li>
                                             </ul>
                                         </td>
                                     </tr>
+                                    <!-- Modal -->
+                                    <div class="modal fade show" id="idConfirmActionModal{{ sanitary.pk }}"
+                                         tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">¿Seguro que desea eliminar la Libreta Sanitaria
+                                                     {{ sanitary.name }}?</h5>
+                                                    <button type="button" class="close" data-dismiss="modal">
+                                                        <span>×</span></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p> Una vez aceptado, la libreta será eliminado. En caso
+                                                        de necesitar reestablecer la libreta, acceder a la categoría:
+                                                        Libretas Sanitarias <i class="fa fa-long-arrow-right"></i> Recuperar. </p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                            data-dismiss="modal">Volver atrás
+                                                    </button>
+                                                    <a href="{% url 'sanitary_book_delete' pk=sanitary.pk %}"
+                                                       role="button" class="btn btn-primary">Aceptar</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 {% endfor %}
                                 </tbody>
                             </table>
@@ -164,6 +212,11 @@
                 }
             });
         }
+    </script>
+    <script>
+        function open_confirm_action_modal(idSanitary) {
+            $("#idConfirmActionModal" + idSanitary).modal('show');
+        };
     </script>
 {% endblock %}
 

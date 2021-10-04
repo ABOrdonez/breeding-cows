@@ -586,7 +586,11 @@ def animal_sanitary_new(request, breedingCowsPk):
         breeding_cows=breedingCows,
         leaving_date__isnull=True
     )
-    sanitaries = Sanitary.objects.order_by('name')
+    sanitaries = Sanitary.objects.filter(
+        delete_date__isnull=True,
+    ).order_by(
+        'name'
+    )
     return render(
         request,
         'animals/animal_sanitary_new.html',
