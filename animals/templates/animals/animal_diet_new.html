@@ -94,11 +94,11 @@
             var unselected_animlas = $("#id_all_animals_from option:not(:selected)");
 
             $.each(selected_animlas, function (id, option, title) {
-                $("#id_selected_animals_to").append('<option id=' + option.id + ' value=' + option.id + ' title=' + option.title + '>' + option.title + '</option>');
+                $("#id_selected_animals_to").append('<option id=' + option.id + ' value=' + option.id + ' title="' + option.title + '">' + option.title + '</option>');
             });
             $("#id_all_animals_from").empty();
             $.each(unselected_animlas, function (id, option, title) {
-                $("#id_all_animals_from").append('<option id=' + option.id + ' value=' + option.id + ' title=' + option.title + '>' + option.title + '</option>');
+                $("#id_all_animals_from").append('<option id=' + option.id + ' value=' + option.id + ' title="' + option.title + '">' + option.title + '</option>');
             });
         };
     </script>
@@ -109,11 +109,11 @@
             var unselected_animlas = $("#id_selected_animals_to option:not(:selected)");
 
             $.each(selected_animlas, function (id, option, title) {
-                $("#id_all_animals_from").append('<option id=' + option.id + ' value=' + option.id + ' title=' + option.title + '>' + option.title + '</option>');
+                $("#id_all_animals_from").append('<option id=' + option.id + ' value=' + option.id + ' title="' + option.title + '">' + option.title + '</option>');
             });
             $("#id_selected_animals_to").empty();
             $.each(unselected_animlas, function (id, option, title) {
-                $("#id_selected_animals_to").append('<option id=' + option.id + ' value=' + option.id + ' title=' + option.title + '>' + option.title + '</option>');
+                $("#id_selected_animals_to").append('<option id=' + option.id + ' value=' + option.id + ' title="' + option.title + '">' + option.title + '</option>');
             });
         };
     </script>
