@@ -29,7 +29,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {% for contact in contacts %}
+                                {% for contact, contact_count in contacts %}
                                     <tr>
                                         <td>{{ contact.last_name }}</td>
                                         <td>{{ contact.first_name }}</td>
@@ -37,14 +37,54 @@
                                         <td>
                                             <ul class="d-flex justify-content-center">
                                                 <li class="mr-3"><a href="{% url 'contact_detail' pk=contact.pk %}"
-                                                                    class="text-secondary"><i class="fa fa-search"></i></a>
+                                                    class="text-secondary"><i class="fa fa-search"></i></a>
                                                 </li>
                                                 <li class="mr-3"><a href="{% url 'contact_edit' pk=contact.pk %}"
-                                                                    class="text-secondary"><i class="fa fa-pencil"></i></a>
+                                                    class="text-secondary"><i class="fa fa-pencil"></i></a>
                                                 </li>
+                                                {% if contact_count == 0 %} 
+                                                    <li><a onclick="open_confirm_action_modal({{ contact.pk }})"
+                                                        class="text-danger"><i class="ti-trash"></i></a>
+                                                    </li>
+                                                {% else %}
+                                                    <span class="d-inline-block" data-toggle="popover"
+                                                    data-content="El contacto tiene al menos un rodeo de cría asociado,
+                                                    no puede ser eliminada." data-original-title="Accion no disponible" 
+                                                    title="" aria-describedby="popover410897">
+                                                        <li><a class="text-danger" style="pointer-events: none;" disabled="">
+                                                            <i class="ti-trash"></i>
+                                                        </a></li>
+                                                    </span>
+                                                {% endif %}
                                             </ul>
                                         </td>
                                     </tr>
+                                    <!-- Modal -->
+                                    <div class="modal fade show" id="idConfirmActionModal{{ contact.pk }}"
+                                         tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">¿Seguro que desea eliminar el contacto
+                                                     {{ contact }}?</h5>
+                                                    <button type="button" class="close" data-dismiss="modal">
+                                                        <span>×</span></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p> Una vez aceptado, el contacto será eliminado. En caso
+                                                        de necesitar reestablecer al usuario, acceder a la categoría:
+                                                        Contactos <i class="fa fa-long-arrow-right"></i> Recuperar. </p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                            data-dismiss="modal">Volver atrás
+                                                    </button>
+                                                    <a href="{% url 'contact_delete' pk=contact.pk %}"
+                                                       role="button" class="btn btn-primary">Aceptar</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 {% endfor %}
                                 </tbody>
                             </table>
@@ -71,4 +111,9 @@
             </div>
         </div>
     </div>
+    <script>
+        function open_confirm_action_modal(idContact) {
+            $("#idConfirmActionModal" + idContact).modal('show');
+        };
+    </script>
 {% endblock %}

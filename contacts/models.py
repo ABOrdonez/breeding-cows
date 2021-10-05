@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from enum import Enum
+from django.utils import timezone
 
 
 class CivilStatus(Enum):
@@ -56,6 +57,7 @@ class Contact(models.Model):
         choices=CivilStatus.choices(),
         default=CivilStatus.SOLTERO,
         max_length=50)
+    delete_date = models.DateTimeField(blank=True, null=True)
 
     @property
     def full_name(self):
@@ -63,3 +65,8 @@ class Contact(models.Model):
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
+
+    def add_delete_date(self):
+        self.delete_date = timezone.now()
+        self.save()
+        return f'{self.first_name}'
